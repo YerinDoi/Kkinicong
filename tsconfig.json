@@ -1,7 +1,11 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  "compilerOptions": {
+    "jsx": "react-jsx", // JSX 오류 해결
+    "baseUrl": ".", // alias 사용
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "esModuleInterop": true // ts-jest warning 제거
+  },
+  "include": ["src"]
 }
