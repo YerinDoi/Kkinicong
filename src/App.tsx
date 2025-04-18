@@ -1,7 +1,10 @@
-import Router from "./routes";
+import AppLayout from './components/layout/AppLayout';
+import Router from '@/routes';
 
-function App() {
-  return <Router />;
+export default function App() {
+  return (
+    <AppLayout>
+      <Router />
+    </AppLayout>
+  );
 }
-
-export default App;
