@@ -3,13 +3,29 @@ import kakaoIcon from '@/assets/svgs/login/kakao.svg';
 import naverIcon from '@/assets/svgs/login/naver.svg';
 import googleIcon from '@/assets/svgs/login/google.svg';
 
-const KAKAO_REST_API_KEY: string = import.meta.env.VITE_KAKAO_REST_API_KEY;
-const REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI;
+const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_REST_API_KEY;
+const KAKAO_REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI;
 
-const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+const NAVER_CLIENT_ID = import.meta.env.VITE_NAVER_CLIENT_ID;
+const NAVER_REDIRECT_URI = import.meta.env.VITE_NAVER_REDIRECT_URI;
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const GOOGLE_REDIRECT_URI = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
 
 const loginWithKakao = () => {
-  window.location.href = kakaoAuthUrl;
+  const url = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${KAKAO_REDIRECT_URI}&response_type=code`;
+  window.location.href = url;
+};
+
+const loginWithNaver = () => {
+  const state = crypto.randomUUID(); // CSRF 방지용(네이버 필수)
+  const url = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&redirect_uri=${NAVER_REDIRECT_URI}&state=${state}`;
+  window.location.href = url;
+};
+
+const loginWithGoogle = () => {
+  const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_REDIRECT_URI}&response_type=code&scope=email profile`;
+  window.location.href = url;
 };
 
 export default function LoginPage() {
@@ -31,11 +47,17 @@ export default function LoginPage() {
             <img src={kakaoIcon} alt="카카오" className="w-5 h-5" />
             카카오로 시작하기
           </button>
-          <button className="flex items-center justify-center gap-2 bg-green-500 text-white rounded-xl py-3 shadow">
+          <button
+            onClick={loginWithNaver}
+            className="flex items-center justify-center gap-2 bg-green-500 text-white rounded-xl py-3 shadow"
+          >
             <img src={naverIcon} alt="네이버" className="w-5 h-5" />
             네이버로 시작하기
           </button>
-          <button className="flex items-center justify-center gap-2 border border-gray-400 text-black rounded-xl py-3">
+          <button
+            onClick={loginWithGoogle}
+            className="flex items-center justify-center gap-2 border border-gray-400 text-black rounded-xl py-3"
+          >
             <img src={googleIcon} alt="구글" className="w-5 h-5" />
             Google로 시작하기
           </button>
