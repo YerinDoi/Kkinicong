@@ -22,7 +22,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
 
-    "types": ["jest", "node"],
+    "types": ["react", "react-dom", "jest", "node"],
 
     "baseUrl": ".",
     "paths": {

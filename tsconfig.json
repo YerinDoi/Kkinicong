@@ -1,11 +1,43 @@
+// {
+//   "compilerOptions": {
+//     "target": "ES2020",
+//     "module": "ESNext", // Vite는 ESM 기반이므로 ESNext 권장
+//     "jsx": "react-jsx", // JSX 오류 해결
+//     "baseUrl": ".", // alias 사용
+//     "paths": {
+//       "@/*": ["src/*"]
+//     },
+//     "esModuleInterop": true // ts-jest warning 제거
+//   },
+//   "include": ["src"]
+// }
+
 {
   "compilerOptions": {
-    "jsx": "react-jsx", // JSX 오류 해결
-    "baseUrl": ".", // alias 사용
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "types": ["vite-plugin-svgr/client"],
+    "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     },
-    "esModuleInterop": true // ts-jest warning 제거
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src/**/*", "src/global.d.ts"]
 }
