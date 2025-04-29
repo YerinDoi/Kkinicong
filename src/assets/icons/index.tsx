@@ -16,6 +16,9 @@ import LunchBox from './menu/lunchBox.svg?react';
 import Etc from './menu/etc.svg?react';
 import Dropdown from './system/dropdown.svg?react';
 import Dropup from './system/dropup.svg?react';
+import Star from './system/star.svg?react';
+import Heart from './system/heart.svg?react';
+
 export type IconName =
   | 'backward'
   | 'menubar'
@@ -34,7 +37,9 @@ export type IconName =
   | 'lunchBox'
   | 'etc'
   | 'dropdown'
-  | 'dropup';
+  | 'dropup'
+  | 'star'
+  | 'heart';
 
 interface IconProps {
   name: IconName;
@@ -113,6 +118,13 @@ const Icon = ({ name, className }: IconProps) => {
   if (name === 'dropup') {
     return <Dropup className={className} />;
   }
-};
 
+  if (name === 'star') {
+    return <Star className={className} />;
+  }
+
+  if (name === 'heart') {
+    return <Heart className={className} />;
+  }
+};
 export default Icon;

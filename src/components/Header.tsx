@@ -1,4 +1,4 @@
-import Icon from '../common/icons';
+import Icon from '../assets/icons';
 
 interface HeaderProps {
   title: string;

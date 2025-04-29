@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Icon from '../common/icons';
-import type { IconName } from '../common/icons';
+import Icon from '../../assets/icons';
+import type { IconName } from '../../assets/icons';
 
 interface Category {
   id: string;

@@ -1,4 +1,4 @@
-import Icon from './icons';
+import Icon from '../../assets/icons';
 import { useState, useRef, useEffect } from 'react';
 
 interface DropdownProps {

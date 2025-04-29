@@ -19,7 +19,9 @@ import LunchBoxIcon from './menu/lunchBox.svg?react';
 import EtcIcon from './menu/etc.svg?react';
 import DropdownIcon from './system/dropdown.svg?react';
 import DropupIcon from './system/dropup.svg?react';
-import Icon from '@/components/common/icons';
+import StarIcon from './system/star.svg?react';
+import HeartIcon from './system/heart.svg?react';
+import Icon from '@/assets/icons';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
@@ -148,5 +150,17 @@ export const Dropdown: Story = {
 export const Dropup: Story = {
   args: {
     name: 'dropup',
+  },
+};
+
+export const Star: Story = {
+  args: {
+    name: 'star',
+  },
+};
+
+export const Heart: Story = {
+  args: {
+    name: 'heart',
   },
 };
