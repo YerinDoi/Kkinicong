@@ -5,9 +5,9 @@ export const mockStores: Store[] = [
     id: '1',
     name: '채움편백찜샤브샤브',
     category: {
-      id: 'korean',
-      name: '한식',
-      icon: 'korean',
+      id: 'shabu shabu',
+      name: '샤브샤브',
+      icon: 'shabu shabu',
     },
     mainTag: '재료가 신선해요',
     address: '인천광역시 서구 크리스탈로 78',
