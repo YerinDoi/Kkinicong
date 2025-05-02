@@ -36,7 +36,7 @@ const StoreInfo: React.FC<StoreInfoProps> = ({
       </div>
 
       {/* 하단 지도 영역 */}
-      <div className="w-full h-60 bg-gray-200">
+      <div className="w-full h-60">
         {/* 지도 이미지 (임시) */}
         <img src={map} alt="지도" className="w-full h-full object-cover" />
       </div>

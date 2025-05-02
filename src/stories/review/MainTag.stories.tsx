@@ -1,16 +1,14 @@
-// components/Tag.stories.tsx
-
 import type { Meta, StoryObj } from '@storybook/react';
-import Tag from './MainTag';
+import MainTag from '../../components/StoreReview/MainTag';
 
-const meta: Meta<typeof Tag> = {
-  title: 'Components/Tag',
-  component: Tag,
+const meta: Meta<typeof MainTag> = {
+  title: 'Components/MainTag',
+  component: MainTag,
   tags: ['autodocs'],
 };
 
 export default meta;
-type Story = StoryObj<typeof Tag>;
+type Story = StoryObj<typeof MainTag>;
 
 export const Default: Story = {
   args: {
