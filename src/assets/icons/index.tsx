@@ -1,6 +1,6 @@
 import Backward from './system/backward.svg?react';
 import Menubar from './system/menubar.svg?react';
-import LocationDropdown from './system/locationDropdown.svg?react';
+import LocationDropdown from './system/location-dropdown.svg?react';
 import Search from './system/search.svg?react';
 import All from './menu/all.svg?react';
 import Snack from './menu/snack.svg?react';
@@ -11,18 +11,18 @@ import Hotpot from './menu/hotpot.svg?react';
 import Asian from './menu/asian.svg?react';
 import Japanese from './menu/japanese.svg?react';
 import Korean from './menu/korean.svg?react';
-import StreetFood from './menu/streetFood.svg?react';
-import LunchBox from './menu/lunchBox.svg?react';
+import StreetFood from './menu/street-food.svg?react';
+import LunchBox from './menu/lunch-box.svg?react';
 import Etc from './menu/etc.svg?react';
 import Dropdown from './system/dropdown.svg?react';
 import Dropup from './system/dropup.svg?react';
 import Star from './system/star.svg?react';
 import Heart from './system/heart.svg?react';
-
+import HeartFilled from './system/heart-filled.svg?react';
 export type IconName =
   | 'backward'
   | 'menubar'
-  | 'locationDropdown'
+  | 'location-dropdown'
   | 'search'
   | 'all'
   | 'snack'
@@ -33,13 +33,14 @@ export type IconName =
   | 'asian'
   | 'japanese'
   | 'korean'
-  | 'streetFood'
-  | 'lunchBox'
+  | 'street-food'
+  | 'lunch-box'
   | 'etc'
   | 'dropdown'
   | 'dropup'
   | 'star'
-  | 'heart';
+  | 'heart'
+  | 'heart-filled';
 
 interface IconProps {
   name: IconName;
@@ -55,7 +56,7 @@ const Icon = ({ name, className }: IconProps) => {
     return <Menubar className={className} />;
   }
 
-  if (name === 'locationDropdown') {
+  if (name === 'location-dropdown') {
     return <LocationDropdown className={className} />;
   }
 
@@ -99,11 +100,11 @@ const Icon = ({ name, className }: IconProps) => {
     return <Korean className={className} />;
   }
 
-  if (name === 'streetFood') {
+  if (name === 'street-food') {
     return <StreetFood className={className} />;
   }
 
-  if (name === 'lunchBox') {
+  if (name === 'lunch-box') {
     return <LunchBox className={className} />;
   }
 
@@ -125,6 +126,10 @@ const Icon = ({ name, className }: IconProps) => {
 
   if (name === 'heart') {
     return <Heart className={className} />;
+  }
+
+  if (name === 'heart-filled') {
+    return <HeartFilled className={className} />;
   }
 };
 export default Icon;
