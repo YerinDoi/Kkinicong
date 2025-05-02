@@ -2,9 +2,13 @@ import Icon from '../../assets/icons';
 
 interface SearchInputProps {
   placeholder: string;
+  value: string;
+  onChange: (value: string) => void;
+  onSearch: () => void;
 }
 
-const SearchInput = ({ placeholder }: SearchInputProps) => {
+const SearchInput = ({ placeholder, value, onChange, onSearch }: SearchInputProps) => {
+
   return (
     <div
       className="flex w-[320px] h-[44px] px-5 py-3 flex-col justify-center items-center gap-[10px]
@@ -14,9 +18,13 @@ const SearchInput = ({ placeholder }: SearchInputProps) => {
         <input
           type="text"
           placeholder={placeholder}
-          className="self-stretch pt-[2px] text-[#919191] font-pretendard text-[12px] tracking-[0.012px]"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="self-stretch text-[#919191] text-[12px] tracking-[0.012px] focus:outline-none"
         />
-        <Icon name="search" />
+        <button onClick={onSearch}>
+          <Icon name="search" />
+        </button>
       </div>
     </div>
   );
