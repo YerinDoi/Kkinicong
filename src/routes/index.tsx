@@ -7,6 +7,8 @@ import NicknamePage from '@/pages/auth/NicknamePage';
 import NicknamePageXXX from '@/pages/auth/NicknamePageXXX';
 
 import StoreSearchPage from '@/pages/StoreSearch/StoreSearchPage';
+import StoreDetailPage from '@/pages/StoreDetail/StoreDetailPage';
+
 const Router = () => {
   return (
     <Routes>
@@ -16,6 +18,7 @@ const Router = () => {
       <Route path="/nickname" element={<NicknamePage />} />
       <Route path="/nicknameXXX" element={<NicknamePageXXX />} />
       <Route path="/store-search" element={<StoreSearchPage />} />
+      <Route path="/store/:storeId" element={<StoreDetailPage />} />
     </Routes>
   );
 };

@@ -1,6 +1,7 @@
 import { Store } from '@/types/store';
 import Icon from '@/assets/icons';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface StoreItemProps {
   store: Store;
@@ -9,14 +10,19 @@ interface StoreItemProps {
 const StoreItem = ({ store }: StoreItemProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(store.favoriteCount);
-
+  const navigate = useNavigate();
+  
   const handleLikeClick = () => {
     setIsLiked(!isLiked);
     setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
   };
 
+  const handleStoreClick = () => {
+    navigate(`/store/${store.id}`);
+  };
+
   return (
-    <div className="flex gap-[14px]">
+    <div className="flex gap-[14px] cursor-pointer" onClick={handleStoreClick}>
       <div className="flex min-w-[115px] aspect-square p-[20px] justify-center items-center rounded-[12px] border border-[#DFE1E4] bg-[#F6F7F8]">
         <div className="w-full h-full">
           <Icon
@@ -56,7 +62,12 @@ const StoreItem = ({ store }: StoreItemProps) => {
       </div>
 
       <div className="flex justify-end items-end gap-[8px]">
-        <button onClick={handleLikeClick} className="cursor-pointer">
+        <button onClick={(e) => {
+          e.stopPropagation();  // 클릭 이벤트 전파 방지
+          handleLikeClick();
+        }} 
+        className="cursor-pointer"
+        >
           <Icon name={isLiked ? 'heart-filled' : 'heart'}/>
         </button>
         <span
