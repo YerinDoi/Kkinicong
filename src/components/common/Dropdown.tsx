@@ -43,13 +43,13 @@ const Dropdown = ({ onSelect }: DropdownProps) => {
   return (
     <div
       ref={dropdownRef}
-      className="flex justify-center rounded-[6px] border border-[#919191] bg-[#F4F6F8] min-w-[94px] h-[28px] px-[12px] py-[4px]"
+      className="flex justify-center rounded-[6px] border border-[#919191] bg-[#F4F6F8] min-w-[94px] h-[28px] px-[12px] py-[4px] z-10"
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-[4px] text-[#616161] font-pretendard text-[14px] not-italic font-medium leading-[18px]"
+        className="flex items-center gap-[4px] text-[#616161] text-[14px] not-italic font-medium leading-[18px]"
       >
-        <span className="mt-[2px]">{selected}</span>
+        <span>{selected}</span>
         <Icon name={isOpen ? 'dropup' : 'dropdown'} />
       </button>
 
@@ -63,7 +63,7 @@ const Dropdown = ({ onSelect }: DropdownProps) => {
               <li
                 key={option}
                 onClick={() => handleSelect(option)}
-                className="px-[12px] py-[4px] text-center text-[#616161] font-pretendard text-[14px] font-medium leading-[18px] cursor-pointer"
+                className="px-[12px] py-[4px] text-center text-[#616161] text-[14px] font-medium leading-[18px] cursor-pointer"
               >
                 {option}
               </li>

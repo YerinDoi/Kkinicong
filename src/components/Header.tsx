@@ -13,16 +13,16 @@ const Header = ({ title, location }: HeaderProps) => {
       </button>
 
       <div className="flex items-end gap-[8px] ml-[4px]">
-        <span className="text-black font-pretendard text-2xl font-semibold leading-[32px]">
+        <span className="text-black text-2xl font-semibold leading-[32px]">
           {title}
         </span>
 
         <div className="flex items-center gap-[4px]">
-          <span className="text-[#919191] font-pretendard text-sm font-medium leading-[18px]">
+          <span className="text-[#919191] text-sm font-medium leading-[18px]">
             {location}
           </span>
           <button>
-            <Icon name="locationDropdown" />
+            <Icon name="location-dropdown" />
           </button>
         </div>
       </div>
