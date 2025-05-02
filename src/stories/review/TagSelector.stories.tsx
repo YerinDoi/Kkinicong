@@ -2,11 +2,15 @@
 import { Meta, StoryFn } from '@storybook/react';
 import TagSelector from '@/components/StoreReview/TagSelector';
 import type { TagSelectorProps } from '@/components/StoreReview/TagSelector';
+import { useState } from 'react';
 
-export default {
+const meta: Meta<typeof TagSelector> = {
   title: 'Components/TagSelector',
   component: TagSelector,
-} as Meta;
+  tags: ['autodocs'],
+};
+
+export default meta;
 
 const Template: StoryFn<TagSelectorProps> = (args) => <TagSelector {...args} />;
 
@@ -28,4 +32,31 @@ Default.args = {
     '포장 가능해요',
     '주차하기 편해요',
   ],
+  selectedTags: [],
+  onChange: (updated: string[]) => {
+    console.log('Selected tags:', updated);
+  },
+};
+
+//클릭 시 상태 변화까지 보이게
+
+export const Interactive: StoryFn<TagSelectorProps> = (args) => {
+  const [selectedTags, setSelectedTags] = useState<string[]>(args.selectedTags);
+
+  const handleChange = (updated: string[]) => {
+    setSelectedTags(updated);
+    args.onChange?.(updated);
+  };
+
+  return (
+    <TagSelector
+      {...args}
+      selectedTags={selectedTags}
+      onChange={handleChange}
+    />
+  );
+};
+
+Interactive.args = {
+  ...Default.args,
 };
