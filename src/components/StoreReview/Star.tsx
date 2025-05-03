@@ -1,7 +1,7 @@
 // components/Rating.tsx
 import React, { useState } from 'react';
-import yellowStar from '@/assets/svgs/review/yellowStar.svg';
-import disabledStar from '@/assets/svgs/review/disabledStar.svg';
+import yellowStar from '@/assets/svgs/review/yellow-star.svg';
+import disabledStar from '@/assets/svgs/review/disabled-star.svg';
 
 interface StarProps {
   max?: number;
