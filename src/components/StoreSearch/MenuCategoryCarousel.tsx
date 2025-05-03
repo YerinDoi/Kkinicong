@@ -15,43 +15,42 @@ const categories: Category[] = [
   { id: 'japanese', name: '일식', icon: 'japanese' },
   { id: 'chinese', name: '중식', icon: 'chinese' },
   { id: 'chicken', name: '치킨', icon: 'chicken' },
-  { id: 'street-food', name: '분식', icon: 'streetFood' },
+  { id: 'street-food', name: '분식', icon: 'street-food' },
   { id: 'hotpot', name: '샤브샤브', icon: 'hotpot' },
   { id: 'asian', name: '아시안', icon: 'asian' },
-  { id: 'lunch-box', name: '도시락', icon: 'lunchBox' },
+  { id: 'lunch-box', name: '도시락', icon: 'lunch-box' },
   { id: 'snack', name: '간식', icon: 'snack' },
   { id: 'etc', name: '기타', icon: 'etc' },
 ];
 
 interface MenuCategoryCarouselProps {
+  selectedCategory: string;
   onSelectCategory?: (category: string) => void;
 }
 
 const MenuCategoryCarousel: React.FC<MenuCategoryCarouselProps> = ({
+  selectedCategory,
   onSelectCategory,
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState('all');
-
   const handleCategoryClick = (categoryId: string) => {
-    setSelectedCategory(categoryId);
     onSelectCategory?.(categoryId);
   };
 
   return (
-    <div className="flex w-full overflow-x-auto scrollbar-hide gap-[24px] px-[20px] mb-[12px]">
+    <div className="flex w-full overflow-x-auto scrollbar-hide gap-[22px] px-[20px] mb-[12px]">
       {categories.map((category) => (
         <div
           key={category.id}
           onClick={() => handleCategoryClick(category.id)}
-          className="flex flex-col items-center gap-[8px] pt-[8px] pb-[8px] relative cursor-pointer"
+          className="flex flex-col items-center w-[60px] h-[100px] gap-[8px] py-[8px] relative cursor-pointer"
         >
-          <div className="flex items-center justify-center h-[53px] w-auto">
-            <button className="flex items-center justify-center">
+          <div className="flex items-center justify-center w-full h-full object-contain px-[4px]">
+            <button className="flex items-center justify-center ">
               <Icon name={category.icon} />
             </button>
           </div>
 
-          <span className="text-[#212121] text-center font-pretendard text-sm font-medium leading-[18px]">
+          <span className="text-[#212121] text-center text-sm font-medium leading-[18px]">
             {category.name}
           </span>
           {selectedCategory === category.id && (

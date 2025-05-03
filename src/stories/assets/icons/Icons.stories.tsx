@@ -3,7 +3,7 @@ import { fn } from '@storybook/test';
 
 import BackwardIcon from './system/backward.svg?react';
 import MenubarIcon from './system/menubar.svg?react';
-import LocationDropdownIcon from './system/locationDropdown.svg?react';
+import LocationDropdownIcon from './system/location-dropdown.svg?react';
 import SearchIcon from './system/search.svg?react';
 import AllIcon from './menu/all.svg?react';
 import SnackIcon from './menu/snack.svg?react';
@@ -14,13 +14,14 @@ import HotpotIcon from './menu/hotpot.svg?react';
 import AsianIcon from './menu/asian.svg?react';
 import JapaneseIcon from './menu/japanese.svg?react';
 import KoreanIcon from './menu/korean.svg?react';
-import StreetFoodIcon from './menu/streetFood.svg?react';
-import LunchBoxIcon from './menu/lunchBox.svg?react';
+import StreetFoodIcon from './menu/street-food.svg?react';
+import LunchBoxIcon from './menu/lunch-box.svg?react';
 import EtcIcon from './menu/etc.svg?react';
 import DropdownIcon from './system/dropdown.svg?react';
 import DropupIcon from './system/dropup.svg?react';
 import StarIcon from './system/star.svg?react';
 import HeartIcon from './system/heart.svg?react';
+import HeartFilledIcon from './system/heart-filled.svg?react';
 import Icon from '@/assets/icons';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
@@ -59,7 +60,7 @@ export const Menubar: Story = {
 
 export const LocationDropdown: Story = {
   args: {
-    name: 'locationDropdown',
+    name: 'location-dropdown',
   },
 };
 
@@ -125,13 +126,13 @@ export const Korean: Story = {
 
 export const StreetFood: Story = {
   args: {
-    name: 'streetFood',
+    name: 'street-food',
   },
 };
 
 export const LunchBox: Story = {
   args: {
-    name: 'lunchBox',
+    name: 'lunch-box',
   },
 };
 
@@ -162,5 +163,11 @@ export const Star: Story = {
 export const Heart: Story = {
   args: {
     name: 'heart',
+  },
+};
+
+export const HeartFilled: Story = {
+  args: {
+    name: 'heart-filled',
   },
 };
