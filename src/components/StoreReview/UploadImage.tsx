@@ -50,7 +50,7 @@ const UploadImage: React.FC = () => {
       {/* 업로드 박스 */}
       <div className="relative w-[88px] h-[88px] cursor-pointer" onClick={handleUploadClick}>
         {/* 이미지 미리보기 또는 기본 아이콘 */}
-        <div className='w-full h-full overflow-hidden '>
+        <div className='w-full h-full overflow-hidden rounded-[12px]'>
           {preview ? (
             <>
               <img src={preview} alt="preview" className="w-full h-full object-cover" />

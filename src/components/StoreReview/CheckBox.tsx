@@ -21,7 +21,7 @@ const CheckBox: React.FC = () => {
         </div>
 
 
-        <span className={checked ? "text-base text-black font-semibold" : "text-[#919191]"}> 
+        <span className={checked ? "text-base text-black font-semibold " : "text-[#919191]"}> 
           네, 실제로 방문해 급식카드로 이용했어요.
         </span>
       </label>

@@ -26,11 +26,11 @@ const TagSelector: React.FC<TagSelectorProps> = ({
     }
 
     setLocalSelected(updated);
-    onChange(updated); // 상위에 전달해서 전체 갱신
+    onChange(updated); 
   };
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-[12px]">
       {tags.map((tag) => (
         <Tag
           key={tag}

@@ -13,7 +13,7 @@ const StoreReviewPage = () => {
 
   return (
     <div>
-      <div className="flex flex-col w-full gap-[12px] font-pretendard">
+      <div className="flex flex-col w-full mt-[11px] mb-[29px] gap-[12px] font-pretendard">
         <Header
           title="리뷰 쓰기"
           showLocationDropdown={false}
@@ -26,11 +26,11 @@ const StoreReviewPage = () => {
           badgeText={store.mainTag}
         />
         <div className="px-[16px] flex flex-col gap-[28px]">
-          <Rating></Rating>
-          <SelectTag></SelectTag>
-          <CommentBox></CommentBox>
-          <UploadImage></UploadImage>
-          <CheckBox></CheckBox>
+          <Rating />
+          <SelectTag />
+          <CommentBox />
+          <UploadImage />
+          <CheckBox />
          
         </div>
       </div>
