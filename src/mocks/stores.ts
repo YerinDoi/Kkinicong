@@ -11,6 +11,8 @@ export const mockStores: Store[] = [
     },
     mainTag: '음식이 맛있어요',
     address: '인천광역시 서구 청마로 19번길',
+    lat: 37.592587,
+    lng: 126.6730328,
     rating: 4.7,
     favoriteCount: 1,
     businessHours: {
@@ -47,6 +49,8 @@ export const mockStores: Store[] = [
     },
     mainTag: '재료가 신선해요',
     address: '인천광역시 서구 크리스탈로 78',
+    lat: 37.532000,
+    lng: 126.636793,
     rating: 4.2,
     favoriteCount: 356,
     businessHours: {
@@ -68,6 +72,8 @@ export const mockStores: Store[] = [
     },
     mainTag: '분위기가 좋아요',
     address: '인천광역시 서구 가정동 612-23',
+    lat: 37.529038,
+    lng: 126.670091,
     rating: 4.7,
     favoriteCount: 1,
     businessHours: {
@@ -89,6 +95,8 @@ export const mockStores: Store[] = [
     },
     mainTag: '재료가 신선해요',
     address: '인천광역시 서구 여우재로 119',
+    lat: 37.490295,
+    lng: 126.685726,
     rating: 4.7,
     favoriteCount: 1,
     businessHours: {
@@ -110,6 +118,8 @@ export const mockStores: Store[] = [
     },
     mainTag: '이야기하기 좋아요',
     address: '인천광역시 서구 봉오재3로 100',
+    lat: 37.527388,
+    lng: 126.670755,
     rating: 4.7,
     favoriteCount: 1,
     businessHours: {
@@ -131,6 +141,8 @@ export const mockStores: Store[] = [
     },
     mainTag: '결제 거절이 없어요',
     address: '인천광역시 서구 청라라임로 85',
+    lat: 37.534524,
+    lng: 126.652643,
     rating: 4.7,
     favoriteCount: 1,
     businessHours: {
@@ -152,6 +164,8 @@ export const mockStores: Store[] = [
     },
     mainTag: '주차하기 편리해요',
     address: '인천광역시 서구 단봉로 97-7',
+    lat: 37.596809,
+    lng: 126.640345,
     rating: 4.3,
     favoriteCount: 1,
     businessHours: {

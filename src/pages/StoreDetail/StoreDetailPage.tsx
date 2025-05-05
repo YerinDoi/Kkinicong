@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { mockStores } from '@/mocks/stores';
+import StoreDetailMap from '@/components/StoreDetail/StoreDetailMap';
 
 const StoreDetailPage = () => {
     const { storeId } = useParams<{ storeId: string }>();
@@ -13,6 +14,7 @@ const StoreDetailPage = () => {
     <div>
         <h1>{store.name}</h1>
         <p>{store.address}</p>
+        <StoreDetailMap />
     </div>
   )
 };
