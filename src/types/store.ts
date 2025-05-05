@@ -7,6 +7,13 @@ export interface Review {
   images?: string[];
 }
 
+export type Weekday = '일' | '월' | '화' | '수' | '목' | '금' | '토';
+
+export type WeeklyHours = {
+  [key in Weekday]: [string, string] | null;
+};
+
+
 export interface Store {
   id: string;
   name: string;
@@ -23,11 +30,12 @@ export interface Store {
   favoriteCount: number;
   businessHours: {
     open: string;
-    close: string;
+    close:string;
     isOpen: boolean;
+    weekly?: WeeklyHours;
   };
   reviews: Review[];
   reviewCount: number;
-  status: '영업중' | '영업 종료' | '휴무' | '준비중';
+  status: '영업중' | '영업 종료' ;
   statusDescription?: string;
 }
