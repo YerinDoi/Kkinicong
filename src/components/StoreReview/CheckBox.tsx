@@ -1,0 +1,32 @@
+import React,{ useState } from "react";
+import CheckboxIcon from "@/assets/svgs/review/checkbox.svg";
+import UncheckedIcon from "@/assets/svgs/review/unchecked-box.svg";
+
+const CheckBox: React.FC = () => {
+  const [checked, setChecked] = useState(false);
+  
+  return (
+    <div className="flex flex-col gap-[12px] ">
+      <p className="text-black font-semibold leading-[20px] text-base">
+        직접 이용 후 작성하시는 리뷰인가요?
+      </p>
+      <label className="flex items-center gap-[8px] cursor-pointer select-none">
+      
+        <div onClick={() => setChecked(!checked)} className="w-[20px] h-[20px]">
+          <img
+            src={checked ? CheckboxIcon : UncheckedIcon}
+            alt="체크박스"
+            className="w-full h-full"
+          />
+        </div>
+
+
+        <span className={checked ? "text-base text-black font-semibold " : "text-[#919191]"}> 
+          네, 실제로 방문해 급식카드로 이용했어요.
+        </span>
+      </label>
+    </div>
+  );
+};
+
+export default CheckBox;
