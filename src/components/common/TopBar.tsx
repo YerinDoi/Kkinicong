@@ -1,4 +1,6 @@
 import { useNavigate } from 'react-router-dom';
+import { ReactComponent as BackIcon } from 'src/assets/icons/system/backward.svg';
+import { ReactComponent as MenuIcon } from 'src/assets/icons/system/menu.svg';
 
 interface TopBarProps {
   title?: string; // 타이틀
@@ -24,16 +26,11 @@ export default function TopBar({
 
   return (
     <div className="flex items-center justify-between h-12 px-4">
-      {/* 왼쪽 영역 */}
+      {/* 왼쪽 영역 : 뒤로가기버튼, 제목, 부제목 */}
       <div className="flex items-center">
         {showBackButton ? (
           <button onClick={handleBack} className="text-xl mr-2">
-            <img
-              src="src/assets/icons/system/backward.svg"
-              alt="뒤로가기"
-              // className="w-[7px] h-[15px]"
-              className="w-5 h-5"
-            />
+            <BackIcon className="w-5 h-5" />
           </button>
         ) : (
           <div className="w-5 h-5" /> // 여백 맞춤
@@ -50,15 +47,11 @@ export default function TopBar({
         )}
       </div>
 
-      {/* 오른쪽 영역 */}
+      {/* 오른쪽 영역 : 메뉴버튼(햄버거) */}
       {rightElement && (
         <div className="flex items-center">
           <button>
-            <img
-              src="src/assets/icons/system/menu.svg"
-              alt="햄버거 메뉴"
-              className="w-6 h-6"
-            />
+            <MenuIcon className="w-6 h-6" />
           </button>
         </div>
       )}
