@@ -16,7 +16,7 @@ const StoreDetailPage = () => {
   return (
     <div className="font-pretendard">
         <Header title="" location=""/>
-        <StoreDetailInfo category={store.category.name} name={store.name} address={store.address} favoriteCount={likeCount} isLiked={isLiked} status={store.status} open={store.businessHours.open}
+        <StoreDetailInfo category={store.category.name} name={store.name} address={store.address} badgeText = {store.mainTag} favoriteCount={likeCount} isLiked={isLiked} status={store.status} open={store.businessHours.open}
   close={store.businessHours.close}
   weekly={store.businessHours.weekly}/>
         <StoreDetailMap />
