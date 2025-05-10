@@ -1,4 +1,4 @@
-import logo from '@/assets/svgs/logo/cong-logo.svg';
+import LogoIcon from '@/assets/svgs/logo/logo-icon.svg?react';
 import kakaoIcon from '@/assets/svgs/login/kakao.svg';
 import naverIcon from '@/assets/svgs/login/naver.svg';
 import googleIcon from '@/assets/svgs/login/google.svg';
@@ -35,7 +35,7 @@ export default function LoginPage() {
         <button className="mb-8 text-xl">←</button>
 
         <div className="flex flex-col items-center mb-10">
-          <img src={logo} alt="끼니콩 로고" className="w-16 h-16 mb-4" />
+          <LogoIcon className="w-8 h-8" />
           <h1 className="text-3xl font-bold text-[#5B3B19]">끼니콩</h1>
         </div>
 
