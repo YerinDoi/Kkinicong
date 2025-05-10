@@ -5,3 +5,4 @@ coverage
 *.lock
 *.log
 public
+tailwind.config.ts
