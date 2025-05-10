@@ -1,7 +1,7 @@
 // TopBar.stories.tsx
 
 import type { Meta, StoryObj } from '@storybook/react';
-import TopBar from '/Users/yerin/Documents/pyerin/PROJECT/끼니콩/fe/src/components/common/TopBar.tsx';
+import TopBar from '../../components/common/TopBar';
 import { BrowserRouter } from 'react-router-dom';
 
 const meta: Meta<typeof TopBar> = {
