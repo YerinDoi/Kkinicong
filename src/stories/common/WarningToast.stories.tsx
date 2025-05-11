@@ -1,6 +1,6 @@
 
 import { Meta, StoryObj } from '@storybook/react';
-import WarningToast from '@/components/StoreReview/WarningToast';
+import WarningToast from '@/components/common/WarningToast';
 
 const meta: Meta<typeof WarningToast> = {
   title: 'Components/WarningToast',
