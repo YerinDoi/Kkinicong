@@ -17,6 +17,8 @@ export interface Store {
   };
   mainTag: string;
   address: string;
+  lat: number;  // 위도
+  lng: number;  // 경도
   rating: number;
   favoriteCount: number;
   businessHours: {

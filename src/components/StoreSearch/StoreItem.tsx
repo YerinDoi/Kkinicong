@@ -98,7 +98,6 @@ const StoreItem = ({ store }: StoreItemProps) => {
         </div>
       </div>
 
-      
     </div>
   );
 };
