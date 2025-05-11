@@ -43,9 +43,9 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
         {reviews.map((review) => (
           <ReviewItem
             key={review.id}
-            username={review.userName}
+            userName={review.userName}
             rating={review.rating}
-            comment={review.content}
+            content={review.content}
             date={review.date}
           />
         ))}

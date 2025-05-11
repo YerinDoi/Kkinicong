@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ProfileImg from '@/assets/svgs/common/profile-img.svg';
 
 interface BottomSheetFormProps {
   title: string;
@@ -9,6 +10,10 @@ interface BottomSheetFormProps {
     name: string;
     category?: string;
     mapComponent?: React.ReactNode;
+  };
+  reviewInfo?: {
+    userName: string;
+    content: string;
   };
 
   onSubmit: () => void;
@@ -23,6 +28,7 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
   onSubmit,
   onCancel,
   storeInfo,
+  reviewInfo,
 }) => {
   const [selected, setSelected] = useState<string | null>(null);
   const [text, setText] = useState('');
@@ -34,6 +40,7 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
       <h2 className="text-sm leading-[18px] text-center font-medium">
         {title}
       </h2>
+      {/*가게 정보 수정 요청*/}
       {storeInfo && (
         <div className="px-[24px] flex flex-col gap-[12px] h-[184px]">
           <div className="flex flex-col gap-[2.635px]">
@@ -52,6 +59,23 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
           )}
         </div>
       )}
+      {/*리뷰 신고*/}
+      {reviewInfo && (
+        <div className="px-[24px] flex flex-col gap-[12px]">
+          <div className="flex gap-[4px] items-center">
+            <img src={ProfileImg} className="w-[36.3px] h-[36.3px] " />
+            <span className="font-medium text-sm font-medium leading-[18px]">
+              {reviewInfo.userName}
+            </span>
+          </div>
+
+          <span className="text-sm mb-[13.7px] font-medium leading-[18px] text-[#616161]">
+            {reviewInfo.content}
+          </span>
+        </div>
+      )}
+
+      {/*공통*/}
       <div className="flex flex-col pt-[12px] gap-[8px] px-[39px] border-t-[2px] border-[#F4F6F8]">
         <p className="text-base font-semibold leading-[20px]">{question}</p>
         <div className="py-[8px] flex flex-col gap-[4px]">

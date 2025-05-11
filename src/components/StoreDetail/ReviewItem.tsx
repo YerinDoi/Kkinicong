@@ -2,22 +2,22 @@ import React from 'react';
 import YellowStar from '@/assets/svgs/review/yellow-star.svg';
 import EmptyStar from '@/assets/svgs/review/disabled-star.svg';
 import ProfileImg from '@/assets/svgs/common/profile-img.svg';
-import AlarmIcon from '@/assets/svgs/common/alarm.svg';
+import ReportReviewButton from '@/components/StoreDetail/ReportReviewButton';
 
 interface ReviewItemProps {
-  username: string;
+  userName: string;
   date: string;
   rating: number;
-  comment: string;
+  content: string;
   imageUrl?: string;
   isOwner?: boolean;
 }
 
 const ReviewItem: React.FC<ReviewItemProps> = ({
-  username,
+  userName,
   date,
   rating,
-  comment,
+  content,
   imageUrl,
   isOwner,
 }) => {
@@ -27,7 +27,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
         <div className="flex items-center gap-[4px] ">
           <img src={ProfileImg} className="w-[36.3px]" />
           <div className="flex gap-[4px]">
-            <span className="font-meidum text-sm">{username}</span>
+            <span className="font-meidum text-sm">{userName}</span>
             <span className="text-xs text-[#919191] self-end">{date}</span>
           </div>
         </div>
@@ -48,16 +48,13 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
               삭제
             </button>
           ) : (
-            <button className="text-xs font-medium text-[#919191] flex gap-[4px]">
-              <img src={AlarmIcon} className="h-[14px]" />
-              <p>신고하기</p>
-            </button>
+            <ReportReviewButton review={{ userName, content }} />
           )}
         </div>
       </div>
       <div className="flex gap-">
         <p className="text-sm font-medium leading-[18px] text-[#616161]">
-          {comment}
+          {content}
         </p>
         {imageUrl && (
           <img
