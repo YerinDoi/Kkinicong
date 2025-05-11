@@ -88,7 +88,7 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
             </span>
           </div>
         </div>
-        <div className="flex gap-[8px]">
+        <div className="flex gap-[8px] items-end">
           <RequestEditButton
             storeInfo={{
               name,
@@ -96,6 +96,10 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
               mapComponent: <StoreDetailMap />,
             }}
           />
+          {/*백엔드 연동시 수정*/}
+          <p className="text-xs font-medium text-[#C3C3C3] ">
+            업데이트 2024.03.02
+          </p>
         </div>
       </div>
     </div>
