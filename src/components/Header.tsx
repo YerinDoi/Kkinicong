@@ -20,7 +20,7 @@ const Header = ({
       </button>
 
       <div className="flex items-end gap-[8px] ml-[4px]">
-        <span className="text-black text-2xl font-semibold leading-[32px]">
+        <span className="text-black text-[20px] font-semibold leading-[32px]">
           {title}
         </span>
 
