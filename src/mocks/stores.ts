@@ -27,13 +27,12 @@ export const mockStores: Store[] = [
         목: ['11:30', '21:30'],
         금: ['11:30', '21:30'],
         토: ['11:30', '21:30'],
-        
-      }
+      },
     },
     reviews: [
       {
         id: '1',
-        userName: '베고픈 콩쥐',
+        userName: '배고픈 콩쥐',
         rating: 3,
         content: '일주일에 한 번은 꼭 가는 맛집입니다... 추천합니다',
         date: '2025.04.09',
@@ -59,7 +58,7 @@ export const mockStores: Store[] = [
     },
     mainTag: '재료가 신선해요',
     address: '인천광역시 서구 크리스탈로 78',
-    lat: 37.532000,
+    lat: 37.532,
     lng: 126.636793,
     rating: 4.2,
     favoriteCount: 356,
@@ -75,7 +74,7 @@ export const mockStores: Store[] = [
         목: ['11:30', '21:30'],
         금: ['11:30', '21:30'],
         토: ['11:30', '21:30'],
-      }
+      },
     },
     reviews: [],
     reviewCount: 0,
@@ -106,8 +105,8 @@ export const mockStores: Store[] = [
         수: ['11:00', '21:30'],
         목: ['11:00', '21:30'],
         금: ['11:00', '22:30'],
-        토: null
-      }
+        토: null,
+      },
     },
     reviews: [],
     reviewCount: 0,
@@ -138,9 +137,8 @@ export const mockStores: Store[] = [
         수: ['8:00', '21:30'],
         목: ['8:00', '21:30'],
         금: ['11:00', '21:30'],
-        토: null
-      }
-
+        토: null,
+      },
     },
     reviews: [],
     reviewCount: 0,
@@ -172,7 +170,7 @@ export const mockStores: Store[] = [
         목: ['9:00', '21:00'],
         금: ['9:00', '21:00'],
         토: ['9:00', '21:00'],
-      }
+      },
     },
     reviews: [],
     reviewCount: 0,
@@ -204,9 +202,9 @@ export const mockStores: Store[] = [
         목: ['9:00', '21:00'],
         금: ['9:00', '21:00'],
         토: ['9:00', '21:00'],
-      }
+      },
     },
-    
+
     reviews: [],
     reviewCount: 0,
     status: '영업 종료',
@@ -237,7 +235,7 @@ export const mockStores: Store[] = [
         목: ['17:00', '24:00'],
         금: ['17:00', '24:00'],
         토: ['17:00', '24:00'],
-      }
+      },
     },
     reviews: [],
     reviewCount: 0,
