@@ -19,6 +19,8 @@ import Dropup from './system/dropup.svg?react';
 import Star from './system/star.svg?react';
 import Heart from './system/heart.svg?react';
 import HeartFilled from './system/heart-filled.svg?react';
+import Gps from './system/gps.svg?react';
+
 export type IconName =
   | 'backward'
   | 'menubar'
@@ -40,7 +42,8 @@ export type IconName =
   | 'dropup'
   | 'star'
   | 'heart'
-  | 'heart-filled';
+  | 'heart-filled'
+  | 'gps';
 
 interface IconProps {
   name: IconName;
@@ -130,6 +133,10 @@ const Icon = ({ name, className }: IconProps) => {
 
   if (name === 'heart-filled') {
     return <HeartFilled className={className} />;
+  }
+
+  if (name === 'gps') {
+    return <Gps className={className} />;
   }
 };
 export default Icon;

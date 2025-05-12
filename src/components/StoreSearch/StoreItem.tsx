@@ -55,7 +55,7 @@ const StoreItem = ({ store }: StoreItemProps) => {
             <span className="text-[#212121] text-[16px] font-bold tracking-[0.016px] leading-tight">
               {store.name}
             </span>
-            <span className="text-[#919191] text-[12px] tracking-[0.012px] leading-tight">
+            <span className="text-[#919191] text-[12px] tracking-[0.012px] leading-tight overflow-hidden whitespace-nowrap text-ellipsis max-w-[200px]">
               {store.address}
             </span>
           </div>
@@ -68,7 +68,7 @@ const StoreItem = ({ store }: StoreItemProps) => {
             </div>
           )}
           
-          <div className="flex items-end justify-between w-full">
+          <div className="absolute bottom-0 flex items-end justify-between w-full">
             <div className="flex items-center gap-[4px]">
               <Icon name="star" />
               <span className="text-[#919191] text-[12px] font-medium tracking-[0.012px] leading-tight">
