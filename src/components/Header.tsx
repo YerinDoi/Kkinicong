@@ -1,4 +1,5 @@
 import Icon from '../assets/icons';
+import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   title: string;
@@ -13,9 +14,14 @@ const Header = ({
   showLocationDropdown = true,
   showMenubarButton = true,
 }: HeaderProps) => {
+  const navigate = useNavigate();
+
   return (
     <div className="flex items-center w-full pt-[8px] pb-[8px] px-[20px]">
-      <button className="flex items-center pt-[8px] pb-[8px] pr-[12px]">
+      <button
+        className="flex items-center pt-[8px] pb-[8px] pr-[12px]"
+        onClick={() => navigate('/')}
+      >
         <Icon name="backward" />
       </button>
 
@@ -25,7 +31,7 @@ const Header = ({
         </span>
 
         {location && (
-          <div className="flex items-center gap-[4px]">
+          <div className="flex items-center gap-[4px] mb-[2px]">
             <span className="text-[#919191] font-pretendard text-sm font-medium leading-[18px]">
               {location}
             </span>
