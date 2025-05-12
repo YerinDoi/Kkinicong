@@ -32,8 +32,8 @@ const MenuCategoryCarousel: React.FC<MenuCategoryCarouselProps> = ({
   selectedCategory,
   onSelectCategory,
 }) => {
-  const handleCategoryClick = (categoryId: string) => {
-    onSelectCategory?.(categoryId);
+  const handleCategoryClick = (categoryName: string) => {
+    onSelectCategory?.(categoryName);
   };
 
   return (
@@ -41,7 +41,7 @@ const MenuCategoryCarousel: React.FC<MenuCategoryCarouselProps> = ({
       {categories.map((category) => (
         <div
           key={category.id}
-          onClick={() => handleCategoryClick(category.id)}
+          onClick={() => handleCategoryClick(category.name)}
           className="flex flex-col items-center w-[60px] h-[100px] gap-[8px] py-[8px] relative cursor-pointer"
         >
           <div className="flex items-center justify-center w-full h-full object-contain px-[4px]">
@@ -53,7 +53,7 @@ const MenuCategoryCarousel: React.FC<MenuCategoryCarouselProps> = ({
           <span className="text-[#212121] text-center text-sm font-medium leading-[18px]">
             {category.name}
           </span>
-          {selectedCategory === category.id && (
+          {selectedCategory === category.name && (
             <div className="absolute bottom-0 left-0 right-0 border-b-2 border-main-color" />
           )}
         </div>
