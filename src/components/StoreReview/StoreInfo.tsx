@@ -37,7 +37,7 @@ const StoreInfo: React.FC<StoreInfoProps> = ({
 
       {/* 하단 지도 영역 */}
       <div className="w-full h-60">
-        <StoreDetailMap />
+        <StoreDetailMap hideButtons />
       </div>
     </div>
   );
