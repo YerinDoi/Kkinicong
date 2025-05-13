@@ -21,6 +21,14 @@ import Heart from './system/heart.svg?react';
 import HeartFilled from './system/heart-filled.svg?react';
 import Gps from './system/gps.svg?react';
 
+import Login from './menubar/login.svg?react';
+import Mypage from './menubar/mypage.svg?react';
+import StoreMap from './menubar/store-map.svg?react';
+import StoreSearch from './menubar/store-search.svg?react';
+import Community from './menubar/community.svg?react';
+import ConvenienceStore from './menubar/convenience-store.svg?react';
+import CloseBtn from './menubar/close-btn.svg?react';
+
 export type IconName =
   | 'backward'
   | 'menubar'
@@ -43,7 +51,14 @@ export type IconName =
   | 'star'
   | 'heart'
   | 'heart-filled'
-  | 'gps';
+  | 'gps'
+  | 'login'
+  | 'mypage'
+  | 'store-map'
+  | 'store-search'
+  | 'community'
+  | 'convenience-store'
+  | 'close-btn';
 
 interface IconProps {
   name: IconName;
@@ -138,5 +153,34 @@ const Icon = ({ name, className }: IconProps) => {
   if (name === 'gps') {
     return <Gps className={className} />;
   }
+
+  if (name === 'login') {
+    return <Login className={className} />;
+  }
+
+  if (name === 'mypage') {
+    return <Mypage className={className} />;
+  }
+
+  if (name === 'store-map') {
+    return <StoreMap className={className} />;
+  }
+
+  if (name === 'store-search') {
+    return <StoreSearch className={className} />;
+  }
+
+  if (name === 'community') {
+    return <Community className={className} />;
+  }
+
+  if (name === 'convenience-store') {
+    return <ConvenienceStore className={className} />;
+  }
+
+  if (name === 'close-btn') {
+    return <CloseBtn className={className} />;
+  }
 };
+
 export default Icon;

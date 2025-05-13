@@ -1,0 +1,57 @@
+import Icon from '@/assets/icons';
+import { useNavigate } from 'react-router-dom';
+import type { IconName } from '@/assets/icons';
+
+interface MenuBarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
+  const navigate = useNavigate();
+
+  const menuItems = [
+    { icon: 'store-map' as IconName, text: '가맹점 지도', path: '/store-map' },
+    { icon: 'store-search' as IconName, text: '가맹점 찾기', path: '/store-search' },
+    { icon: 'convenience-store' as IconName, text: '편의점 구매가능 품목 게시판', path: '/convenience-store', },
+    { icon: 'community' as IconName, text: '커뮤니티', path: '/community' },
+    { icon: 'login' as IconName, text: '로그인', path: '/login' },
+    { icon: 'mypage' as IconName, text: '마이페이지', path: '/mypage' },
+  ];
+
+  return (
+    <div
+      className={`fixed top-0 pt-[20px] w-full bg-white shadow-md transition-transform duration-300 ease-in-out transform z-50 ${
+        isOpen ? 'translate-y-0' : '-translate-y-full'
+      }`}
+    >
+      <div className="relative p-[20px] pb-[28px]">
+        <button className="absolute right-[20px]" onClick={onClose}>
+          <Icon name="close-btn" />
+        </button>
+
+        <div className="flex flex-col gap-[20px] mt-[40px]">
+          {menuItems.map((item, index) => (
+            <div key={item.text}>
+              <button
+                className="flex items-center gap-[16px] w-full text-left"
+                onClick={() => {
+                  navigate(item.path);
+                  onClose();
+                }}
+              >
+                <Icon name={item.icon} />
+                <span className="text-[#212121] text-[14px] font-medium leading-[18px]">
+                  {item.text}
+                </span>
+              </button>
+              {index === 3 && <div className="mt-[4px] pb-[20px] border-b-4 border-[#F4F6F8]" />}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default MenuBar;

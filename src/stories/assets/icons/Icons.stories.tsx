@@ -155,3 +155,45 @@ export const Gps: Story = {
     name: 'gps',
   },
 };
+
+export const Login: Story = {
+  args: {
+    name: 'login',
+  },
+};
+
+export const Mypage: Story = {
+  args: {
+    name: 'mypage',
+  },
+};
+
+export const StoreMap: Story = {
+  args: {
+    name: 'store-map',
+  },
+};
+
+export const StoreSearch: Story = {
+  args: {
+    name: 'store-search',
+  },
+};
+
+export const Community: Story = {
+  args: {
+    name: 'community',
+  },
+};
+
+export const ConvenienceStore: Story = {
+  args: {
+    name: 'convenience-store',
+  },
+};
+
+export const CloseBtn: Story = {
+  args: {
+    name: 'close-btn',
+  },
+};
