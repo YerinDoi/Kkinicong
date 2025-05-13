@@ -1,11 +1,11 @@
 import React from 'react';
 import ConfirmIcon from '@/assets/svgs/common/confirm-icon.svg';
 
-interface WarningToastProps {
+interface ConfirmToastProps {
   text: string;
 }
 
-const WarningToast: React.FC<WarningToastProps> = ({ text }) => {
+const ConfirmToast: React.FC<ConfirmToastProps> = ({ text }) => {
   return (
     <div className="flex py-[16px] pl-[33px] gap-[32px] w-[338px] font-pretendard bg-[#F4F6F8] rounded-[12px]">
       <img src={ConfirmIcon} className="w-[40px] h-[40px]" />
@@ -18,4 +18,4 @@ const WarningToast: React.FC<WarningToastProps> = ({ text }) => {
   );
 };
 
-export default WarningToast;
+export default ConfirmToast;

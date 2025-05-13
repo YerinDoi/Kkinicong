@@ -3,6 +3,7 @@ import ReviewItem from '@/components/StoreDetail/ReviewItem';
 import { Store } from '@/types/store';
 import AddIcon from '@/assets/svgs/common/add-icon.svg';
 import Star from '@/assets/svgs/review/yellow-star.svg';
+import CongG from '@/assets/svgs/logo/congG.svg';
 
 interface StoreDetailReviewProps {
   store: Store;
@@ -15,12 +16,13 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
     <section className="flex flex-col mt-[12px] ">
       {/* 리뷰쓰기 배너*/}
       <div className="bg-[#F3F5ED] p-[16px]">
-        <div className="h-[112px]">
-          <div className="h-full pb-[16px] text-base font-semibold leading-[20px] flex flex-col gap-[4px] justify-center">
+        <div className="flex h-[112px]">
+          <div className="h-full pb-[16px] text-[15px] font-semibold leading-[20px] flex flex-col gap-[4px] justify-center">
             <p className="text-[#029F64]">{name}</p>
             <p className="text-black">다녀오셨나요?</p>
             <p className="text-black">리뷰를 통해 경험을 공유해주세요!</p>
           </div>
+          <img src={CongG} className="w-[122px]" />
         </div>
 
         <button className="w-full bg-[#65CE58] text-white rounded-[12px] px-[16px] py-[10px] justify-center flex gap-[10px] text-base font-semibold items-center">
