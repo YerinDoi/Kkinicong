@@ -3,6 +3,7 @@ import Icon, { IconName } from '@/assets/icons';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+
 interface StoreItemProps {
   store: Store;
 }
@@ -18,7 +19,13 @@ const StoreItem = ({ store }: StoreItemProps) => {
   };
 
   const handleStoreClick = () => {
-    navigate(`/store/${store.id}`);
+    navigate(`/store/${store.id}`, {
+      state: {
+        isLiked,
+        likeCount,
+      },
+    });
+    
   };
 
   const categoryIconMap: Record<string, IconName> = {
