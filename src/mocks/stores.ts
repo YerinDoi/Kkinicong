@@ -36,6 +36,7 @@ export const mockStores: Store[] = [
         rating: 3,
         content: '일주일에 한 번은 꼭 가는 맛집입니다... 추천합니다',
         date: '2025.04.09',
+        isOwner: false,
       },
       {
         id: '2',
@@ -43,6 +44,7 @@ export const mockStores: Store[] = [
         rating: 5,
         content: '너무 맛있어요!! 아주머니가 친절하세요 ㅎㅎ 다음에 또 올게요~',
         date: '2025.04.09',
+        isOwner: true,
       },
     ],
     reviewCount: 127,

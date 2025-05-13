@@ -4,6 +4,7 @@ import { Store } from '@/types/store';
 import AddIcon from '@/assets/svgs/common/add-icon.svg';
 import Star from '@/assets/svgs/review/yellow-star.svg';
 import CongG from '@/assets/svgs/logo/congG.svg';
+import { useNavigate } from 'react-router-dom';
 
 interface StoreDetailReviewProps {
   store: Store;
@@ -11,6 +12,7 @@ interface StoreDetailReviewProps {
 
 const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
   const { reviews, reviewCount, rating, name } = store;
+  const navigate = useNavigate();
 
   return (
     <section className="flex flex-col mt-[12px] ">
@@ -25,7 +27,10 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
           <img src={CongG} className="w-[122px]" />
         </div>
 
-        <button className="w-full bg-[#65CE58] text-white rounded-[12px] px-[16px] py-[10px] justify-center flex gap-[10px] text-base font-semibold items-center">
+        <button
+          onClick={() => navigate(`/store-review/${store.id}`)}
+          className="w-full bg-[#65CE58] text-white rounded-[12px] px-[16px] py-[10px] justify-center flex gap-[10px] text-base font-semibold items-center"
+        >
           <img src={AddIcon} className="w-[14px] h-[14px] " />
           리뷰쓰기
         </button>
@@ -49,12 +54,14 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
             rating={review.rating}
             content={review.content}
             date={review.date}
+            isOwner={review.isOwner}
+            badgeText={store.mainTag}
           />
         ))}
       </div>
 
       {/* 더 보기 */}
-      <button className="mt-[20px] mb-[16.36px] text-center text-[#65CE58] text-sm font-semibold underline decoration-solid decoration-[1px] leading-[20px]">
+      <button className="mt-[20px] mb-[33.71px] text-center text-[#65CE58] text-sm font-semibold underline decoration-solid decoration-[1px] leading-[20px]">
         리뷰 더 보기
       </button>
     </section>

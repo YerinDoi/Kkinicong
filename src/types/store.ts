@@ -5,6 +5,7 @@ export interface Review {
   content: string;
   date: string;
   images?: string[];
+  isOwner: boolean;
 }
 
 export type Weekday = '일' | '월' | '화' | '수' | '목' | '금' | '토';
@@ -12,7 +13,6 @@ export type Weekday = '일' | '월' | '화' | '수' | '목' | '금' | '토';
 export type WeeklyHours = {
   [key in Weekday]: [string, string] | null;
 };
-
 
 export interface Store {
   id: string;
@@ -24,18 +24,19 @@ export interface Store {
   };
   mainTag: string;
   address: string;
-  lat: number;  // 위도
-  lng: number;  // 경도
+  lat: number; // 위도
+  lng: number; // 경도
   rating: number;
   favoriteCount: number;
   businessHours: {
     open: string;
-    close:string;
+    close: string;
     isOpen: boolean;
     weekly?: WeeklyHours;
   };
   reviews: Review[];
   reviewCount: number;
-  status: '영업중' | '영업 종료' ;
+
+  status: '영업중' | '영업 종료';
   statusDescription?: string;
 }
