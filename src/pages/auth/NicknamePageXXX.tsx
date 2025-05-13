@@ -1,7 +1,9 @@
+import TopBar from '@/components/common/TopBar';
+
 function NicknamePageXXX() {
   return (
     <div className="flex flex-col h-full px-4">
-      {/* 뒤로가기 버튼 */}
+      <TopBar />
 
       {/* 타이틀 영역 */}
       <div className="mb-6">

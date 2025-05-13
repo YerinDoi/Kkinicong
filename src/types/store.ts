@@ -1,4 +1,4 @@
-export interface Review {
+/*export interface Review {
   id: string;
   userName: string;
   rating: number;
@@ -39,4 +39,27 @@ export interface Store {
 
   status: '영업중' | '영업 종료';
   statusDescription?: string;
-}
+}*/
+
+export type Store = {
+  id: number;
+  name: string;
+  address: string;
+  category: string;
+  ratingAvg: number;
+  scrapCount: number;
+  representativeTag: string | null;
+  isScrapped: boolean | null;
+};
+
+export type StoreApiResponse = {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  results: {
+    content: Store[];
+    totalPage: number;
+    currentPage: number;
+  };
+};
+

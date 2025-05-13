@@ -11,7 +11,7 @@ const SearchInput = ({ placeholder, value, onChange, onSearch }: SearchInputProp
 
   return (
     <div
-      className="flex w-[320px] h-[44px] px-5 py-3 flex-col justify-center items-center gap-[10px]
+      className="flex w-full h-[44px] px-5 py-3 flex-col justify-center items-center gap-[10px]
                     rounded-xl border-2 border-main-color bg-white mt-[12px] mb-[12px]"
     >
       <div className="flex justify-between items-center self-stretch">
