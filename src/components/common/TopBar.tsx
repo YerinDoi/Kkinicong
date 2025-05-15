@@ -25,9 +25,9 @@ export default function TopBar({
   };
 
   return (
-    <div className="flex items-center justify-between h-12">
+    <div className="flex items-center justify-between h-[47px] px-[20px] py-[8px]">
       {/* 왼쪽 영역 : 뒤로가기버튼, 제목, 부제목 */}
-      <div className="flex items-center">
+      <div className="flex items-center gap-[4px]">
         {showBackButton ? (
           <button onClick={handleBack} className="text-xl mr-2">
             <BackIcon className="h-[px15]" />
@@ -41,7 +41,9 @@ export default function TopBar({
 
         {title && (
           <div className="flex items-baseline">
-            <span className="text-2xl font-semibold text-black">{title}</span>
+            <span className="text-[20px] font-semibold text-black">
+              {title}
+            </span>
             {subTitle && (
               <span className="ml-2 text-sm font-medium text-[#919191]">
                 {subTitle}

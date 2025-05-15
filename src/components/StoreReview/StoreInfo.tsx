@@ -24,7 +24,7 @@ const StoreInfo: React.FC<StoreInfoProps> = ({
             {category}
           </p>
           <div className="relative flex items-center gap-[12px]">
-            <h1 className="text-2xl font-semibold text-black leading-[32px]">
+            <h1 className="text-[20px] font-semibold text-black leading-[32px]">
               {name}
             </h1>
 
