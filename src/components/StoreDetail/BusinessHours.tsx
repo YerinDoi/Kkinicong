@@ -1,26 +1,47 @@
 import Icon from '@/assets/icons';
 import { useState, useEffect, useRef } from 'react';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
 
-const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+dayjs.locale('ko');
+
+const weekdays = ['일', '월', '화', '수', '목', '금', '토'] as const;
 const mondayFirst = [...weekdays.slice(1), weekdays[0]];
 
+type Weekday = (typeof weekdays)[number];
 type WeeklyHours = {
-  [key in typeof weekdays[number]]: [string, string] | null;
+  [key in Weekday]: [string, string] | null;
 };
+type StoreStatus = '영업중' | '영업 종료' | '휴무';
+
+function getStoreStatus(weekly?: WeeklyHours): StoreStatus {
+  if (!weekly) return '휴무';
+
+  const todayKey = weekdays[new Date().getDay()];
+  const todayHours = weekly[todayKey];
+
+  if (!todayHours || !Array.isArray(todayHours)) return '휴무';
+
+  const now = dayjs();
+
+  if (now.isAfter(todayHours[1])) return '영업 종료';
+  return '영업중';
+}
 
 interface Props {
-  open: string;
-  close: string;
-  status: '휴무' | '영업중' | '영업 종료';
   weekly?: WeeklyHours;
 }
 
-const BusinessHours: React.FC<Props> = ({ weekly, status }) => {
+const BusinessHours: React.FC<Props> = ({ weekly }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null); //드롭다운 바깥 클릭 감지를 위한 DOM 참조
-  const [dropdownWidth, setDropdownWidth] = useState<number>(0);//드롭다운 너비 고정
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [dropdownWidth, setDropdownWidth] = useState<number>(0);
 
-  //밖 클릭하면 드롭다운 닫기
+  const todayIndex = new Date().getDay();
+  const todayKey = weekdays[todayIndex];
+  const todayHours = weekly?.[todayKey];
+  const status = getStoreStatus(weekly);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -36,48 +57,35 @@ const BusinessHours: React.FC<Props> = ({ weekly, status }) => {
     };
   }, []);
 
-  //너비 자동 계산, 열릴 때 최소 160px
   useEffect(() => {
     if (dropdownRef.current) {
       setDropdownWidth(Math.max(dropdownRef.current.offsetWidth, 160));
     }
   }, [isOpen]);
 
-  const today = new Date();
-  const todayKey = weekdays[today.getDay()];
-  const todayHours = weekly?.[todayKey];
- 
-
   return (
-    <div
-      ref={dropdownRef}
-      className="relative w-fit text-sm text-[#616161]">
+    <div ref={dropdownRef} className="relative w-fit text-sm text-[#616161]">
       <div className="flex gap-[12px] cursor-pointer">
-      <span
-        className={`inline-flex items-center rounded-[6px] border-[1px] px-[8px] py-[4px] text-sm leading-[18px] h-[26px] 
-          ${status === '영업중'
-            ? 'border-[#65CE58]'
-            : 'border-[#919191]'
-          }`}
-      >
-        {status}
-      </span>
+        <span
+          className={`inline-flex items-center rounded-[6px] border-[1px] px-[8px] py-[4px] text-sm leading-[18px] h-[26px] 
+            ${status === '영업중' ? 'border-[#65CE58]' : 'border-[#919191]'}`}
+        >
+          {status}
+        </span>
 
-        <div 
-         onClick={() => setIsOpen(!isOpen)} className = "flex gap-[8px] items-center">
+        <div
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex gap-[8px] items-center"
+        >
           <span>
-            {status === '영업중' && todayHours && Array.isArray(todayHours)
+            {status === '영업중' && todayHours
               ? `${todayHours[1]}에 영업 종료`
-              : status === '영업 종료' && todayHours && Array.isArray(todayHours)
-              ? `${todayHours[0]}에 오픈`
-              : `정기 휴무 (매주 ${todayKey}요일)`
-            }
+              : status === '영업 종료' && todayHours
+                ? `${todayHours[0]}에 오픈`
+                : `정기 휴무 (매주 ${todayKey}요일)`}
           </span>
-
           <Icon name={isOpen ? 'dropup' : 'dropdown'} />
-
         </div>
-        
       </div>
 
       {isOpen && weekly && (
@@ -87,15 +95,16 @@ const BusinessHours: React.FC<Props> = ({ weekly, status }) => {
         >
           {mondayFirst.map((day) => {
             const hours = weekly[day];
-            const isToday = day === weekdays[today.getDay()];
+            const isToday = day === todayKey;
             return (
-              <div key={day} className={`flex justify-between ${
-                isToday ? 'text-[#616161]' : 'text-[#919191]'
-              }`}>
-                  {day}
-                  {Array.isArray(hours)
-                    ? ` ${hours[0]} ~ ${hours[1]}`
-                    : ` 정기 휴무 (매주 ${day}요일)`}
+              <div
+                key={day}
+                className={`flex justify-between ${isToday ? 'text-[#616161]' : 'text-[#919191]'}`}
+              >
+                {day}
+                {Array.isArray(hours)
+                  ? ` ${hours[0]} ~ ${hours[1]}`
+                  : ` 정기 휴무 (매주 ${day}요일)`}
               </div>
             );
           })}

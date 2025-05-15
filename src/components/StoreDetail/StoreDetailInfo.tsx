@@ -13,9 +13,7 @@ interface StoreDetailInfoProps {
   badgeText?: string;
   favoriteCount: number;
   isLiked: boolean;
-  status: string;
-  open: string;
-  close: string;
+
   weekly?: WeeklyHours;
 }
 
@@ -26,9 +24,6 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
   badgeText,
   favoriteCount,
   isLiked: initialLiked,
-  status,
-  open,
-  close,
   weekly,
 }) => {
   const [isLiked, setIsLiked] = useState(initialLiked);
@@ -63,12 +58,7 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
         <div className="flex justify-between items-start w-full ">
           {/*영업시간 태그/드롭다운*/}
           <div className="flex items-center gap-[12px] self-stretch">
-            <BusinessHours
-              open={open}
-              close={close}
-              status={status as '휴무' | '영업중' | '영업 종료'}
-              weekly={weekly}
-            />
+            <BusinessHours weekly={weekly} />
           </div>
           {/*찜 아이콘*/}
           <div className="flex justify-end items-center gap-[8px]">
