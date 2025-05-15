@@ -1,0 +1,47 @@
+import axios from 'axios';
+
+const axiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  withCredentials: true, // refreshToken이 쿠키로 올 경우 사용
+});
+
+// 요청 시 accessToken 붙이기
+axiosInstance.interceptors.request.use((config) => {
+  const token = localStorage.getItem('accessToken');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// 응답 401 → 자동으로 /auth/refresh 요청
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        const refreshRes = await axios.post(
+          '/api/v1/auth/refresh',
+          {},
+          { withCredentials: true },
+        );
+
+        const newAccessToken = refreshRes.data.accessToken;
+        localStorage.setItem('accessToken', newAccessToken);
+
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        return axiosInstance(originalRequest); // 요청 재시도
+      } catch (refreshError) {
+        localStorage.removeItem('accessToken');
+        window.location.href = '/login'; // or navigate('/login');
+      }
+    }
+
+    return Promise.reject(error);
+  },
+);
+
+export default axiosInstance;
