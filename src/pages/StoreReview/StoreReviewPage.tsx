@@ -1,4 +1,4 @@
-import Header from '@/components/Header';
+import TopBar from '@/components/common/TopBar';
 import StoreInfo from '@/components/StoreReview/StoreInfo';
 import Rating from '@/components/StoreReview/Rating';
 import SelectTag from '@/components/StoreReview/SelectTag';
@@ -18,11 +18,7 @@ const StoreReviewPage = () => {
   return (
     <div>
       <div className="flex flex-col w-full mt-[11px] mb-[29px] gap-[12px] font-pretendard">
-        <Header
-          title="리뷰 쓰기"
-          showLocationDropdown={false}
-          showMenubarButton={false}
-        />
+        <TopBar title="리뷰 쓰기" />
         <StoreInfo
           category={store.category.name}
           name={store.name}

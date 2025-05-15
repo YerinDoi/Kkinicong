@@ -2,7 +2,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import { mockStores } from '@/mocks/stores';
 import StoreDetailMap from '@/components/StoreDetail/StoreDetailMap';
 import StoreDetailInfo from '@/components/StoreDetail/StoreDetailInfo';
-import Header from '@/components/Header';
+import TopBar from '@/components/common/TopBar';
 import StoreDetailReview from '@/components/StoreDetail/StoreDetailReview';
 
 const StoreDetailPage = () => {
@@ -19,7 +19,7 @@ const StoreDetailPage = () => {
 
   return (
     <div className="font-pretendard">
-      <Header title="" location="" />
+      <TopBar rightElement />
       <StoreDetailInfo
         category={store.category.name}
         name={store.name}
