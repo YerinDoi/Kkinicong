@@ -2,10 +2,10 @@ import axios from 'axios';
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
-  withCredentials: true, // refreshToken이 쿠키로 올 경우 사용
+  // withCredentials: true, // refreshToken이 쿠키로 올 경우 사용
 });
 
-// 요청 시 accessToken 붙이기
+// access token을 헤더에 자동으로 넣어주는 interceptor
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem('accessToken');
   if (token) {
@@ -26,7 +26,7 @@ axiosInstance.interceptors.response.use(
         const refreshRes = await axios.post(
           '/api/v1/auth/refresh',
           {},
-          { withCredentials: true },
+          { withCredentials: true }, // 쿠키 기반 refreshToken 전송
         );
 
         const newAccessToken = refreshRes.data.accessToken;
@@ -35,6 +35,7 @@ axiosInstance.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return axiosInstance(originalRequest); // 요청 재시도
       } catch (refreshError) {
+        // refresh 실패 시 logout 처리
         localStorage.removeItem('accessToken');
         window.location.href = '/login'; // or navigate('/login');
       }
