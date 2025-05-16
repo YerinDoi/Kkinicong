@@ -52,6 +52,7 @@ const StoreDetailPage = () => {
         favoriteCount={likeCount}
         isLiked={isLiked}
         weekly={store.storeWeeklyOpeningHours ?? undefined}
+        updatedDate = {store.storeUpdatedDate}
       />
       <StoreDetailMap />
       {/* <StoreDetailReview store={store} /> */}

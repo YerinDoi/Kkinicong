@@ -33,6 +33,9 @@ interface Props {
 }
 
 const BusinessHours: React.FC<Props> = ({ weekly }) => {
+  const isAllDaysClosed = !weekly || Object.values(weekly).every((value) => value === null); //영업시간 데이터 없으면 표시x
+  if (isAllDaysClosed) return null;
+
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [dropdownWidth, setDropdownWidth] = useState<number>(0);
@@ -88,13 +91,13 @@ const BusinessHours: React.FC<Props> = ({ weekly }) => {
         </div>
       </div>
 
-      {isOpen && (
+      {isOpen && weekly && (
         <div
           className="absolute pt-[16px] bg-white z-10 px-[8px] flex flex-col gap-[4px]"
           style={{ width: `${dropdownWidth}px` }}
         >
           {mondayFirst.map((day) => {
-            const hours = weekly?.[day];
+            const hours = weekly[day];
             const isToday = day === todayKey;
             return (
               <div

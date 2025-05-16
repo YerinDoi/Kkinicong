@@ -5,6 +5,7 @@ import BusinessHours from './BusinessHours';
 import MainTag from '../StoreReview/MainTag';
 import RequestEditButton from './RequestEditButton';
 import StoreDetailMap from '@/components/StoreDetail/StoreDetailMap';
+import dayjs from 'dayjs';
 
 interface StoreDetailInfoProps {
   category: string;
@@ -15,6 +16,7 @@ interface StoreDetailInfoProps {
   isLiked: boolean;
 
   weekly?: WeeklyHours;
+  updatedDate: string;
 }
 
 const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
@@ -25,6 +27,7 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
   favoriteCount,
   isLiked: initialLiked,
   weekly,
+  updatedDate,
 }) => {
   const [isLiked, setIsLiked] = useState(initialLiked);
   const [likeCount, setLikeCount] = useState(favoriteCount);
@@ -88,7 +91,7 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
           />
           {/*백엔드 연동시 수정*/}
           <p className="text-xs font-medium text-[#C3C3C3] ">
-            업데이트 2024.03.02
+            업데이트 {dayjs(updatedDate).format('YYYY.MM.DD')}
           </p>
         </div>
       </div>
