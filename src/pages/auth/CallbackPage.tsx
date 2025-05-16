@@ -1,44 +1,36 @@
-// src/pages/CallbackPage.tsx
-import { useEffect } from 'react';
-import { useSearchParams, useParams, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { loginWithSocial } from '@/store/authSlice';
+import { useEffect, useRef } from 'react';
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
+import { login } from '@/api/auth';
 
 export default function CallbackPage() {
-  const { provider } = useParams(); // kakao | naver | google
+  const { provider } = useParams(); // kakao / naver / google
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const code = searchParams.get('code');
+  const hasCalled = useRef(false); // ✅ 중복 호출 방지용 ref
 
   useEffect(() => {
-    if (!provider || !code) return;
+    const code = searchParams.get('code');
+    if (!code || !provider || hasCalled.current) return;
 
-    const fetchToken = async () => {
+    hasCalled.current = true; // ✅ 한 번 실행되면 막음
+
+    (async () => {
       try {
-        const res = await fetch(
-          `/api/v1/auth/login/${provider.toUpperCase()}?code=${code}`,
-          {
-            method: 'GET', // 백엔드와 협의된 방식 사용
-          },
+        const user = await login(
+          provider.toUpperCase() as 'KAKAO' | 'NAVER' | 'GOOGLE',
+          code,
         );
-        const data = await res.json();
+        console.log('✅ 로그인 성공!!!!!!!!!!!!!!:', user);
 
-        if (data.isSuccess) {
-          dispatch(loginWithSocial(data.results.accessToken));
-          localStorage.setItem('accessToken', data.results.accessToken);
-          navigate('/');
-        } else {
-          alert(`${provider} 로그인 실패: ${data.message}`);
-        }
-      } catch (err) {
-        console.error(`${provider} 로그인 에러:`, err);
+        if (!user.nickname) navigate('/nickname');
+        else navigate('/');
+      } catch (e) {
+        console.error('❌ 로그인 실패:ㅠㅠㅠㅠㅠㅠㅠㅠ', e);
+        alert('로그인에 실패했습니다.');
+        navigate('/login');
       }
-    };
+    })();
+  }, []);
 
-    fetchToken();
-  }, [provider, code]);
-
-  return <div>{provider} 로그인 처리 중입니다...</div>;
+  return <div className="text-center mt-20">🔐 로그인 처리 중입니다...</div>;
 }
