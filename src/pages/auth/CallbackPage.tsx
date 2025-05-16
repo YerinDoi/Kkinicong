@@ -31,6 +31,4 @@ export default function CallbackPage() {
       }
     })();
   }, []);
-
-  return <div className="text-center mt-20">🔐 로그인 처리 중입니다...</div>;
 }
