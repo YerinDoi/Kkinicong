@@ -45,6 +45,7 @@ const StoreDetailPage = () => {
     <div className="font-pretendard">
       <TopBar rightElement />
       <StoreDetailInfo
+        storeId ={store.storeId}
         category={store.storeCategory}
         name={store.storeName}
         address={store.storeAddress}

@@ -26,7 +26,6 @@ const RequestEditButton: React.FC<Props> = ({ storeId, onClick, storeInfo }) => 
   '기타': 'ETC',
 } as const;
 
-  type ReasonKo = keyof typeof reasonMap;
 
   const handleClick = () => {
     onClick?.();
@@ -34,8 +33,9 @@ const RequestEditButton: React.FC<Props> = ({ storeId, onClick, storeInfo }) => 
   };
 
 
-  const handleEditSubmit = async (reason: ReasonKo, description: string) => {
+  const handleEditSubmit = async (reason: string, description: string) => {
     const token = localStorage.getItem('accessToken');
+    const mappedReason = reasonMap[reason as keyof typeof reasonMap];
     if (!token) {
     alert('로그인이 필요한 기능입니다.');
     return;
@@ -43,7 +43,7 @@ const RequestEditButton: React.FC<Props> = ({ storeId, onClick, storeInfo }) => 
  
     try {
       await axios.post(`http://ec2-13-209-219-105.ap-northeast-2.compute.amazonaws.com/api/v1/report/store/${storeId}`,{description},{
-        params: { reason: reasonMap[reason] },
+        params: { reason: mappedReason },
         headers: { Authorization: `Bearer ${token}` },
       });
 
