@@ -88,13 +88,13 @@ const BusinessHours: React.FC<Props> = ({ weekly }) => {
         </div>
       </div>
 
-      {isOpen && weekly && (
+      {isOpen && (
         <div
-          className="absolute mt-[16px] bg-white z-10 px-[8px] flex flex-col gap-[4px]"
+          className="absolute pt-[16px] bg-white z-10 px-[8px] flex flex-col gap-[4px]"
           style={{ width: `${dropdownWidth}px` }}
         >
           {mondayFirst.map((day) => {
-            const hours = weekly[day];
+            const hours = weekly?.[day];
             const isToday = day === todayKey;
             return (
               <div
