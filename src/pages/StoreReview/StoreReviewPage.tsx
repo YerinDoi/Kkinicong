@@ -1,24 +1,24 @@
-import React from 'react';
-import Header from '@/components/Header';
+import TopBar from '@/components/common/TopBar';
 import StoreInfo from '@/components/StoreReview/StoreInfo';
-import { mockStores } from '@/mocks/stores';
 import Rating from '@/components/StoreReview/Rating';
 import SelectTag from '@/components/StoreReview/SelectTag';
 import CommentBox from '@/components/StoreReview/CommentBox';
 import UploadImage from '@/components/StoreReview/UploadImage';
-import CheckBox from '@/components/StoreReview/Checkbox';
+import CheckBox from '@/components/StoreReview/CheckBox';
+
+import { useParams } from 'react-router-dom';
+import { mockStores } from '@/mocks/stores';
 
 const StoreReviewPage = () => {
-  const store = mockStores[0]; // '채움편백찜샤브샤브' 가게 선택. 나중에는 상세페이지와 연관지어 수정 필요요
-
+  const { storeId } = useParams<{ storeId: string }>();
+  const store = mockStores.find((s) => s.id === storeId);
+  if (!store) {
+    return <div>가게 정보를 찾을 수 없습니다.</div>;
+  }
   return (
     <div>
       <div className="flex flex-col w-full mt-[11px] mb-[29px] gap-[12px] font-pretendard">
-        <Header
-          title="리뷰 쓰기"
-          showLocationDropdown={false}
-          showMenubarButton={false}
-        />
+        <TopBar title="리뷰 쓰기" />
         <StoreInfo
           category={store.category.name}
           name={store.name}
@@ -31,7 +31,6 @@ const StoreReviewPage = () => {
           <CommentBox />
           <UploadImage />
           <CheckBox />
-         
         </div>
       </div>
     </div>

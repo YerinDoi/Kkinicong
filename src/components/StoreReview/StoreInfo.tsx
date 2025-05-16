@@ -1,5 +1,5 @@
 import React from 'react';
-import map from '@/assets/svgs/review/reviewmap.svg';
+import StoreDetailMap from '@/components/StoreDetail/StoreDetailMap';
 import MainTag from '@/components/StoreReview/MainTag';
 
 interface StoreInfoProps {
@@ -24,7 +24,7 @@ const StoreInfo: React.FC<StoreInfoProps> = ({
             {category}
           </p>
           <div className="relative flex items-center gap-[12px]">
-            <h1 className="text-2xl font-semibold text-black leading-[32px]">
+            <h1 className="text-[20px] font-semibold text-black leading-[32px]">
               {name}
             </h1>
 
@@ -37,8 +37,7 @@ const StoreInfo: React.FC<StoreInfoProps> = ({
 
       {/* 하단 지도 영역 */}
       <div className="w-full h-60">
-        {/* 지도 이미지 (임시) */}
-        <img src={map} alt="지도" className="w-full h-full object-cover" />
+        <StoreDetailMap hideButtons />
       </div>
     </div>
   );
