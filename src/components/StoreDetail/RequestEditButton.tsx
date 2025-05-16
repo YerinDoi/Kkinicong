@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import BottomSheet from '@/components/common/BottomSheet';
 import BottomSheetForm from '@/components/common/BottomSheetForm';
 import ConfirmToast from '@/components/common/ConfirmToast';
+import axios from 'axios';
 
 interface Props {
+  storeId: number;
   onClick?: () => void;
   storeInfo?: {
     name: string;
@@ -12,20 +14,47 @@ interface Props {
   };
 }
 
-const RequestEditButton: React.FC<Props> = ({ onClick, storeInfo }) => {
+const RequestEditButton: React.FC<Props> = ({ storeId, onClick, storeInfo }) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  
+  const reasonMap = {
+  '음식 카테고리': 'CATEGORY',
+  '위치': 'LOCATION',
+  '영업시간': 'BUSINESS_HOURS',
+  '폐업한 가게': 'CLOSED',
+  '기타': 'ETC',
+} as const;
+
+  type ReasonKo = keyof typeof reasonMap;
 
   const handleClick = () => {
     onClick?.();
     setIsEditOpen(true); // 바텀시트 열기
   };
 
-  const handleEditSubmit = () => {
-    console.log('수정 요청 전송됨');
-    setIsEditOpen(false); // 바텀시트 닫기
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+
+  const handleEditSubmit = async (reason: ReasonKo, description: string) => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+    alert('로그인이 필요한 기능입니다.');
+    return;
+  }
+ 
+    try {
+      await axios.post(`http://ec2-13-209-219-105.ap-northeast-2.compute.amazonaws.com/api/v1/report/store/${storeId}`,{description},{
+        params: { reason: reasonMap[reason] },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      console.log('수정 요청 전송됨');
+      setIsEditOpen(false);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    } catch (error) {
+      console.error('수정 요청 실패', error);
+      alert('수정 요청에 실패했습니다.');
+    }
   };
 
   const handleCloseClick = () => {

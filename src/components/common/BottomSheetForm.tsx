@@ -16,7 +16,7 @@ interface BottomSheetFormProps {
     content: string;
   };
 
-  onSubmit: () => void;
+  onSubmit: (reason: string, description: string) => void;
   onCancel: () => void;
 }
 
@@ -126,7 +126,13 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
         </button>
 
         <button
-          onClick={onSubmit}
+          onClick={() => {
+            if (selected) {
+              onSubmit(selected, text);
+            } else {
+              alert('수정 항목을 선택해주세요.');
+            }
+          }}
           disabled={isDisabled}
           className={`w-1/2 text-center text-base font-bold py-[12px] ${
             isDisabled ? 'cursor-not-allowed' : ''
@@ -134,6 +140,7 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
         >
           {buttonText}
         </button>
+
       </div>
     </div>
   );
