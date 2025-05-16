@@ -1,8 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { checkNicknameDuplicate, registerNickname } from '@/api/user'; // ✅ ❶ axios 기반 API 함수 import
+import { useDispatch } from 'react-redux';
+// import { setUser } from '@/store/authSlice'; // ✅ ❷ 닉네임 저장용 액션
+
 export default function NicknamePage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch(); // ✅ ❷ 리덕스 상태 갱신용
 
   const [nickname, setNickname] = useState('');
   const [error, setError] = useState('');
@@ -27,16 +32,59 @@ export default function NicknamePage() {
     setIsDuplicate(null); // 닉네임 변경 시 중복 확인 초기화
   };
 
-  // 중복 확인
+  // // 중복 확인
+  // const checkDuplicate = async () => {
+  //   if (error || nickname.length === 0) return;
+
+  //   setIsChecking(true);
+  //   try {
+  //     const res = await fetch(`/api/check-nickname?nickname=${nickname}`);
+  //     const data = await res.json();
+
+  //     if (data.exists) {
+  //       setIsDuplicate(true);
+  //       setError('이미 사용 중인 닉네임이에요');
+  //     } else {
+  //       setIsDuplicate(false);
+  //       setError('');
+  //     }
+  //   } catch {
+  //     setError('중복 확인 중 오류가 발생했어요');
+  //   } finally {
+  //     setIsChecking(false);
+  //   }
+  // };
+
+  // // 닉네임 등록
+  // const registerNickname = async () => {
+  //   if (!!error || isDuplicate !== false) return;
+
+  //   setIsSubmitting(true);
+  //   try {
+  //     const res = await fetch('/api/register-nickname', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({ nickname }),
+  //     });
+
+  //     if (!res.ok) throw new Error();
+
+  //     // 성공 시 다음 페이지로 이동
+  //     navigate('/home'); // 필요시 '/welcome' 등으로 변경 가능
+  //   } catch {
+  //     setError('닉네임 등록 중 오류가 발생했어요');
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+  // ✅ ❶ 중복 확인 - fetch → axios 사용 & api/user.ts 함수로 분리
   const checkDuplicate = async () => {
     if (error || nickname.length === 0) return;
 
     setIsChecking(true);
     try {
-      const res = await fetch(`/api/check-nickname?nickname=${nickname}`);
-      const data = await res.json();
-
-      if (data.exists) {
+      const exists = await checkNicknameDuplicate(nickname); // 👈 boolean 값 반환
+      if (exists) {
         setIsDuplicate(true);
         setError('이미 사용 중인 닉네임이에요');
       } else {
@@ -50,22 +98,15 @@ export default function NicknamePage() {
     }
   };
 
-  // 닉네임 등록
-  const registerNickname = async () => {
+  // ✅ ❷ 닉네임 등록 - fetch → axios 사용 & 상태 저장 + 리디렉션
+  const handleRegister = async () => {
     if (!!error || isDuplicate !== false) return;
 
     setIsSubmitting(true);
     try {
-      const res = await fetch('/api/register-nickname', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nickname }),
-      });
-
-      if (!res.ok) throw new Error();
-
-      // 성공 시 다음 페이지로 이동
-      navigate('/home'); // 필요시 '/welcome' 등으로 변경 가능
+      const result = await registerNickname(nickname); // 👈 서버에서 등록 후 유저 정보 반환
+      dispatch(setUser({ id: result.id, nickname: result.nickname })); // ✅ 리덕스에 저장
+      navigate('/'); // 홈으로 이동
     } catch {
       setError('닉네임 등록 중 오류가 발생했어요');
     } finally {
@@ -118,7 +159,7 @@ export default function NicknamePage() {
       {/* 하단 고정 버튼 */}
       <div className="mt-auto">
         <button
-          onClick={registerNickname}
+          onClick={handleRegister}
           disabled={!!error || isDuplicate !== false || isSubmitting}
           className={`w-full rounded-xl py-4 text-base font-semibold transition ${
             !!error || isDuplicate !== false || isSubmitting
