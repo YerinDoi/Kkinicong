@@ -20,6 +20,6 @@ export const checkNicknameDuplicate = async (
  * @returns 등록된 유저 정보 (예: id, nickname)
  */
 export const registerNickname = async (nickname: string) => {
-  const res = await axios.patch('/api/v1/user/nickname', { nickname });
+  const res = await axios.post('/api/v1/user/nickname', { nickname });
   return res.data.results; // 👈 CallbackPage나 Redux에서 쓰이는 유저 정보 반환
 };

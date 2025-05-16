@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { checkNicknameDuplicate, registerNickname } from '@/api/user'; // ✅ ❶ axios 기반 API 함수 import
 import { useDispatch } from 'react-redux';
-import { setUser } from '@/store/authSlice'; // ✅ ❷ 닉네임 저장용 액션
+import { setUser } from '@/store/userSlice'; // ✅ ❷ 닉네임 저장용 액션
 
 export default function NicknamePage() {
   const navigate = useNavigate();
@@ -67,7 +67,8 @@ export default function NicknamePage() {
       // localStorage.setItem('email', result.email);
 
       navigate('/'); // 홈으로 이동
-    } catch {
+    } catch (error) {
+      console.error('닉네임 등록 에러:', error);
       setError('닉네임 등록 중 오류가 발생했어요');
     } finally {
       setIsSubmitting(false);
