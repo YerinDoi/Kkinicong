@@ -64,7 +64,7 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
         <div className="px-[24px] flex flex-col gap-[12px]">
           <div className="flex gap-[4px] items-center">
             <img src={ProfileImg} className="w-[36.3px] h-[36.3px] " />
-            <span className="font-medium text-sm font-medium leading-[18px]">
+            <span className="text-sm font-medium leading-[18px]">
               {reviewInfo.userName}
             </span>
           </div>
@@ -105,7 +105,7 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
           ))}
 
           <textarea
-            className="mt-[12px] w-full h-[66px] font-medium border border-[1px] rounded-[12px] px-[16px] py-[12px] text-xs"
+            className="mt-[12px] w-full h-[66px] font-medium border-[1px] rounded-[12px] px-[16px] py-[12px] text-xs"
             placeholder="최대 500자"
             value={text}
             onChange={(e) => setText(e.target.value)}
