@@ -14,38 +14,44 @@ interface Props {
   };
 }
 
-const RequestEditButton: React.FC<Props> = ({ storeId, onClick, storeInfo }) => {
+const RequestEditButton: React.FC<Props> = ({
+  storeId,
+  onClick,
+  storeInfo,
+}) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  
-  const reasonMap = {
-  '음식 카테고리': 'CATEGORY',
-  '위치': 'LOCATION',
-  '영업시간': 'BUSINESS_HOURS',
-  '폐업한 가게': 'CLOSED',
-  '기타': 'ETC',
-} as const;
 
+  const reasonMap = {
+    '음식 카테고리': 'CATEGORY',
+    위치: 'LOCATION',
+    영업시간: 'BUSINESS_HOURS',
+    '폐업한 가게': 'CLOSED',
+    기타: 'ETC',
+  } as const;
 
   const handleClick = () => {
     onClick?.();
     setIsEditOpen(true); // 바텀시트 열기
   };
 
-
   const handleEditSubmit = async (reason: string, description: string) => {
     const token = localStorage.getItem('accessToken');
     const mappedReason = reasonMap[reason as keyof typeof reasonMap];
     if (!token) {
-    alert('로그인이 필요한 기능입니다.');
-    return;
-  }
- 
+      alert('로그인이 필요한 기능입니다.');
+      return;
+    }
+
     try {
-      await axios.post(`http://ec2-13-209-219-105.ap-northeast-2.compute.amazonaws.com/api/v1/report/store/${storeId}`,{description},{
-        params: { reason: mappedReason },
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.post(
+        `https://kkinikong.store/api/v1/report/store/${storeId}`,
+        { description },
+        {
+          params: { reason: mappedReason },
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
       console.log('수정 요청 전송됨');
       setIsEditOpen(false);

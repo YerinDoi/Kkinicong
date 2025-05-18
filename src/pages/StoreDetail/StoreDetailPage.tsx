@@ -24,7 +24,7 @@ const StoreDetailPage = () => {
     const fetchStoreDetail = async () => {
       try {
         const response = await axios.get(
-          `http://ec2-13-209-219-105.ap-northeast-2.compute.amazonaws.com/api/v1/store/${storeId}`,
+          `https://kkinikong.store/api/v1/store/${storeId}`,
         );
         setStore(response.data.results);
       } catch (err) {
@@ -45,7 +45,7 @@ const StoreDetailPage = () => {
     <div className="font-pretendard">
       <TopBar rightElement />
       <StoreDetailInfo
-        storeId ={store.storeId}
+        storeId={store.storeId}
         category={store.storeCategory}
         name={store.storeName}
         address={store.storeAddress}
@@ -53,7 +53,7 @@ const StoreDetailPage = () => {
         favoriteCount={likeCount}
         isLiked={isLiked}
         weekly={store.storeWeeklyOpeningHours ?? undefined}
-        updatedDate = {store.storeUpdatedDate}
+        updatedDate={store.storeUpdatedDate}
       />
       <StoreDetailMap />
       {/* <StoreDetailReview store={store} /> */}
