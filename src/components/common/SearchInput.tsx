@@ -7,7 +7,17 @@ interface SearchInputProps {
   onSearch: () => void;
 }
 
-const SearchInput = ({ placeholder, value, onChange, onSearch }: SearchInputProps) => {
+const SearchInput = ({
+  placeholder,
+  value,
+  onChange,
+  onSearch,
+}: SearchInputProps) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      onSearch();
+    }
+  };
 
   return (
     <div
@@ -20,6 +30,7 @@ const SearchInput = ({ placeholder, value, onChange, onSearch }: SearchInputProp
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          onKeyDown={handleKeyDown}
           className="self-stretch text-[#919191] text-[12px] tracking-[0.012px] focus:outline-none"
         />
         <button onClick={onSearch}>

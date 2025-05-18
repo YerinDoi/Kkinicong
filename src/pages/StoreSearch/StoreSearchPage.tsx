@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import axios from 'axios';
+import axiosInstance from '@/api/axiosInstance';
 import Header from '@/components/Header';
 import SearchInput from '@/components/common/SearchInput';
 import MenuCategoryCarousel from '@/components/StoreSearch/MenuCategoryCarousel';
@@ -35,6 +35,7 @@ const StoreSearchPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [stores, setStores] = useState<Store[]>([]);
   const [sort, setsort] = useState('조회수 순');
+  const [isLoading, setIsLoading] = useState(false);
 
   const pageRef = useRef(0);
   const hasNextPageRef = useRef(true);
@@ -47,6 +48,7 @@ const StoreSearchPage = () => {
     if (isLoadingRef.current || !hasNextPageRef.current) return;
 
     isLoadingRef.current = true;
+    setIsLoading(true);
     try {
       const categoryParam =
         selectedCategory !== '전체'
@@ -54,14 +56,23 @@ const StoreSearchPage = () => {
           : undefined;
       const sortParam = sortMapping[sort];
 
-      const response = await axios.get(
-        'http://ec2-13-209-219-105.ap-northeast-2.compute.amazonaws.com/api/v1/store/list',
+      const params: Record<string, any> = {
+        page: pageRef.current,
+        sort: sortParam,
+      };
+
+      if (categoryParam) {
+        params.category = categoryParam;
+      }
+
+      if (searchTerm) {
+        params.keyword = searchTerm;
+      }
+
+      const response = await axiosInstance.get(
+        'https://kkinikong.store/api/v1/store/list',
         {
-          params: {
-            page: pageRef.current,
-            category: categoryParam,
-            sort: sortParam,
-          },
+          params,
         },
       );
 
@@ -70,7 +81,20 @@ const StoreSearchPage = () => {
         response.data.results.totalPage ===
         response.data.results.currentPage + 1;
 
-      setStores((prev) => [...prev, ...newStores]);
+      setStores((prev) => {
+        const combinedStores = [...prev, ...newStores];
+        const uniqueStores = combinedStores.reduce(
+          (acc: Store[], current: Store) => {
+            if (!acc.find((store) => store.id === current.id)) {
+              acc.push(current);
+            }
+            return acc;
+          },
+          [] as Store[],
+        );
+        return uniqueStores;
+      });
+
       hasNextPageRef.current = !isLastPage;
       pageRef.current += 1;
       console.log(' 호출된 페이지:', pageRef.current - 1);
@@ -78,8 +102,9 @@ const StoreSearchPage = () => {
       console.error('가게 목록을 불러오는데 실패했습니다:', error);
     } finally {
       isLoadingRef.current = false;
+      setIsLoading(false);
     }
-  }, [selectedCategory]);
+  }, [selectedCategory, sort, searchTerm]);
 
   useEffect(() => {
     setStores([]);
@@ -118,7 +143,7 @@ const StoreSearchPage = () => {
       <div className="flex flex-col items-center w-full mt-[11px] shadow-custom shrink-0">
         <Header title="가맹점 찾기" location="인천 서구" />
 
-        <div className='flex gap-[8px] px-[20px] w-full'>
+        <div className="flex gap-[8px] px-[20px] w-full">
           <button>
             <Icons name="gps" />
           </button>
@@ -126,19 +151,21 @@ const StoreSearchPage = () => {
             placeholder="가게이름을 검색하세요"
             value={inputValue}
             onChange={setInputValue}
-            onSearch={() => setSearchTerm(inputValue)}
+            onSearch={() => {
+              setSearchTerm(inputValue);
+              setStores([]);
+              pageRef.current = 0;
+              hasNextPageRef.current = true;
+              fetchStores();
+            }}
           />
         </div>
         <MenuCategoryCarousel
           selectedCategory={selectedCategory}
           onSelectCategory={(cat) => {
-            setStores([]);
-            pageRef.current = 0;
-            hasNextPageRef.current = true;
             setSelectedCategory(cat);
           }}
         />
-        
       </div>
 
       <div className="pt-[20px] px-[16px]">
@@ -149,10 +176,14 @@ const StoreSearchPage = () => {
           className="h-[calc(100vh-100px)] overflow-y-auto scrollbar-hide"
           ref={scrollContainerRef}
         >
-          <StoreList stores={stores} />
-          <div
-            ref={loaderRef} // 스크롤 끝 부분 감시용
-          />
+          {!isLoading && stores.length === 0 && searchTerm ? (
+            <div className="flex justify-center items-center h-32">
+              <p className="text-gray-500">검색 결과가 없습니다.</p>
+            </div>
+          ) : (
+            <StoreList stores={stores} />
+          )}
+          <div ref={loaderRef} />
         </div>
       </div>
     </div>

@@ -43,25 +43,21 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   if (!isOpen) return null;
 
   return createPortal(
-  <div
-    className="fixed inset-0 z-[9998] flex justify-center items-end"
-    onClick={onClose}
-  >
-   
     <div
-      className="relative w-[375px] h-full bg-black/40"
+      className="fixed inset-0 z-[9998] flex justify-center items-end"
       onClick={onClose}
     >
-      <div
-        ref={sheetRef}
-        className="absolute bottom-0 left-0 w-full bg-white rounded-t-[12px] shadow-md font-pretendard max-h-[90vh] overflow-y-auto transition-transform duration-300 ease-out"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {children}
+      <div className="relative w-[375px] h-full bg-black/40" onClick={onClose}>
+        <div
+          ref={sheetRef}
+          className="absolute bottom-0 left-0 w-full bg-white rounded-t-[12px] shadow-md font-pretendard max-h-[90vh] overflow-y-auto transition-transform duration-300 ease-out"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {children}
+        </div>
       </div>
-    </div>
-  </div>,
-  document.body,
-);
-}
+    </div>,
+    document.body,
+  );
+};
 export default BottomSheet;
