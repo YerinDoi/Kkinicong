@@ -97,7 +97,7 @@ const StoreSearchPage = () => {
 
       hasNextPageRef.current = !isLastPage;
       pageRef.current += 1;
-      console.log('📦 호출된 페이지:', pageRef.current - 1);
+      console.log(' 호출된 페이지:', pageRef.current - 1);
     } catch (error) {
       console.error('가게 목록을 불러오는데 실패했습니다:', error);
     } finally {

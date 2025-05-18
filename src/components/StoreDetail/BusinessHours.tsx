@@ -1,26 +1,61 @@
 import Icon from '@/assets/icons';
 import { useState, useEffect, useRef } from 'react';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
 
-const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+dayjs.locale('ko');
+
+const weekdays = ['일', '월', '화', '수', '목', '금', '토'] as const;
 const mondayFirst = [...weekdays.slice(1), weekdays[0]];
 
+type Weekday = (typeof weekdays)[number];
 type WeeklyHours = {
-  [key in typeof weekdays[number]]: [string, string] | null;
+  [key in Weekday]: [string, string] | null;
 };
+type StoreStatus = '영업중' | '영업 종료' | '휴무';
+
+function parseTodayTime(timeStr: string) {
+  const [hour, minute] = timeStr.split(':').map(Number);
+  const now = dayjs();
+  return now.hour(hour).minute(minute).second(0);
+}
+
+
+function getStoreStatus(weekly?: WeeklyHours): StoreStatus {
+  if (!weekly) return '휴무';
+
+  const todayKey = weekdays[new Date().getDay()];
+  const todayHours = weekly[todayKey];
+
+  if (!todayHours || !Array.isArray(todayHours)) return '휴무';
+
+  const now = dayjs();
+  const openTime = parseTodayTime(todayHours[0]);
+  const closeTime = parseTodayTime(todayHours[1]);
+
+  if (now.isBefore(openTime)) return '영업 종료';
+  if (now.isAfter(closeTime)) return '영업 종료';
+  return '영업중';
+}
 
 interface Props {
-  open: string;
-  close: string;
-  status: '휴무' | '영업중' | '영업 종료';
   weekly?: WeeklyHours;
 }
 
-const BusinessHours: React.FC<Props> = ({ weekly, status }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null); //드롭다운 바깥 클릭 감지를 위한 DOM 참조
-  const [dropdownWidth, setDropdownWidth] = useState<number>(0);//드롭다운 너비 고정
+const BusinessHours: React.FC<Props> = ({ weekly }) => {
+  const isAllDaysClosed = !weekly || Object.values(weekly).every((value) => value === null); //영업시간 데이터 없으면 표시x
+  if (isAllDaysClosed) return <p className="text-sm text-[#919191] font-medium">영업시간 정보 없음</p>
 
-  //밖 클릭하면 드롭다운 닫기
+
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [dropdownWidth, setDropdownWidth] = useState<number>(0);
+
+  const todayIndex = new Date().getDay();
+  const todayKey = weekdays[todayIndex];
+  const todayHours = weekly?.[todayKey];
+  const status = getStoreStatus(weekly);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -36,66 +71,54 @@ const BusinessHours: React.FC<Props> = ({ weekly, status }) => {
     };
   }, []);
 
-  //너비 자동 계산, 열릴 때 최소 160px
   useEffect(() => {
     if (dropdownRef.current) {
       setDropdownWidth(Math.max(dropdownRef.current.offsetWidth, 160));
     }
   }, [isOpen]);
 
-  const today = new Date();
-  const todayKey = weekdays[today.getDay()];
-  const todayHours = weekly?.[todayKey];
- 
-
   return (
-    <div
-      ref={dropdownRef}
-      className="relative w-fit text-sm text-[#616161]">
+    <div ref={dropdownRef} className="relative w-fit text-sm text-[#616161] font-medium">
       <div className="flex gap-[12px] cursor-pointer">
-      <span
-        className={`inline-flex items-center rounded-[6px] border-[1px] px-[8px] py-[4px] text-sm leading-[18px] h-[26px] 
-          ${status === '영업중'
-            ? 'border-[#65CE58]'
-            : 'border-[#919191]'
-          }`}
-      >
-        {status}
-      </span>
+        <span
+          className={`inline-flex items-center rounded-[6px] border-[1px] px-[8px] py-[4px] text-sm leading-[18px] h-[26px] 
+            ${status === '영업중' ? 'border-[#65CE58]' : 'border-[#919191]'}`}
+        >
+          {status}
+        </span>
 
-        <div 
-         onClick={() => setIsOpen(!isOpen)} className = "flex gap-[8px] items-center">
+        <div
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex gap-[8px] items-center"
+        >
           <span>
-            {status === '영업중' && todayHours && Array.isArray(todayHours)
+            {status === '영업중' && todayHours
               ? `${todayHours[1]}에 영업 종료`
-              : status === '영업 종료' && todayHours && Array.isArray(todayHours)
-              ? `${todayHours[0]}에 오픈`
-              : `정기 휴무 (매주 ${todayKey}요일)`
-            }
+              : status === '영업 종료' && todayHours
+                ? `${todayHours[0]}에 오픈`
+                : `정기 휴무 (매주 ${todayKey}요일)`}
           </span>
-
           <Icon name={isOpen ? 'dropup' : 'dropdown'} />
-
         </div>
-        
       </div>
 
       {isOpen && weekly && (
         <div
-          className="absolute mt-[16px] bg-white z-10 px-[8px] flex flex-col gap-[4px]"
+          className="absolute pt-[16px] bg-white z-10 px-[8px] flex flex-col gap-[4px]"
           style={{ width: `${dropdownWidth}px` }}
         >
           {mondayFirst.map((day) => {
             const hours = weekly[day];
-            const isToday = day === weekdays[today.getDay()];
+            const isToday = day === todayKey;
             return (
-              <div key={day} className={`flex justify-between ${
-                isToday ? 'text-[#616161]' : 'text-[#919191]'
-              }`}>
-                  {day}
-                  {Array.isArray(hours)
-                    ? ` ${hours[0]} ~ ${hours[1]}`
-                    : ` 정기 휴무 (매주 ${day}요일)`}
+              <div
+                key={day}
+                className={`flex justify-between ${isToday ? 'text-[#616161]' : 'text-[#919191]'}`}
+              >
+                {day}
+                {Array.isArray(hours)
+                  ? ` ${hours[0]} ~ ${hours[1]}`
+                  : ` 정기 휴무 (매주 ${day}요일)`}
               </div>
             );
           })}

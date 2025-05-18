@@ -5,31 +5,31 @@ import BusinessHours from './BusinessHours';
 import MainTag from '../StoreReview/MainTag';
 import RequestEditButton from './RequestEditButton';
 import StoreDetailMap from '@/components/StoreDetail/StoreDetailMap';
+import dayjs from 'dayjs';
 
 interface StoreDetailInfoProps {
+  storeId ?: number;
   category: string;
   name: string;
   address: string;
   badgeText?: string;
   favoriteCount: number;
   isLiked: boolean;
-  status: string;
-  open: string;
-  close: string;
+
   weekly?: WeeklyHours;
+  updatedDate: string;
 }
 
 const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
+  storeId,
   category,
   name,
   address,
   badgeText,
   favoriteCount,
   isLiked: initialLiked,
-  status,
-  open,
-  close,
   weekly,
+  updatedDate,
 }) => {
   const [isLiked, setIsLiked] = useState(initialLiked);
   const [likeCount, setLikeCount] = useState(favoriteCount);
@@ -42,8 +42,10 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
     setIsLiked((prev) => !prev);
     setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
   };
+  console.log('storeId는:', storeId); 
 
   return (
+    
     <div className="w-[341px] pb-[16px] flex flex-col gap-[12px] mx-auto">
       <div className="flex flex-col gap-[12px] w-full">
         {/*카테고리, 이름, 태그*/}
@@ -63,12 +65,7 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
         <div className="flex justify-between items-start w-full ">
           {/*영업시간 태그/드롭다운*/}
           <div className="flex items-center gap-[12px] self-stretch">
-            <BusinessHours
-              open={open}
-              close={close}
-              status={status as '휴무' | '영업중' | '영업 종료'}
-              weekly={weekly}
-            />
+            <BusinessHours weekly={weekly} />
           </div>
           {/*찜 아이콘*/}
           <div className="flex justify-end items-center gap-[8px]">
@@ -89,16 +86,21 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
           </div>
         </div>
         <div className="flex gap-[8px] items-end">
-          <RequestEditButton
-            storeInfo={{
-              name,
-              category,
-              mapComponent: <StoreDetailMap />,
-            }}
-          />
-          {/*백엔드 연동시 수정*/}
+          {storeId !== undefined && (
+            <RequestEditButton
+              storeId={storeId}
+              storeInfo={{
+                name,
+                category,
+                mapComponent: <StoreDetailMap />,
+              }}
+            />
+          )}
+
+
+  
           <p className="text-xs font-medium text-[#C3C3C3] ">
-            업데이트 2024.03.02
+            업데이트 {dayjs(updatedDate).format('YYYY.MM.DD')}
           </p>
         </div>
       </div>
