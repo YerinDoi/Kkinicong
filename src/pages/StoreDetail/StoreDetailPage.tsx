@@ -1,5 +1,5 @@
 import { useParams, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import axios from '@/api/axiosInstance';
 import { useEffect, useState } from 'react';
 import StoreDetailMap from '@/components/StoreDetail/StoreDetailMap';
 import StoreDetailInfo from '@/components/StoreDetail/StoreDetailInfo';
@@ -23,9 +23,7 @@ const StoreDetailPage = () => {
   useEffect(() => {
     const fetchStoreDetail = async () => {
       try {
-        const response = await axios.get(
-          `https://kkinikong.store/api/v1/store/${storeId}`,
-        );
+        const response = await axios.get(`/api/v1/store/${storeId}`);
         setStore(response.data.results);
       } catch (err) {
         console.error('가맹점 정보를 불러오는데 실패했습니다.', err);
@@ -56,7 +54,7 @@ const StoreDetailPage = () => {
         updatedDate={store.storeUpdatedDate}
       />
       <StoreDetailMap />
-      {/* <StoreDetailReview store={store} /> */}
+      <StoreDetailReview store={store} />
     </div>
   );
 };

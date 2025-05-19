@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import BottomSheet from '@/components/common/BottomSheet';
 import BottomSheetForm from '@/components/common/BottomSheetForm';
 import ConfirmToast from '@/components/common/ConfirmToast';
-import axios from 'axios';
+import axios from '@/api/axiosInstance';
 
 interface Props {
   storeId: number;
@@ -45,7 +45,7 @@ const RequestEditButton: React.FC<Props> = ({
 
     try {
       await axios.post(
-        `https://kkinikong.store/api/v1/report/store/${storeId}`,
+        `/api/v1/report/store/${storeId}`,
         { description },
         {
           params: { reason: mappedReason },

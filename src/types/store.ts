@@ -79,4 +79,18 @@ export interface StoreDetail {
   storeUpdatedDate: string;
   storeReviewCount: number;
   storeRating: number;
+  reviews?: StoreReview[];
+  reviewCount?: number;
+  ratingAvg?: number;
+}
+
+export interface StoreReview {
+  reviewId: number;
+  nickname: string | null;
+  reviewDate: string;
+  rating: number;
+  tags: string[];
+  content: string;
+  imageUrl: string | null;
+  isOwner: boolean | null;
 }

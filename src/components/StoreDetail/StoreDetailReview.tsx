@@ -1,26 +1,43 @@
-import React from 'react';
 import ReviewItem from '@/components/StoreDetail/ReviewItem';
-import { Store } from '@/types/store';
+import { StoreDetail, StoreReview } from '@/types/store';
 import AddIcon from '@/assets/svgs/common/add-icon.svg';
 import Star from '@/assets/svgs/review/yellow-star.svg';
 import CongG from '@/assets/svgs/logo/congG.svg';
 import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import axios from '@/api/axiosInstance';
 
 interface StoreDetailReviewProps {
-  store: Store;
+  store: StoreDetail;
 }
 
 const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
-  const { reviews, reviewCount, rating, name } = store;
   const navigate = useNavigate();
+  const [reviews, setReviews] = useState<StoreReview[]>([]);
+  const [ratingAvg, setRatingAvg] = useState<number>(0);
+  const [reviewCount, setReviewCount] = useState<number>(0);
+  useEffect(() => {
+    const fetchReviews = async () => {
+      const res = await axios.get(`/api/v1/${store.storeId}/review`, {
+        params: { page: 0, size: 5 },
+      });
 
+      const { ratingAvg, reviewCount, pageResponse } = res.data.results;
+
+      setRatingAvg(ratingAvg);
+      setReviewCount(reviewCount);
+      setReviews(pageResponse.content);
+    };
+
+    fetchReviews();
+  }, []);
   return (
     <section className="flex flex-col mt-[12px] ">
       {/* 리뷰쓰기 배너*/}
       <div className="bg-[#F3F5ED] p-[16px]">
         <div className="flex h-[112px]">
           <div className="h-full pb-[16px] text-[15px] font-semibold leading-[20px] flex flex-col gap-[4px] justify-center">
-            <p className="text-[#029F64]">{name}</p>
+            <p className="text-[#029F64]">{store.storeName}</p>
             <p className="text-black">다녀오셨나요?</p>
             <p className="text-black">리뷰를 통해 경험을 공유해주세요!</p>
           </div>
@@ -28,7 +45,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
         </div>
 
         <button
-          onClick={() => navigate(`/store-review/${store.id}`)}
+          onClick={() => navigate(`/store-review/${store.storeId}`)}
           className="w-full bg-[#65CE58] text-white rounded-[12px] px-[16px] py-[10px] justify-center flex gap-[10px] text-base font-semibold items-center"
         >
           <img src={AddIcon} className="w-[14px] h-[14px] " />
@@ -41,7 +58,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
         <p>최근 리뷰 {reviewCount}개</p>
         <div className="flex gap-[8px] text-[#919191] leading-[20px]">
           <img src={Star} className="w-[24px]" />
-          <span>{rating.toFixed(1)}</span>
+          <span>{ratingAvg.toFixed(1)}</span>
         </div>
       </div>
 
@@ -49,13 +66,13 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
       <div className="flex flex-col gap-[20px]">
         {reviews.map((review) => (
           <ReviewItem
-            key={review.id}
-            userName={review.userName}
+            key={review.reviewId}
+            userName={review.nickname ?? ''}
             rating={review.rating}
             content={review.content}
-            date={review.date}
-            isOwner={review.isOwner}
-            badgeText={store.mainTag}
+            date={review.reviewDate}
+            isOwner={review.isOwner ?? false}
+            badgeText={store.representativeTag ?? ''}
           />
         ))}
       </div>
