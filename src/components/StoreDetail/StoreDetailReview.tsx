@@ -13,24 +13,34 @@ interface StoreDetailReviewProps {
 
 const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
   const navigate = useNavigate();
+  const [page, setPage] = useState(0);
+  const [totalPage, setTotalPage] = useState(1);
   const [reviews, setReviews] = useState<StoreReview[]>([]);
   const [ratingAvg, setRatingAvg] = useState<number>(0);
   const [reviewCount, setReviewCount] = useState<number>(0);
+
   useEffect(() => {
-    const fetchReviews = async () => {
-      const res = await axios.get(`/api/v1/${store.storeId}/review`, {
-        params: { page: 0, size: 5 },
-      });
+    fetchReviews(0);
+  }, [store.storeId]);
 
-      const { ratingAvg, reviewCount, pageResponse } = res.data.results;
+  const fetchReviews = async (pageToLoad: number) => {
+    const res = await axios.get(`/api/v1/${store.storeId}/review`, {
+      params: { page: pageToLoad, size: 5 },
+    });
+    const { ratingAvg, reviewCount, pageResponse } = res.data.results;
 
+    if (pageToLoad === 0) {
+      setReviews(pageResponse.content);
       setRatingAvg(ratingAvg);
       setReviewCount(reviewCount);
-      setReviews(pageResponse.content);
-    };
+    } else {
+      setReviews((prev) => [...prev, ...pageResponse.content]);
+    }
 
-    fetchReviews();
-  }, []);
+    setPage(pageToLoad);
+    setTotalPage(pageResponse.totalPage);
+  };
+
   return (
     <section className="flex flex-col mt-[12px] ">
       {/* 리뷰쓰기 배너*/}
@@ -78,9 +88,14 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
       </div>
 
       {/* 더 보기 */}
-      <button className="mt-[20px] mb-[33.71px] text-center text-[#65CE58] text-sm font-semibold underline decoration-solid decoration-[1px] leading-[20px]">
-        리뷰 더 보기
-      </button>
+      {page + 1 < totalPage && (
+        <button
+          onClick={() => fetchReviews(page + 1)}
+          className="mt-[20px] mb-[33.71px] text-center text-[#65CE58] text-sm font-semibold underline decoration-solid decoration-[1px] leading-[20px]"
+        >
+          리뷰 더 보기
+        </button>
+      )}
     </section>
   );
 };
