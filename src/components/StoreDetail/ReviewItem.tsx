@@ -13,7 +13,8 @@ interface ReviewItemProps {
   content: string;
   imageUrl?: string;
   isOwner?: boolean;
-  badgeText: string;
+
+  tags: string[];
 }
 
 const ReviewItem: React.FC<ReviewItemProps> = ({
@@ -23,9 +24,13 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
   content,
   imageUrl,
   isOwner,
-  badgeText,
+
+  tags,
 }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showAllTags, setShowAllTags] = useState(false);
+  const visibleTags = showAllTags ? tags : tags.slice(0, 2);
+  const hiddenTagCount = tags.length - 2;
 
   const handleDelete = () => {
     // 추후 백엔드 연동시 추가가
@@ -57,7 +62,19 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
           ) : null}
         </div>
 
-        {badgeText && <MainTag text={badgeText} />}
+        <div className="flex flex-wrap gap-[8px]">
+          {visibleTags.map((tag, index) => (
+            <MainTag key={index} text={tag} />
+          ))}
+
+          {!showAllTags && hiddenTagCount > 0 && (
+            <MainTag
+              text={`+${hiddenTagCount}`}
+              onClick={() => setShowAllTags(true)}
+            />
+          )}
+        </div>
+
         <div className="flex justify-between h-[16.4px]">
           <div className="flex gap-[4px]">
             {Array.from({ length: 5 }).map((_, i) => (
@@ -65,7 +82,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
                 key={i}
                 src={i < rating ? YellowStar : EmptyStar}
                 alt={i < rating ? '채워진 별' : '빈 별'}
-                className="w-[17.123px] "
+                className="w-[17.123px]"
               />
             ))}
           </div>

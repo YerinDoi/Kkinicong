@@ -71,8 +71,8 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
             rating={review.rating}
             content={review.content}
             date={review.reviewDate}
+            tags={review.tags}
             isOwner={review.isOwner ?? false}
-            badgeText={store.representativeTag ?? ''}
           />
         ))}
       </div>
