@@ -6,6 +6,7 @@ import CongG from '@/assets/svgs/logo/congG.svg';
 import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import axios from '@/api/axiosInstance';
+import LoginModal from '@/components/common/LoginRequiredBottomSheet';
 
 interface StoreDetailReviewProps {
   store: StoreDetail;
@@ -18,6 +19,17 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
   const [reviews, setReviews] = useState<StoreReview[]>([]);
   const [ratingAvg, setRatingAvg] = useState<number>(0);
   const [reviewCount, setReviewCount] = useState<number>(0);
+
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const handleReviewClick = () => {
+    const isLoggedIn = !!localStorage.getItem('accessToken');
+
+    if (isLoggedIn) {
+      navigate(`/store-review/${store.storeId}`);
+    } else {
+      setShowLoginModal(true);
+    }
+  };
 
   useEffect(() => {
     fetchReviews(0);
@@ -55,7 +67,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
         </div>
 
         <button
-          onClick={() => navigate(`/store-review/${store.storeId}`)}
+          onClick={handleReviewClick}
           className="w-full bg-[#65CE58] text-white rounded-[12px] px-[16px] py-[10px] justify-center flex gap-[10px] text-base font-semibold items-center"
         >
           <img src={AddIcon} className="w-[14px] h-[14px] " />
@@ -95,6 +107,14 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
         >
           리뷰 더 보기
         </button>
+      )}
+
+      {/* 로그인 필요 모달 */}
+      {showLoginModal && (
+        <LoginModal
+          isOpen={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+        />
       )}
     </section>
   );
