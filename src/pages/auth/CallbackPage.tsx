@@ -31,4 +31,7 @@ export default function CallbackPage() {
       }
     })();
   }, []);
+  return (
+    <div className="text-center mt-40 text-lg">로그인 처리 중입니다...</div>
+  );
 }
