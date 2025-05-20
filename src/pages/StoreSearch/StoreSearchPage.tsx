@@ -190,7 +190,6 @@ const StoreSearchPage = () => {
           },
         );
 
-
         console.log('API 응답:', response.data);
 
         const newStores = response.data.results.content;
@@ -212,7 +211,6 @@ const StoreSearchPage = () => {
           return uniqueStores;
         });
 
-
         hasNextPageRef.current = !isLastPage;
         pageRef.current += 1;
       } catch (error) {
@@ -227,13 +225,11 @@ const StoreSearchPage = () => {
 
   // 카테고리나 정렬 변경 시에만 검색 실행
   useEffect(() => {
-    if (searchTerm) {
-      setStores([]);
-      pageRef.current = 0;
-      hasNextPageRef.current = true;
-      fetchStores(searchTerm);
-    }
-  }, [selectedCategory, sort, fetchStores]);
+    setStores([]);
+    pageRef.current = 0;
+    hasNextPageRef.current = true;
+    fetchStores(searchTerm);
+  }, [selectedCategory, sort, fetchStores, searchTerm]);
 
   useEffect(() => {
     if (!loaderRef.current) return;
