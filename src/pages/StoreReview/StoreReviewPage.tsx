@@ -24,7 +24,9 @@ const StoreReviewPage = () => {
   const [comment, setComment] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const mappedTags = selectedTags.map((tag) => tagMap[tag]).filter(Boolean);
+  const [checked, setChecked] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const isSubmitEnabled = rating>0 && checked;
 
   if (!storeId) {
     return <div>가게 정보를 찾을 수 없습니다.</div>;
@@ -83,12 +85,15 @@ const StoreReviewPage = () => {
           <SelectTag selected={selectedTags} onChange={setSelectedTags} />
           <CommentBox value={comment} onChange={setComment} />
           <UploadImage onFileSelect={setImageFile} />
-          <CheckBox />
+          <CheckBox onCheckChange = {setChecked}/>
           <button
             onClick={handleSubmitReview}
-            className="bg-[#65CE58] text-white font-semibold text-base px-[16px] py-[12px] rounded-[8px] mt-[24px]"
+            disabled={!isSubmitEnabled}
+            className={`text-white font-semibold text-base px-[16px] py-[12px] rounded-[8px] mt-[24px] ${
+              isSubmitEnabled ? 'bg-[#65CE58]' : 'bg-[#E6E6E6] cursor-not-allowed'
+            }`}
           >
-            리뷰 등록하기
+            공유하기
           </button>
         </div>
         {/*토스트 수정 예정*/}

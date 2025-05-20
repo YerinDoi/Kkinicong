@@ -52,9 +52,9 @@ const StoreDetailPage = () => {
         address={store.storeAddress}
         badgeText={store.representativeTag ?? undefined}
         isLiked={isLiked}
-  setIsLiked={setIsLiked}
-  favoriteCount={likeCount}
-  setLikeCount={setLikeCount}
+        setIsLiked={setIsLiked}
+        favoriteCount={likeCount}
+        setLikeCount={setLikeCount}
         weekly={store.storeWeeklyOpeningHours ?? undefined}
         updatedDate={store.storeUpdatedDate}
       />
