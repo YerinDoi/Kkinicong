@@ -190,6 +190,7 @@ const StoreSearchPage = () => {
           },
         );
 
+
         console.log('API 응답:', response.data);
 
         const newStores = response.data.results.content;
@@ -210,6 +211,7 @@ const StoreSearchPage = () => {
           );
           return uniqueStores;
         });
+
 
         hasNextPageRef.current = !isLastPage;
         pageRef.current += 1;

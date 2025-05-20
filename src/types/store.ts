@@ -40,6 +40,11 @@ export interface Store {
   status: '영업중' | '영업 종료';
   statusDescription?: string;
 }*/
+export type Weekday = '일' | '월' | '화' | '수' | '목' | '금' | '토';
+
+export type WeeklyHours = {
+  [key in Weekday]: [string, string] | null;
+};
 
 export type Store = {
   id: number;
@@ -78,4 +83,5 @@ export interface StoreDetail {
   storeRating: number;
   latitude: number;
   longitude: number;
+
 }
