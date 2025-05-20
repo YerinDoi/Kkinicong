@@ -28,6 +28,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
 
   tags,
 }) => {
+  const isLoggedIn = !!localStorage.getItem('accessToken');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAllTags, setShowAllTags] = useState(false);
   const visibleTags = showAllTags ? tags : (tags ?? []).slice(0, 2);
@@ -93,12 +94,14 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
             ))}
           </div>
 
-          {isOwner ? null : (
-            <ReportReviewButton
-              reviewId={reviewId}
-              review={{ userName, content }}
-            />
-          )}
+          {isOwner
+            ? null
+            : isLoggedIn && (
+                <ReportReviewButton
+                  reviewId={reviewId}
+                  review={{ userName, content }}
+                />
+              )}
         </div>
       </div>
       <div className="flex gap-auto justify-between">
