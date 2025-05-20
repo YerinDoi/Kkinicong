@@ -2,7 +2,7 @@ import { Store } from '@/types/store';
 import Icon, { IconName } from '@/assets/icons';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '@/api/axiosInstance';
 import LoginRequiredBottomSheet from '@/components/common/LoginRequiredBottomSheet';
 
 interface StoreItemProps {
@@ -16,9 +16,6 @@ const StoreItem = ({ store }: StoreItemProps) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(
-      `Store ${store.name} (ID: ${store.id}) - isScrapped prop: ${store.isScrapped}, Initial isLiked state: ${store.isScrapped === true}`,
-    );
     setIsLiked(store.isScrapped === true);
     setLikeCount(store.scrapCount);
   }, [store.id, store.name, store.isScrapped, store.scrapCount]);
@@ -31,14 +28,11 @@ const StoreItem = ({ store }: StoreItemProps) => {
       setIsBottomSheetOpen(true);
       return;
     }
-    
+
     try {
-      const response = await axios({
+      const response = await axiosInstance({
         method: isLiked ? 'delete' : 'post',
         url: `https://kkinikong.store/api/v1/store/scrap/${store.id}`,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       });
 
       if (response.data.isSuccess) {
@@ -104,7 +98,7 @@ const StoreItem = ({ store }: StoreItemProps) => {
 
             {store.representativeTag && (
               <div className="flex items-center">
-                <span className="rounded-[14px] border-[1.5px] border-main-color bg-[#F4F6F8] px-[11px] py-[3px] text-[12px] text-[#212121] tracking-[0.012px] leading-tight">
+                <span className="rounded-[12px] border-[1px] border-main-color bg-[#F4F6F8] px-[11px] py-[3px] text-[12px] text-[#212121] tracking-[0.012px] leading-tight">
                   {store.representativeTag}
                 </span>
               </div>

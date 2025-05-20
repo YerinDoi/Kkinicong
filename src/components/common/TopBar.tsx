@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import BackIcon from '@/assets/icons/system/backward.svg?react';
-import MenuIcon from '@/assets/icons/system/menu.svg?react';
+import Icon from '@/assets/icons';
+import MenuBar from './MenuBar';
+import { useState } from 'react';
+import { Fragment } from 'react';
 
 interface TopBarProps {
   title?: string; // 타이틀
@@ -19,48 +21,68 @@ export default function TopBar({
 }: TopBarProps) {
   const navigate = useNavigate();
 
+  // 메뉴 열림/닫힘 상태 관리
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // 메뉴 열기/닫기 함수
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
   const handleBack = () => {
     if (onBack) onBack();
     else navigate(-1);
   };
 
   return (
-    <div className="flex items-center justify-between h-[47px] px-[20px] py-[8px]">
-      {/* 왼쪽 영역 : 뒤로가기버튼, 제목, 부제목 */}
-      <div className="flex items-center gap-[4px]">
-        {showBackButton ? (
-          <button onClick={handleBack} className="text-xl mr-2">
-            <BackIcon className="h-[px15]" />
-          </button>
-        ) : (
-          <div /> // 여백 맞춤
-        )}
-        {/* ) : (
+    <Fragment>
+      <div className="flex items-center justify-between px-[20px] py-[8px]">
+        {/* 왼쪽 영역 : 뒤로가기버튼, 제목, 부제목 */}
+        <div className="flex items-center gap-[4px]">
+          {showBackButton ? (
+            <button onClick={handleBack} className="py-[8px] pr-[12px]">
+              <Icon name="backward" />
+            </button>
+          ) : (
+            <div /> // 여백 맞춤
+          )}
+          {/* ) : (
           <div className="w-5 h-5" /> // 여백 맞춤
         )} */}
 
-        {title && (
-          <div className="flex items-baseline">
-            <span className="text-[20px] font-semibold text-black">
-              {title}
-            </span>
-            {subTitle && (
-              <span className="ml-2 text-sm font-medium text-[#919191]">
-                {subTitle}
+          {title && (
+            <div className="flex items-baseline">
+              <span className="text-[20px] font-semibold text-black">
+                {title}
               </span>
-            )}
+              {subTitle && (
+                <span className="ml-2 text-sm font-medium text-[#919191]">
+                  {subTitle}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* 오른쪽 영역 : 메뉴버튼(햄버거) */}
+        {rightElement && (
+          <div className="flex items-center">
+            <button
+              className="w-[24px] h-[24px] aspect-square ml-auto"
+              onClick={toggleMenu}
+            >
+              <Icon name="menubar" />
+            </button>
           </div>
         )}
       </div>
 
-      {/* 오른쪽 영역 : 메뉴버튼(햄버거) */}
-      {rightElement && (
-        <div className="flex items-center">
-          <button>
-            <MenuIcon className="w-6 h-6" />
-          </button>
-        </div>
-      )}
-    </div>
+      {/* MenuBar 컴포넌트 렌더링, 상태 및 닫기 함수 전달 */}
+      <MenuBar isOpen={isMenuOpen} onClose={closeMenu} />
+    </Fragment>
   );
 }

@@ -8,7 +8,7 @@ import StoreDetailMap from '@/components/StoreDetail/StoreDetailMap';
 import dayjs from 'dayjs';
 
 interface StoreDetailInfoProps {
-  storeId ?: number;
+  storeId?: number;
   category: string;
   name: string;
   address: string;
@@ -42,7 +42,8 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
     setIsLiked((prev) => !prev);
     setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
   };
-  console.log('storeId는:', storeId); 
+
+  console.log('storeId는:', storeId);
 
   return (
     
@@ -97,8 +98,6 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
             />
           )}
 
-
-  
           <p className="text-xs font-medium text-[#C3C3C3] ">
             업데이트 {dayjs(updatedDate).format('YYYY.MM.DD')}
           </p>
