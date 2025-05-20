@@ -4,7 +4,11 @@ import AddIcon from '@/assets/svgs/review/add-image.svg';
 import DeleteIcon from '@/assets/svgs/review/delete-img.svg';
 import WarningToast from '@/components/common/WarningToast';
 
-const UploadImage: React.FC = () => {
+interface UploadImageProps {
+  onFileSelect: (file: File | null) => void;
+}
+
+const UploadImage: React.FC<UploadImageProps> = ({ onFileSelect }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -43,6 +47,7 @@ const UploadImage: React.FC = () => {
 
       const imageURL = URL.createObjectURL(file);
       setPreview(imageURL);
+      onFileSelect(file);
     } catch {
       setToastMessage('이미지 업로드에 실패했어요');
       setShowToast(true);

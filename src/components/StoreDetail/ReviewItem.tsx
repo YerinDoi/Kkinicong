@@ -11,10 +11,10 @@ interface ReviewItemProps {
   date: string;
   rating: number;
   content: string;
-  imageUrl?: string;
+  imageUrl: string | null;
   isOwner?: boolean;
   reviewId: number;
-  tags: string[];
+  tags?: string[];
 }
 
 const ReviewItem: React.FC<ReviewItemProps> = ({
@@ -30,12 +30,15 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
 }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAllTags, setShowAllTags] = useState(false);
-  const visibleTags = showAllTags ? tags : tags.slice(0, 2);
-  const hiddenTagCount = tags.length - 2;
+  const visibleTags = showAllTags ? tags : (tags ?? []).slice(0, 2);
+  const hiddenTagCount = (tags?.length ?? 0) - 2;
 
   useEffect(() => {
     console.log('reviewId:', reviewId);
   }, []);
+  useEffect(() => {
+    console.log('이미지 URL:', imageUrl);
+  }, [imageUrl]);
 
   const handleDelete = () => {
     // 추후 백엔드 연동시 추가가
@@ -68,9 +71,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
         </div>
 
         <div className="flex flex-wrap gap-[8px]">
-          {visibleTags.map((tag, index) => (
-            <MainTag key={index} text={tag} />
-          ))}
+          {visibleTags?.map((tag, index) => <MainTag key={index} text={tag} />)}
 
           {!showAllTags && hiddenTagCount > 0 && (
             <MainTag
@@ -100,15 +101,15 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
           )}
         </div>
       </div>
-      <div className="flex gap-auto">
-        <p className="text-sm font-medium leading-[18px] text-[#616161]">
+      <div className="flex gap-auto justify-between">
+        <p className="text-sm font-medium leading-[18px] text-[#616161] w-[221px]">
           {content}
         </p>
         {imageUrl && (
           <img
             src={imageUrl}
             alt="리뷰 이미지"
-            className="w-[100px] h-[80px] object-cover rounded-[12px]"
+            className="w-[100px] h-[80px] rounded-[12px]"
           />
         )}
       </div>

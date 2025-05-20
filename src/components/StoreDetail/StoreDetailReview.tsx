@@ -101,6 +101,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
             rating={review.rating}
             content={review.content}
             date={review.reviewDate}
+            imageUrl={review.imageUrl}
             tags={review.tags}
             isOwner={review.isOwner ?? false}
           />

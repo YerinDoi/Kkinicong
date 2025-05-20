@@ -10,6 +10,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from '@/api/axiosInstance';
 import { useLocation } from 'react-router-dom';
 import { tagMap } from '@/constants/tagMap';
+import ConfirmToast from '@/components/common/ConfirmToast';
 
 const StoreReviewPage = () => {
   const { storeId } = useParams<{ storeId: string }>();
@@ -21,7 +22,9 @@ const StoreReviewPage = () => {
   const [rating, setRating] = useState(0);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [comment, setComment] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const mappedTags = selectedTags.map((tag) => tagMap[tag]).filter(Boolean);
+  const [showToast, setShowToast] = useState(false);
 
   if (!storeId) {
     return <div>가게 정보를 찾을 수 없습니다.</div>;
@@ -29,14 +32,36 @@ const StoreReviewPage = () => {
 
   const handleSubmitReview = async () => {
     try {
-      await axios.post(`/api/v1/${storeId}/review`, {
+      const reviewRes = await axios.post(`/api/v1/${storeId}/review`, {
         rating,
         tag: mappedTags,
         content: comment,
       });
 
-      alert('리뷰가 등록되었습니다!');
-      navigate(-1); // 이전 페이지로 이동
+      const reviewId = reviewRes.data.results.reviewId;
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append('file', imageFile);
+
+        await axios.post(
+          `/api/v1/${storeId}/review/${reviewId}/photo`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+            },
+          },
+        );
+
+        console.log('이미지 업로드 완료');
+      }
+
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+        navigate(-1);
+      }, 3000);
     } catch (error) {
       console.error('리뷰 작성 실패:', error);
       alert('리뷰 작성에 실패했습니다.');
@@ -57,7 +82,7 @@ const StoreReviewPage = () => {
           <Rating value={rating} onChange={setRating} />
           <SelectTag selected={selectedTags} onChange={setSelectedTags} />
           <CommentBox value={comment} onChange={setComment} />
-          <UploadImage />
+          <UploadImage onFileSelect={setImageFile} />
           <CheckBox />
           <button
             onClick={handleSubmitReview}
@@ -66,6 +91,11 @@ const StoreReviewPage = () => {
             리뷰 등록하기
           </button>
         </div>
+        {showToast && (
+          <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
+            <ConfirmToast text="리뷰 등록 완료! " />
+          </div>
+        )}
       </div>
     </div>
   );
