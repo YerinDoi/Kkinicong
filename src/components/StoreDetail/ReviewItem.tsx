@@ -20,6 +20,7 @@ interface ReviewItemProps {
   tags?: string[];
   storeId: number;
   setReviews: React.Dispatch<React.SetStateAction<StoreReview[]>>;
+  refreshReviews: () => void;
 }
 
 const ReviewItem: React.FC<ReviewItemProps> = ({
@@ -32,7 +33,9 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
   reviewId,
   tags,
   storeId,
-  setReviews
+  setReviews,
+  refreshReviews
+
 }) => {
   const isLoggedIn = !!localStorage.getItem('accessToken');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -49,6 +52,10 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
   useEffect(() => {
   console.log('[ReviewItem] storeId:', storeId); // 여기 확인
 }, [storeId]);
+useEffect(() => {
+  console.log('[debug] props:', { refreshReviews });
+}, []);
+
 
 
   const handleDelete = async () => {
@@ -69,6 +76,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
       setReviews((prev) =>
       prev.filter((review) => review.reviewId !== reviewId)
       );
+      refreshReviews();
     
     } else {
       alert('리뷰 삭제 실패: ' + response.data.message);

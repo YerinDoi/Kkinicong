@@ -101,7 +101,7 @@ const StoreReviewPage = () => {
         {showToast &&
           createPortal(
             <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-[9999]">
-              <ConfirmToast text="신고 완료!" />
+              <ConfirmToast text="리뷰 작성 완료!" />
             </div>,
             document.body
           )

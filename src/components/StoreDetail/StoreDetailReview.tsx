@@ -38,10 +38,6 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
     }
   };
 
-  useEffect(() => {
-    fetchReviews(0);
-  }, [store.storeId]);
-
   const fetchReviews = async (pageToLoad: number) => {
     const res = await axios.get(`/api/v1/${store.storeId}/review`, {
       params: { page: pageToLoad, size: 5 },
@@ -59,6 +55,12 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
     setPage(pageToLoad);
     setTotalPage(pageResponse.totalPage);
   };
+  
+  useEffect(() => {
+    fetchReviews(0);
+  }, [store.storeId]);
+
+  
 
   return (
     <section className="flex flex-col mt-[12px] ">
@@ -112,6 +114,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
             isOwner={review.isOwner ?? false}
             storeId={store.storeId}
             setReviews = {setReviews}
+            refreshReviews={() => fetchReviews(0)} 
           />
 
         )))}
