@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import YellowStar from '@/assets/svgs/review/yellow-star.svg';
 import EmptyStar from '@/assets/svgs/review/disabled-star.svg';
 import ProfileImg from '@/assets/svgs/common/profile-img.svg';
@@ -13,7 +13,7 @@ interface ReviewItemProps {
   content: string;
   imageUrl?: string;
   isOwner?: boolean;
-
+  reviewId: number;
   tags: string[];
 }
 
@@ -24,6 +24,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
   content,
   imageUrl,
   isOwner,
+  reviewId,
 
   tags,
 }) => {
@@ -31,6 +32,10 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
   const [showAllTags, setShowAllTags] = useState(false);
   const visibleTags = showAllTags ? tags : tags.slice(0, 2);
   const hiddenTagCount = tags.length - 2;
+
+  useEffect(() => {
+    console.log('reviewId:', reviewId);
+  }, []);
 
   const handleDelete = () => {
     // 추후 백엔드 연동시 추가가
@@ -88,7 +93,10 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
           </div>
 
           {isOwner ? null : (
-            <ReportReviewButton review={{ userName, content }} />
+            <ReportReviewButton
+              reviewId={reviewId}
+              review={{ userName, content }}
+            />
           )}
         </div>
       </div>

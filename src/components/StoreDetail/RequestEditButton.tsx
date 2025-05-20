@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import BottomSheet from '@/components/common/BottomSheet';
 import BottomSheetForm from '@/components/common/BottomSheetForm';
 import ConfirmToast from '@/components/common/ConfirmToast';
-import axios from '@/api/axiosInstance';
+import axiosInstance from '@/api/axiosInstance';
+import axios from 'axios';
 
 interface Props {
   storeId: number;
@@ -38,13 +39,9 @@ const RequestEditButton: React.FC<Props> = ({
   const handleEditSubmit = async (reason: string, description: string) => {
     const token = localStorage.getItem('accessToken');
     const mappedReason = reasonMap[reason as keyof typeof reasonMap];
-    if (!token) {
-      alert('로그인이 필요한 기능입니다.');
-      return;
-    }
 
     try {
-      await axios.post(
+      await axiosInstance.post(
         `/api/v1/report/store/${storeId}`,
         { description },
         {
@@ -58,8 +55,19 @@ const RequestEditButton: React.FC<Props> = ({
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     } catch (error) {
-      console.error('수정 요청 실패', error);
-      alert('수정 요청에 실패했습니다.');
+      if (axios.isAxiosError(error)) {
+        const errorCode = error.response?.data?.code;
+        console.error('수정 요청 실패 코드:', errorCode);
+
+        if (errorCode === 'REPORT_ALREADY_EXISTS') {
+          alert('이미 수정 요청을 보낸 가게입니다.');
+          return;
+        }
+
+        alert('수정 요청에 실패했습니다.');
+      } else {
+        alert('예상치 못한 오류가 발생했습니다.');
+      }
     }
   };
 
