@@ -51,6 +51,7 @@ const UploadImage: React.FC<UploadImageProps> = ({ onFileSelect }) => {
     } catch {
       setToastMessage('이미지 업로드에 실패했어요');
       setShowToast(true);
+      onFileSelect(null); 
     }
   };
 

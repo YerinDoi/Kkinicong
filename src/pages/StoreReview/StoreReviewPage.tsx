@@ -91,6 +91,7 @@ const StoreReviewPage = () => {
             리뷰 등록하기
           </button>
         </div>
+        {/*토스트 수정 예정*/}
         {showToast && (
           <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
             <ConfirmToast text="리뷰 등록 완료! " />
