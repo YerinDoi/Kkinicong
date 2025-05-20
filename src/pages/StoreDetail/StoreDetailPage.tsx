@@ -18,7 +18,7 @@ const StoreDetailPage = () => {
   }
 
   return (
-    <div className="font-pretendard">
+    <div className="font-pretendard mt-[11px]">
       <TopBar rightElement />
       <StoreDetailInfo
         category={store.category.name}
@@ -32,8 +32,8 @@ const StoreDetailPage = () => {
         close={store.businessHours.close}
         weekly={store.businessHours.weekly}
       />
-      <StoreDetailMap />
-      <StoreDetailReview store={store} />
+      <StoreDetailMap store={store}/>
+      {/* <StoreDetailReview store={store} /> */}
     </div>
   );
 };

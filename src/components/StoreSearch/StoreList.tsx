@@ -7,7 +7,7 @@ interface StoreListProps {
 
 const StoreList = ({ stores }: StoreListProps) => {
   return (
-    <div className="flex flex-col gap-[20px]">
+    <div className="flex flex-col gap-[20px] mb-[29px]">
       {stores.map((store) => (
         <StoreItem key={store.id} store={store} />
       ))}

@@ -50,6 +50,8 @@ export type Store = {
   scrapCount: number;
   representativeTag: string | null;
   isScrapped: boolean | null;
+  latitude: number; // 위도
+  longitude: number; // 경도
 };
 
 export type StoreApiResponse = {
@@ -63,3 +65,17 @@ export type StoreApiResponse = {
   };
 };
 
+export interface StoreDetail {
+  storeId: number;
+  storeName: string;
+  storeCategory: string;
+  storeAddress: string;
+  representativeTag: string | null;
+  storeWeeklyOpeningHours: WeeklyHours | null;
+  storeScrapCount: number;
+  storeUpdatedDate: string;
+  storeReviewCount: number;
+  storeRating: number;
+  latitude: number;
+  longitude: number;
+}

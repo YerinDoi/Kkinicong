@@ -7,6 +7,7 @@ import RequestEditButton from './RequestEditButton';
 import StoreDetailMap from '@/components/StoreDetail/StoreDetailMap';
 
 interface StoreDetailInfoProps {
+  storeId?: number;
   category: string;
   name: string;
   address: string;
@@ -42,6 +43,7 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
     setIsLiked((prev) => !prev);
     setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
   };
+  console.log('storeId는:', storeId);
 
   return (
     <div className="w-[341px] pb-[16px] flex flex-col gap-[12px] mx-auto">
@@ -89,14 +91,17 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
           </div>
         </div>
         <div className="flex gap-[8px] items-end">
-          <RequestEditButton
-            storeInfo={{
-              name,
-              category,
-              mapComponent: <StoreDetailMap />,
-            }}
-          />
-          {/*백엔드 연동시 수정*/}
+          {storeId !== undefined && (
+            <RequestEditButton
+              storeId={storeId}
+              storeInfo={{
+                name,
+                category,
+                mapComponent: <StoreDetailMap />,
+              }}
+            />
+          )}
+
           <p className="text-xs font-medium text-[#C3C3C3] ">
             업데이트 2024.03.02
           </p>
