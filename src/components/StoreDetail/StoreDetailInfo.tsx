@@ -46,6 +46,11 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
       return;
     }
 
+    if (!storeId) {
+    console.error('[스크랩 실패] storeId가 undefined입니다.');
+    return;
+  }
+
     try {
       const response = await axios({
         method: isLiked ? 'delete' : 'post',

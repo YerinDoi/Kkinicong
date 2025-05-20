@@ -60,7 +60,7 @@ const RequestEditButton: React.FC<Props> = ({
         const errorCode = error.response?.data?.code;
         console.error('수정 요청 실패 코드:', errorCode);
 
-        if (errorCode === 'REPORT_ALREADY_EXISTS') {
+        if (errorCode === 'STORE_REPORT_ALREADY_EXISTS') {
           alert('이미 수정 요청을 보낸 가게입니다.');
           return;
         }
