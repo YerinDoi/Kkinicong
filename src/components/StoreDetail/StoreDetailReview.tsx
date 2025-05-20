@@ -99,6 +99,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
             <p className='text-xs font-medium text-[#919191]'>첫번째 리뷰를 작성하시겠어요?</p>
           </div>
         ):(reviews.map((review) => (
+          
           <ReviewItem
             key={review.reviewId}
             reviewId={review.reviewId}
@@ -110,7 +111,9 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
             tags={review.tags}
             isOwner={review.isOwner ?? false}
             storeId={store.storeId}
+            setReviews = {setReviews}
           />
+
         )))}
    
         

@@ -6,6 +6,8 @@ import ReportReviewButton from '@/components/StoreDetail/ReportReviewButton';
 import DeleteReviewModal from '@/components/StoreDetail/DeleteReview';
 import MainTag from '@/components/StoreReview/MainTag';
 import axios from '@/api/axiosInstance';
+import type { StoreReview } from '@/types/store';
+
 
 interface ReviewItemProps {
   userName: string;
@@ -17,6 +19,7 @@ interface ReviewItemProps {
   reviewId: number;
   tags?: string[];
   storeId: number;
+  setReviews: React.Dispatch<React.SetStateAction<StoreReview[]>>;
 }
 
 const ReviewItem: React.FC<ReviewItemProps> = ({
@@ -28,7 +31,8 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
   isOwner,
   reviewId,
   tags,
-  storeId
+  storeId,
+  setReviews
 }) => {
   const isLoggedIn = !!localStorage.getItem('accessToken');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -42,6 +46,10 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
   useEffect(() => {
     console.log('이미지 URL:', imageUrl);
   }, [imageUrl]);
+  useEffect(() => {
+  console.log('[ReviewItem] storeId:', storeId); // 여기 확인
+}, [storeId]);
+
 
   const handleDelete = async () => {
     try{
@@ -58,6 +66,9 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
     if (response.data.isSuccess) {
       alert('리뷰가 삭제되었습니다.');
       setShowDeleteModal(false);
+      setReviews((prev) =>
+      prev.filter((review) => review.reviewId !== reviewId)
+      );
     
     } else {
       alert('리뷰 삭제 실패: ' + response.data.message);
@@ -73,6 +84,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
   const closeDeleteModal = () => setShowDeleteModal(false);
 
   return (
+    
     <div className="flex flex-col gap-[12px] px-[16px] pb-[12px] border-b-[1.5px] border-[#E6E6E6]">
       <div className="flex flex-col gap-[12px]">
         <div className="flex justify-between items-center">
