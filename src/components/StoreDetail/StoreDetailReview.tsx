@@ -25,7 +25,14 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
     const isLoggedIn = !!localStorage.getItem('accessToken');
 
     if (isLoggedIn) {
-      navigate(`/store-review/${store.storeId}`);
+      navigate(`/store-review/${store.storeId}`, {
+        state: {
+          name: store.storeName,
+          address: store.storeAddress,
+          category: store.storeCategory,
+          mainTag: store.representativeTag,
+        },
+      });
     } else {
       setShowLoginModal(true);
     }
