@@ -8,7 +8,7 @@ import axios from './axiosInstance';
 export const checkNicknameDuplicate = async (
   nickname: string,
 ): Promise<boolean> => {
-  const res = await axios.get('/api/v1/user/check-nickname', {
+  const res = await axios.get('/user/check-nickname', {
     params: { nickname },
   });
   return res.data.exists; // 👈 백엔드 응답 형식에 따라 조정
@@ -20,6 +20,6 @@ export const checkNicknameDuplicate = async (
  * @returns 등록된 유저 정보 (예: id, nickname)
  */
 export const registerNickname = async (nickname: string) => {
-  const res = await axios.post('/api/v1/user/nickname', { nickname });
+  const res = await axios.post('/user/nickname', { nickname });
   return res.data.results; // 👈 CallbackPage나 Redux에서 쓰이는 유저 정보 반환
 };
