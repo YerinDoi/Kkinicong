@@ -1,4 +1,4 @@
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from '@/api/axiosInstance';
 import { useEffect, useState } from 'react';
 import StoreDetailMap from '@/components/StoreDetail/StoreDetailMap';
@@ -9,22 +9,25 @@ import { StoreDetail } from '@/types/store';
 
 const StoreDetailPage = () => {
   const { storeId } = useParams<{ storeId: string }>();
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
 
-  const location = useLocation();
-  const { isLiked, likeCount } = location.state || {
-    isLiked: false,
-    likeCount: 0,
-  };
 
   const [store, setStore] = useState<StoreDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
+
+
   useEffect(() => {
     const fetchStoreDetail = async () => {
       try {
-        const response = await axios.get(`/api/v1/store/${storeId}`);
-        setStore(response.data.results);
+        const res = await axios.get(`/api/v1/store/${storeId}`);
+        const storeData = res.data.results;
+
+        setStore(storeData);
+        setIsLiked(storeData.isScrapped === true);     
+        setLikeCount(storeData.scrapCount ?? 0); 
       } catch (err) {
         console.error('가맹점 정보를 불러오는데 실패했습니다.', err);
         setError(true);
@@ -48,8 +51,10 @@ const StoreDetailPage = () => {
         name={store.storeName}
         address={store.storeAddress}
         badgeText={store.representativeTag ?? undefined}
-        favoriteCount={likeCount}
         isLiked={isLiked}
+  setIsLiked={setIsLiked}
+  favoriteCount={likeCount}
+  setLikeCount={setLikeCount}
         weekly={store.storeWeeklyOpeningHours ?? undefined}
         updatedDate={store.storeUpdatedDate}
       />

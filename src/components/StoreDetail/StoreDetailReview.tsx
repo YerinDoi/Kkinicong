@@ -90,10 +90,15 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
           <span>{ratingAvg.toFixed(1)}</span>
         </div>
       </div>
-
+      
       {/* 리뷰 카드 리스트 */}
-      <div className="flex flex-col gap-[20px]">
-        {reviews.map((review) => (
+      <div className="flex flex-col gap-[20px]">{
+        reviewCount == 0 ? (
+          <div className='flex flex-col gap-[12px] mt-[34px] text-center'>
+            <p className='text-sm font-medium leading-[18px]'>아직은 작성된 리뷰가 없어요</p>
+            <p className='text-xs font-medium text-[#919191]'>첫번째 리뷰를 작성하시겠어요?</p>
+          </div>
+        ):(reviews.map((review) => (
           <ReviewItem
             key={review.reviewId}
             reviewId={review.reviewId}
@@ -104,8 +109,11 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
             imageUrl={review.imageUrl}
             tags={review.tags}
             isOwner={review.isOwner ?? false}
+            storeId={store.storeId}
           />
-        ))}
+        )))}
+   
+        
       </div>
 
       {/* 더 보기 */}

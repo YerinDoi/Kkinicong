@@ -5,6 +5,7 @@ import ProfileImg from '@/assets/svgs/common/profile-img.svg';
 import ReportReviewButton from '@/components/StoreDetail/ReportReviewButton';
 import DeleteReviewModal from '@/components/StoreDetail/DeleteReview';
 import MainTag from '@/components/StoreReview/MainTag';
+import axios from '@/api/axiosInstance';
 
 interface ReviewItemProps {
   userName: string;
@@ -15,6 +16,7 @@ interface ReviewItemProps {
   isOwner?: boolean;
   reviewId: number;
   tags?: string[];
+  storeId: number;
 }
 
 const ReviewItem: React.FC<ReviewItemProps> = ({
@@ -25,8 +27,8 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
   imageUrl,
   isOwner,
   reviewId,
-
   tags,
+  storeId
 }) => {
   const isLoggedIn = !!localStorage.getItem('accessToken');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -41,11 +43,31 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
     console.log('이미지 URL:', imageUrl);
   }, [imageUrl]);
 
-  const handleDelete = () => {
-    // 추후 백엔드 연동시 추가가
-    console.log('리뷰 삭제됨');
-    setShowDeleteModal(false);
-  };
+  const handleDelete = async () => {
+    try{
+      const token = localStorage.getItem('accessToken');
+      const response = await axios.delete(
+      `/api/v1/${storeId}/review/${reviewId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    if (response.data.isSuccess) {
+      alert('리뷰가 삭제되었습니다.');
+      setShowDeleteModal(false);
+    
+    } else {
+      alert('리뷰 삭제 실패: ' + response.data.message);
+    }
+  } catch (err) {
+    console.error('리뷰 삭제 중 오류:', err);
+    alert('리뷰 삭제 중 오류가 발생했습니다.');
+  }
+};
+  
 
   const openDeleteModal = () => setShowDeleteModal(true);
   const closeDeleteModal = () => setShowDeleteModal(false);
