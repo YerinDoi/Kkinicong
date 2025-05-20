@@ -64,7 +64,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
     );
 
     if (response.data.isSuccess) {
-      alert('리뷰가 삭제되었습니다.');
+
       setShowDeleteModal(false);
       setReviews((prev) =>
       prev.filter((review) => review.reviewId !== reviewId)

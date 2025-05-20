@@ -11,6 +11,7 @@ import axios from '@/api/axiosInstance';
 import { useLocation } from 'react-router-dom';
 import { tagMap } from '@/constants/tagMap';
 import ConfirmToast from '@/components/common/ConfirmToast';
+import { createPortal } from 'react-dom';
 
 const StoreReviewPage = () => {
   const { storeId } = useParams<{ storeId: string }>();
@@ -97,11 +98,14 @@ const StoreReviewPage = () => {
           </button>
         </div>
         {/*토스트 수정 예정*/}
-        {showToast && (
-          <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
-            <ConfirmToast text="리뷰 등록 완료! " />
-          </div>
-        )}
+        {showToast &&
+          createPortal(
+            <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-[9999]">
+              <ConfirmToast text="신고 완료!" />
+            </div>,
+            document.body
+          )
+        }
       </div>
     </div>
   );

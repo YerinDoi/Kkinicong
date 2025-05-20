@@ -4,6 +4,7 @@ import BottomSheetForm from '@/components/common/BottomSheetForm';
 import ConfirmToast from '@/components/common/ConfirmToast';
 import axiosInstance from '@/api/axiosInstance';
 import axios from 'axios';
+import { createPortal } from 'react-dom';
 
 interface Props {
   storeId: number;
@@ -102,11 +103,14 @@ const RequestEditButton: React.FC<Props> = ({
           storeInfo={storeInfo}
         />
       </BottomSheet>
-      {showToast && (
-        <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
-          <ConfirmToast text="수정 요청 완료! " />
-        </div>
-      )}
+      {showToast &&
+        createPortal(
+          <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
+            <ConfirmToast text="수정 요청 완료! " />
+          </div>,
+          document.body
+        )
+      }
     </>
   );
 };

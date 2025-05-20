@@ -5,6 +5,7 @@ import ConfirmToast from '@/components/common/ConfirmToast';
 import AlarmIcon from '@/assets/svgs/common/alarm.svg';
 import axiosInstance from '@/api/axiosInstance';
 import axios from 'axios';
+import { createPortal } from 'react-dom';
 
 interface Props {
   onClick?: () => void;
@@ -113,9 +114,12 @@ const ReportReviewButton: React.FC<Props> = ({ onClick, review, reviewId }) => {
         />
       </BottomSheet>
       {showToast && (
-        <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
-          <ConfirmToast text="신고 완료! " />
-        </div>
+         createPortal(
+          <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
+            <ConfirmToast text="신고 완료! " />
+          </div>,
+          document.body
+        )
       )}
     </>
   );
