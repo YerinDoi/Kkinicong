@@ -19,7 +19,7 @@ const StoreDetailPage = () => {
   useEffect(() => {
     const fetchStoreDetail = async () => {
       try {
-        const res = await axios.get(`/store/${storeId}`);
+        const res = await axios.get(`/api/v1/store/${storeId}`);
         const storeData = res.data.results;
 
         setStore(storeData);
