@@ -43,9 +43,10 @@ const StoreDetailPage = () => {
   if (error || !store) return <div>가맹점 정보를 찾을 수 없습니다.</div>;
 
   return (
-    <div className="font-pretendard">
+    <div className="font-pretendard mt-[11px]">
       <TopBar rightElement />
       <StoreDetailInfo
+        store={store}
         storeId={store.storeId}
         category={store.storeCategory}
         name={store.storeName}
@@ -58,8 +59,9 @@ const StoreDetailPage = () => {
         weekly={store.storeWeeklyOpeningHours ?? undefined}
         updatedDate={store.storeUpdatedDate}
       />
-      <StoreDetailMap />
-      <StoreDetailReview store={store} />
+
+      <StoreDetailMap store={store}/>
+      <StoreDetailReview store={store} /> 
     </div>
   );
 };

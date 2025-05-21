@@ -27,10 +27,14 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
     if (isLoggedIn) {
       navigate(`/store-review/${store.storeId}`, {
         state: {
+ 
           name: store.storeName,
           address: store.storeAddress,
           category: store.storeCategory,
           mainTag: store.representativeTag,
+          storeId:store.storeId,
+          latitude: store.latitude,           // ← 추가!
+    longitude: store.longitude
         },
       });
     } else {
@@ -55,7 +59,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
     setPage(pageToLoad);
     setTotalPage(pageResponse.totalPage);
   };
-  
+
   useEffect(() => {
     fetchReviews(0);
   }, [store.storeId]);
@@ -96,9 +100,9 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
       {/* 리뷰 카드 리스트 */}
       <div className="flex flex-col gap-[20px]">{
         reviewCount == 0 ? (
-          <div className='flex flex-col gap-[12px] mt-[34px] text-center'>
+          <div className='flex flex-col gap-[12px] mt-[34px] mb-[61px] text-center'>
             <p className='text-sm font-medium leading-[18px]'>아직은 작성된 리뷰가 없어요</p>
-            <p className='text-xs font-medium text-[#919191]'>첫번째 리뷰를 작성하시겠어요?</p>
+            <button onClick={handleReviewClick} className='text-xs font-medium text-[#919191] underline'>첫번째 리뷰를 작성하시겠어요?</button>
           </div>
         ):(reviews.map((review) => (
           

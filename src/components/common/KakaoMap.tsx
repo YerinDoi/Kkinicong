@@ -1,5 +1,6 @@
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import useKakaoMapLoader from '@/hooks/useKakaoMapLoader';
+import { useEffect, useRef, useState } from 'react';
 
 interface KakaoMapProps {
     center: { lat: number; lng: number };  // 지도 중심 좌표

@@ -8,8 +8,10 @@ import StoreDetailMap from '@/components/StoreDetail/StoreDetailMap';
 import dayjs from 'dayjs';
 import LoginRequiredBottomSheet from '../common/LoginRequiredBottomSheet';
 import axios from '@/api/axiosInstance';
+import type { StoreDetail } from '@/types/store';
 
 interface StoreDetailInfoProps {
+  store: StoreDetail;
   storeId?: number;
   category: string;
   name: string;
@@ -24,6 +26,7 @@ interface StoreDetailInfoProps {
 }
 
 const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
+  store,
   storeId,
   category,
   name,
@@ -115,7 +118,7 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
               storeInfo={{
                 name,
                 category,
-                mapComponent: <StoreDetailMap />,
+                mapComponent: <StoreDetailMap store={store} />
               }}
             />
           )}

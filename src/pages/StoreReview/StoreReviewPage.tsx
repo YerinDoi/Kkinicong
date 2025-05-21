@@ -13,11 +13,12 @@ import { tagMap } from '@/constants/tagMap';
 import ConfirmToast from '@/components/common/ConfirmToast';
 import { createPortal } from 'react-dom';
 
+
 const StoreReviewPage = () => {
   const { storeId } = useParams<{ storeId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const { name, address, category, mainTag } = location.state ?? {};
+  const { name, address, category, mainTag,latitude, longitude } = location.state ?? {};
 
   // 입력 값 상태 관리
   const [rating, setRating] = useState(0);
@@ -75,10 +76,16 @@ const StoreReviewPage = () => {
       <div className="flex flex-col w-full mt-[11px] mb-[29px] gap-[12px] font-pretendard">
         <TopBar title="리뷰 쓰기" />
         <StoreInfo
-          category={category}
-          name={name}
-          address={address}
-          badgeText={mainTag}
+          store={{
+          storeId: Number(storeId),
+          storeName: name,
+          storeCategory: category,
+          storeAddress: address,
+          latitude,
+          longitude,
+        }}
+        badgeText={mainTag}
+          
         />
 
         <div className="px-[16px] flex flex-col gap-[28px]">

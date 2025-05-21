@@ -5,11 +5,11 @@ const axiosInstance = axios.create({
   // withCredentials: true, // refreshToken이 쿠키로 올 경우 사용
 });
 
-if (import.meta.env.MODE === 'development' && !localStorage.getItem('accessToken')) {
-  console.log('[DEV MODE] Swagger용 accessToken 임시 주입');
-  localStorage.setItem('accessToken', 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQ3NzQyMDE2LCJleHAiOjE3NDc3NjAwMTZ9.pWxffSflKK6fS1bZ7qGGbNsE2z9yiXs2BBoTSSsxv39F5NSm4ZvRnCNQpfcCl-5JQrrNbebOO5ebxsXWvL9BZA');
-}
-// access token을 헤더에 자동으로 넣어주는 interceptor
+// if (import.meta.env.MODE === 'development' && !localStorage.getItem('accessToken')) {
+//   console.log('[DEV MODE] Swagger용 accessToken 임시 주입');
+//   localStorage.setItem('Swagger용 accessToken 임시로 바꿔서 넣기');
+// }
+
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem('accessToken');
   if (token) {
@@ -22,14 +22,13 @@ axiosInstance.interceptors.request.use((config) => {
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    
     const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         const refreshRes = await axios.post(
-          '/api/v1/auth/refresh',
+          '/auth/refresh',
           {},
           { withCredentials: true }, // 쿠키 기반 refreshToken 전송
         );
