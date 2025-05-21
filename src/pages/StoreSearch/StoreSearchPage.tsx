@@ -129,10 +129,9 @@ const StoreSearchPage = () => {
         longitude: locationCoordinates.longitude,
       });
 
-      const response = await axiosInstance.get(
-        'https://kkinikong.store/api/v1/store/list',
-        { params },
-      );
+      const response = await axiosInstance.get('/api/v1/store/list', {
+        params,
+      });
 
       console.log('API 응답:', response.data);
 
@@ -183,12 +182,9 @@ const StoreSearchPage = () => {
 
         console.log('API 요청 파라미터:', params);
 
-        const response = await axiosInstance.get(
-          'https://kkinikong.store/api/v1/store/list',
-          {
-            params,
-          },
-        );
+        const response = await axiosInstance.get('/api/v1/store/list', {
+          params,
+        });
 
         console.log('API 응답:', response.data);
 
