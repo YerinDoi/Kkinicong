@@ -12,22 +12,19 @@ const StoreDetailPage = () => {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
 
-
   const [store, setStore] = useState<StoreDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-
-
   useEffect(() => {
     const fetchStoreDetail = async () => {
       try {
-        const res = await axios.get(`/api/v1/store/${storeId}`);
+        const res = await axios.get(`/store/${storeId}`);
         const storeData = res.data.results;
 
         setStore(storeData);
-        setIsLiked(storeData.isScrapped === true);     
-        setLikeCount(storeData.scrapCount ?? 0); 
+        setIsLiked(storeData.isScrapped === true);
+        setLikeCount(storeData.scrapCount ?? 0);
       } catch (err) {
         console.error('가맹점 정보를 불러오는데 실패했습니다.', err);
         setError(true);
@@ -60,8 +57,8 @@ const StoreDetailPage = () => {
         updatedDate={store.storeUpdatedDate}
       />
 
-      <StoreDetailMap store={store}/>
-      <StoreDetailReview store={store} /> 
+      <StoreDetailMap store={store} />
+      <StoreDetailReview store={store} />
     </div>
   );
 };
