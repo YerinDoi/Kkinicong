@@ -28,7 +28,8 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const refreshRes = await axios.post(
-          'api/v1/auth/refresh',
+          // 'api/v1/auth/refresh',
+          `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/refresh`,
           {},
           { withCredentials: true }, // 쿠키 기반 refreshToken 전송
         );
