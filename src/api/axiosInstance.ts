@@ -5,7 +5,11 @@ const axiosInstance = axios.create({
   // withCredentials: true, // refreshToken이 쿠키로 올 경우 사용
 });
 
-// access token을 헤더에 자동으로 넣어주는 interceptor
+// if (import.meta.env.MODE === 'development' && !localStorage.getItem('accessToken')) {
+//   console.log('[DEV MODE] Swagger용 accessToken 임시 주입');
+//   localStorage.setItem('Swagger용 accessToken 임시로 바꿔서 넣기');
+// }
+
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem('accessToken');
   if (token) {

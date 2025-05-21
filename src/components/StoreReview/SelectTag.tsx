@@ -1,17 +1,24 @@
-import React, { useState } from 'react';
+import React from 'react';
 import TagSelector from '@/components/StoreReview/TagSelector';
 
 const MAX_TOTAL = 5;
 
-const SelectTag: React.FC = () => {
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+interface SelectTagProps {
+  selected: string[];
+  onChange: (tags: string[]) => void;
+}
 
+const SelectTag: React.FC<SelectTagProps> = ({ selected, onChange }) => {
   const handleTagChange = (groupTags: string[], updated: string[]) => {
-    const otherSelected = selectedTags.filter((t) => !groupTags.includes(t));
-    const newSelected = [...otherSelected, ...updated];
-    if (newSelected.length <= MAX_TOTAL) {
-      setSelectedTags(newSelected);
+    const otherSelected = selected.filter((t) => !groupTags.includes(t));
+    const merged = [...otherSelected, ...updated];
+    const deduplicated = [...new Set(merged)];
+
+    if (deduplicated.length > MAX_TOTAL) {
+      return;
     }
+
+    onChange(deduplicated);
   };
 
   return (
@@ -27,7 +34,7 @@ const SelectTag: React.FC = () => {
 
         <TagSelector
           tags={['음식이 맛있어요', '재료가 신선해요', '아이들이 먹기 좋아요']}
-          selectedTags={selectedTags}
+          selectedTags={selected}
           onChange={(updated) =>
             handleTagChange(
               ['음식이 맛있어요', '재료가 신선해요', '아이들이 먹기 좋아요'],
@@ -45,7 +52,7 @@ const SelectTag: React.FC = () => {
             '매장이 청결해요',
             '금방 나와요',
           ]}
-          selectedTags={selectedTags}
+          selectedTags={selected}
           onChange={(updated) =>
             handleTagChange(
               [
@@ -66,7 +73,7 @@ const SelectTag: React.FC = () => {
             '결제 거절이 없어요',
             '편하게 먹을 수 있어요',
           ]}
-          selectedTags={selectedTags}
+          selectedTags={selected}
           onChange={(updated) =>
             handleTagChange(
               [
@@ -81,7 +88,7 @@ const SelectTag: React.FC = () => {
         <p>기타</p>
         <TagSelector
           tags={['포장 가능해요', '주차하기 편해요']}
-          selectedTags={selectedTags}
+          selectedTags={selected}
           onChange={(updated) =>
             handleTagChange(['포장 가능해요', '주차하기 편해요'], updated)
           }

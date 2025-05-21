@@ -7,7 +7,7 @@ import axiosInstance from '@/api/axiosInstance';
 
 interface StoreDetailMapProps {
   hideButtons?: boolean;
-  store: StoreDetail;
+  store?: StoreDetail;
 }
 
 const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
@@ -60,7 +60,7 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
   }, [store?.storeId]);
 
   if (!store) {
-    return <div>가맹점 정보를 찾을 수 없습니다.</div>;
+    return <div className='px-[16px]'>가맹점 정보를 찾을 수 없습니다.</div>;
   }
 
   const marker = [{ lat: store.latitude, lng: store.longitude }];

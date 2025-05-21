@@ -1,9 +1,18 @@
 import React,{ useState } from "react";
 import CheckboxIcon from "@/assets/svgs/review/checkbox.svg";
 import UncheckedIcon from "@/assets/svgs/review/unchecked-box.svg";
+interface CheckBoxProps {
+  onCheckChange: (checked: boolean) => void;
+}
 
-const CheckBox: React.FC = () => {
+const CheckBox: React.FC<CheckBoxProps> = ({onCheckChange }) => {
   const [checked, setChecked] = useState(false);
+  
+  const handleToggle = () => {
+    const newValue = !checked;
+    setChecked(newValue);
+    onCheckChange(newValue); 
+  };
   
   return (
     <div className="flex flex-col gap-[12px] ">
@@ -12,7 +21,7 @@ const CheckBox: React.FC = () => {
       </p>
       <label className="flex items-center gap-[8px] cursor-pointer select-none">
       
-        <div onClick={() => setChecked(!checked)} className="w-[20px] h-[20px]">
+        <div onClick={handleToggle} className="w-[20px] h-[20px]">
           <img
             src={checked ? CheckboxIcon : UncheckedIcon}
             alt="체크박스"
