@@ -4,7 +4,7 @@ type LoginType = 'KAKAO' | 'NAVER' | 'GOOGLE';
 
 // code: redirect URI에서 받은 인증 코드
 export const login = async (loginType: LoginType, code: string) => {
-  const response = await axios.get(`/auth/login/${loginType}`, {
+  const response = await axios.get(`/api/v1/auth/login/${loginType}`, {
     params: { code }, // 쿼리 파라미터로 전달
   });
 
