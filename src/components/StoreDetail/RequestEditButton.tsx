@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import BottomSheet from '@/components/common/BottomSheet';
 import BottomSheetForm from '@/components/common/BottomSheetForm';
 import ConfirmToast from '@/components/common/ConfirmToast';
+import axiosInstance from '@/api/axiosInstance';
 import axios from 'axios';
+import { createPortal } from 'react-dom';
 
 interface Props {
   storeId: number;
@@ -38,14 +40,10 @@ const RequestEditButton: React.FC<Props> = ({
   const handleEditSubmit = async (reason: string, description: string) => {
     const token = localStorage.getItem('accessToken');
     const mappedReason = reasonMap[reason as keyof typeof reasonMap];
-    if (!token) {
-      alert('로그인이 필요한 기능입니다.');
-      return;
-    }
 
     try {
-      await axios.post(
-        `https://kkinikong.store/api/v1/report/store/${storeId}`,
+      await axiosInstance.post(
+        `/api/v1/report/store/${storeId}`,
         { description },
         {
           params: { reason: mappedReason },
@@ -58,8 +56,19 @@ const RequestEditButton: React.FC<Props> = ({
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     } catch (error) {
-      console.error('수정 요청 실패', error);
-      alert('수정 요청에 실패했습니다.');
+      if (axios.isAxiosError(error)) {
+        const errorCode = error.response?.data?.code;
+        console.error('수정 요청 실패 코드:', errorCode);
+
+        if (errorCode === 'STORE_REPORT_ALREADY_EXISTS') {
+          alert('이미 수정 요청을 보낸 가게입니다.');
+          return;
+        }
+
+        alert('수정 요청에 실패했습니다.');
+      } else {
+        alert('예상치 못한 오류가 발생했습니다.');
+      }
     }
   };
 
@@ -94,11 +103,14 @@ const RequestEditButton: React.FC<Props> = ({
           storeInfo={storeInfo}
         />
       </BottomSheet>
-      {showToast && (
-        <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
-          <ConfirmToast text="수정 요청 완료! " />
-        </div>
-      )}
+      {showToast &&
+        createPortal(
+          <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
+            <ConfirmToast text="수정 요청 완료! " />
+          </div>,
+          document.body
+        )
+      }
     </>
   );
 };

@@ -55,6 +55,8 @@ export type Store = {
   scrapCount: number;
   representativeTag: string | null;
   isScrapped: boolean | null;
+  latitude: number; // 위도
+  longitude: number; // 경도
 };
 
 export type StoreApiResponse = {
@@ -79,4 +81,23 @@ export interface StoreDetail {
   storeUpdatedDate: string;
   storeReviewCount: number;
   storeRating: number;
+  reviews?: StoreReview[];
+  reviewCount?: number;
+  ratingAvg?: number;
+  latitude: number; 
+  longitude: number;
+}
+
+export interface StoreReview {
+  reviewId: number;
+  nickname: string | null;
+  reviewDate: string;
+  rating: number;
+  tags: string[];
+  content: string;
+  imageUrl: string | null;
+  isOwner: boolean | null;
+  latitude: number;
+  longitude: number;
+
 }

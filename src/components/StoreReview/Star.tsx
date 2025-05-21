@@ -10,10 +10,7 @@ interface StarProps {
 }
 
 const Star: React.FC<StarProps> = ({ max = 5, value = 0, onChange }) => {
-  const [rating, setRating] = useState(value);
-
   const handleClick = (v: number) => {
-    setRating(v);
     onChange?.(v);
   };
 
@@ -22,8 +19,8 @@ const Star: React.FC<StarProps> = ({ max = 5, value = 0, onChange }) => {
       {Array.from({ length: max }, (_, i) => (
         <img
           key={i}
-          src={i < rating ? yellowStar : disabledStar}
-          alt={i < rating ? '선택된 별' : '빈 별'}
+          src={i < value ? yellowStar : disabledStar}
+          alt={i < value ? '선택된 별' : '빈 별'}
           className="w-[40px] h-[38px] cursor-pointer"
           onClick={() => handleClick(i + 1)}
         />
