@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { checkNicknameDuplicate, registerNickname } from '@/api/user'; // ✅ ❶ axios 기반 API 함수 import
+import TopBar from '@/components/common/TopBar';
+
+import { checkNicknameDuplicate, registerNickname } from '@/api/user';
 import { useDispatch } from 'react-redux';
 import { setUser } from '@/store/userSlice'; // ✅ ❷ 닉네임 저장용 액션
 
@@ -79,7 +81,8 @@ export default function NicknamePage() {
   return (
     <div className="flex flex-col h-full px-6 pt-6 pb-8">
       {/* 뒤로가기 버튼 */}
-      <button className="mb-6 text-xl">{'←'}</button>
+      {/* <button className="mb-6 text-xl">{'←'}</button> */}
+      <TopBar />
 
       {/* 타이틀 영역 */}
       <div className="mb-48px">
