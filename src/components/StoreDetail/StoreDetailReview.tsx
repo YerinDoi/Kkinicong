@@ -25,16 +25,15 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
     const isLoggedIn = !!localStorage.getItem('accessToken');
 
     if (isLoggedIn) {
-      navigate(`/store-review/${store.storeId}`, {
+      navigate(`/api/v1/store-review/${store.storeId}`, {
         state: {
- 
           name: store.storeName,
           address: store.storeAddress,
           category: store.storeCategory,
           mainTag: store.representativeTag,
-          storeId:store.storeId,
-          latitude: store.latitude,           // ← 추가!
-    longitude: store.longitude
+          storeId: store.storeId,
+          latitude: store.latitude, // ← 추가!
+          longitude: store.longitude,
         },
       });
     } else {
@@ -63,8 +62,6 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
   useEffect(() => {
     fetchReviews(0);
   }, [store.storeId]);
-
-  
 
   return (
     <section className="flex flex-col mt-[12px] ">
@@ -96,34 +93,39 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
           <span>{ratingAvg.toFixed(1)}</span>
         </div>
       </div>
-      
-      {/* 리뷰 카드 리스트 */}
-      <div className="flex flex-col gap-[20px]">{
-        reviewCount == 0 ? (
-          <div className='flex flex-col gap-[12px] mt-[34px] mb-[61px] text-center'>
-            <p className='text-sm font-medium leading-[18px]'>아직은 작성된 리뷰가 없어요</p>
-            <button onClick={handleReviewClick} className='text-xs font-medium text-[#919191] underline'>첫번째 리뷰를 작성하시겠어요?</button>
-          </div>
-        ):(reviews.map((review) => (
-          
-          <ReviewItem
-            key={review.reviewId}
-            reviewId={review.reviewId}
-            userName={review.nickname ?? ''}
-            rating={review.rating}
-            content={review.content}
-            date={review.reviewDate}
-            imageUrl={review.imageUrl}
-            tags={review.tags}
-            isOwner={review.isOwner ?? false}
-            storeId={store.storeId}
-            setReviews = {setReviews}
-            refreshReviews={() => fetchReviews(0)} 
-          />
 
-        )))}
-   
-        
+      {/* 리뷰 카드 리스트 */}
+      <div className="flex flex-col gap-[20px]">
+        {reviewCount == 0 ? (
+          <div className="flex flex-col gap-[12px] mt-[34px] mb-[61px] text-center">
+            <p className="text-sm font-medium leading-[18px]">
+              아직은 작성된 리뷰가 없어요
+            </p>
+            <button
+              onClick={handleReviewClick}
+              className="text-xs font-medium text-[#919191] underline"
+            >
+              첫번째 리뷰를 작성하시겠어요?
+            </button>
+          </div>
+        ) : (
+          reviews.map((review) => (
+            <ReviewItem
+              key={review.reviewId}
+              reviewId={review.reviewId}
+              userName={review.nickname ?? ''}
+              rating={review.rating}
+              content={review.content}
+              date={review.reviewDate}
+              imageUrl={review.imageUrl}
+              tags={review.tags}
+              isOwner={review.isOwner ?? false}
+              storeId={store.storeId}
+              setReviews={setReviews}
+              refreshReviews={() => fetchReviews(0)}
+            />
+          ))
+        )}
       </div>
 
       {/* 더 보기 */}

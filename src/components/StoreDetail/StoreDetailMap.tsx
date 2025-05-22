@@ -36,7 +36,7 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
         setErrorLoadingLinks(false);
         console.log('외부 링크 API 호출 시작:', store.storeId);
         const response = await axiosInstance.get(
-          `/store/${store.storeId}/external-links`,
+          `/api/v1/store/${store.storeId}/external-links`,
         );
         console.log('외부 링크 API 응답:', response.data);
         if (response.data.isSuccess) {
@@ -60,7 +60,7 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
   }, [store?.storeId]);
 
   if (!store) {
-    return <div className='px-[16px]'>가맹점 정보를 찾을 수 없습니다.</div>;
+    return <div className="px-[16px]">가맹점 정보를 찾을 수 없습니다.</div>;
   }
 
   const marker = [{ lat: store.latitude, lng: store.longitude }];
