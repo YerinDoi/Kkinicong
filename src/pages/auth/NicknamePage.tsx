@@ -79,13 +79,12 @@ export default function NicknamePage() {
   };
 
   return (
-    <div className="flex flex-col h-full px-6 pt-6 pb-8">
+    <div className="flex flex-col h-full pb-8">
       {/* 뒤로가기 버튼 */}
-      {/* <button className="mb-6 text-xl">{'←'}</button> */}
       <TopBar />
 
       {/* 타이틀 영역 */}
-      <div className="mb-48px">
+      <div className="mb-48px px-6">
         <h1 className="text-xl font-bold text-black">반가워요!</h1>
         <p className="text-lg font-semibold text-[#65CE58]">
           사용할 닉네임을 정해주세요
@@ -96,7 +95,7 @@ export default function NicknamePage() {
       </div>
 
       {/* 입력 영역 */}
-      <div className="mb-2">
+      <div className="mb-2 px-6">
         <div className="flex items-center border-b border-gray-300 py-2">
           <input
             value={nickname}
@@ -122,7 +121,7 @@ export default function NicknamePage() {
       </div>
 
       {/* 하단 고정 버튼 */}
-      <div className="mt-auto">
+      <div className="mt-auto px-6">
         <button
           onClick={handleRegister}
           disabled={!!error || isDuplicate !== false || isSubmitting}
