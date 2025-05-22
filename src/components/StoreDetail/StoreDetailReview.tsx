@@ -25,7 +25,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
     const isLoggedIn = !!localStorage.getItem('accessToken');
 
     if (isLoggedIn) {
-      navigate(`/api/v1/store-review/${store.storeId}`, {
+      navigate(`/store-review/${store.storeId}`, {
         state: {
           name: store.storeName,
           address: store.storeAddress,
