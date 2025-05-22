@@ -17,7 +17,7 @@ export default function NicknamePage() {
 
   // 유효성 검사 함수
   const validateNickname = (value: string) => {
-    const regex = /^[가-힣a-zA-Z0-9]+$/;
+    const regex = /^[가-힣a-zA-Z0-9 ]+$/;
     if (value.length === 0) return '닉네임을 입력해주세요';
     if (value.length > 10) return '10자 이내로 입력해주세요';
     if (!regex.test(value)) return '한글, 영문, 숫자만 사용할 수 있어요';
