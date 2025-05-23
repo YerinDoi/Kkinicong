@@ -24,7 +24,7 @@ const StoreDetailPage = () => {
 
         setStore(storeData);
         setIsLiked(storeData.isScrapped === true);
-        setLikeCount(storeData.scrapCount ?? 0);
+        setLikeCount(storeData.storeScrapCount ?? 0); // 필드 이름 수정
       } catch (err) {
         console.error('가맹점 정보를 불러오는데 실패했습니다.', err);
         setError(true);
