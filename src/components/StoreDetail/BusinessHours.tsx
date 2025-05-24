@@ -14,10 +14,16 @@ type WeeklyHours = {
 };
 type StoreStatus = '영업중' | '영업 종료' | '휴무';
 
-function parseTodayTime(timeStr: string) {
+function parseTodayTime(timeStr: string, isClosingTime = false) {
   const [hour, minute] = timeStr.split(':').map(Number);
-  const now = dayjs();
-  return now.hour(hour).minute(minute).second(0);
+  let base = dayjs().startOf('day').add(hour, 'hour').add(minute, 'minute');
+
+  // 마감 시간이 정확히 00:00이라면 다음 날로 보정
+  if (isClosingTime && hour === 0 && minute === 0) {
+    base = base.add(1, 'day');
+  }
+
+  return base;
 }
 
 function getStoreStatus(weekly?: WeeklyHours): StoreStatus {
@@ -30,7 +36,7 @@ function getStoreStatus(weekly?: WeeklyHours): StoreStatus {
 
   const now = dayjs();
   const openTime = parseTodayTime(todayHours[0]);
-  const closeTime = parseTodayTime(todayHours[1]);
+  const closeTime = parseTodayTime(todayHours[1], true);
 
   if (now.isBefore(openTime)) return '영업 종료';
   if (now.isAfter(closeTime)) return '영업 종료';
