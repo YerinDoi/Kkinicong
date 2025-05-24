@@ -50,9 +50,9 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
     }
 
     if (!storeId) {
-    console.error('[스크랩 실패] storeId가 undefined입니다.');
-    return;
-  }
+      console.error('[스크랩 실패] storeId가 undefined입니다.');
+      return;
+    }
 
     try {
       const response = await axios({
