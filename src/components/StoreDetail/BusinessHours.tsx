@@ -20,7 +20,6 @@ function parseTodayTime(timeStr: string) {
   return now.hour(hour).minute(minute).second(0);
 }
 
-
 function getStoreStatus(weekly?: WeeklyHours): StoreStatus {
   if (!weekly) return '휴무';
 
@@ -43,9 +42,8 @@ interface Props {
 }
 
 const BusinessHours: React.FC<Props> = ({ weekly }) => {
-  const isAllDaysClosed = !weekly || Object.values(weekly).every((value) => value === null); //영업시간 데이터 없으면 표시x
-  if (isAllDaysClosed) return <p className="text-sm text-[#919191] font-medium">영업시간 정보 없음</p>
-
+  const isAllDaysClosed =
+    !weekly || Object.values(weekly).every((value) => value === null); //영업시간 데이터 없으면 표시x
 
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -77,8 +75,16 @@ const BusinessHours: React.FC<Props> = ({ weekly }) => {
     }
   }, [isOpen]);
 
+  if (isAllDaysClosed)
+    return (
+      <p className="text-sm text-[#616161] font-medium">영업시간 정보 없음</p>
+    );
+
   return (
-    <div ref={dropdownRef} className="relative w-fit text-sm text-[#616161] font-medium">
+    <div
+      ref={dropdownRef}
+      className="relative w-fit text-sm text-[#616161] font-medium"
+    >
       <div className="flex gap-[12px] cursor-pointer">
         <span
           className={`inline-flex items-center rounded-[6px] border-[1px] px-[8px] py-[4px] text-sm leading-[18px] h-[26px] 
