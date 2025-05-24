@@ -83,7 +83,9 @@ const BusinessHours: React.FC<Props> = ({ weekly }) => {
 
   if (isAllDaysClosed)
     return (
-      <p className="text-sm text-[#616161] font-medium">영업시간 정보 없음</p>
+      <p className="text-sm text-[#616161] font-medium h-[24.6px]">
+        영업시간 정보 없음
+      </p>
     );
 
   return (
