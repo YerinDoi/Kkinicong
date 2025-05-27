@@ -6,9 +6,9 @@ import CallbackPage from '@/pages/auth/CallbackPage';
 import NicknamePage from '@/pages/auth/NicknamePage';
 import NicknamePageXXX from '@/pages/auth/NicknamePageXXX';
 
-import StoreSearchPage from '@/pages/StoreSearch/StoreSearchPage';
-import StoreReviewPage from '@/pages/StoreReview/StoreReviewPage';
-import StoreDetailPage from '@/pages/StoreDetail/StoreDetailPage';
+import StoreSearchPage from '@/pages/store-search/StoreSearchPage';
+import StoreReviewPage from '@/pages/store-review/StoreReviewPage';
+import StoreDetailPage from '@/pages/store-detail/StoreDetailPage';
 
 const Router = () => {
   return (
