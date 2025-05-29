@@ -16,6 +16,8 @@ const StoreDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
+  // 리뷰PR 커밋용 주석 열기
+  // 가맹점 상세 정보 불러오기
   useEffect(() => {
     const fetchStoreDetail = async () => {
       try {
@@ -38,6 +40,8 @@ const StoreDetailPage = () => {
 
   if (loading) return <div>로딩 중...</div>;
   if (error || !store) return <div>가맹점 정보를 찾을 수 없습니다.</div>;
+
+  // 리뷰PR 커밋용 주석 닫기
 
   return (
     <div className="font-pretendard mt-[11px]">

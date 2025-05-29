@@ -3,6 +3,7 @@ import StoreDetailMap from '@/components/StoreDetail/StoreDetailMap';
 import MainTag from '@/components/StoreReview/MainTag';
 import { StoreDetail } from '@/types/store';
 
+// 리뷰PR 커밋용 주석 열기
 interface StoreInfoProps {
   store: StoreDetail;
   badgeText?: string;
@@ -12,8 +13,8 @@ const StoreInfo: React.FC<StoreInfoProps> = ({
   store,
   badgeText = '재료가 신선해요',
 }) => {
-  const { storeName, storeCategory, storeAddress ,latitude,
-    longitude,} = store;
+  const { storeName, storeCategory, storeAddress, latitude, longitude } = store;
+  // 리뷰PR 커밋용 주석 닫기
 
   if (latitude == null || longitude == null) {
     console.warn('StoreInfo에 좌표가 없습니다:', store);
@@ -43,7 +44,9 @@ const StoreInfo: React.FC<StoreInfoProps> = ({
         {latitude != null && longitude != null ? (
           <StoreDetailMap hideButtons store={store} />
         ) : (
-          <div className="text-sm text-red-500 pl-4">지도를 표시할 수 없습니다 (좌표 없음)</div>
+          <div className="text-sm text-red-500 pl-4">
+            지도를 표시할 수 없습니다 (좌표 없음)
+          </div>
         )}
       </div>
     </div>

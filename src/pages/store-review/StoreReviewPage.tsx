@@ -13,6 +13,7 @@ import { tagMap } from '@/constants/tagMap';
 import ConfirmToast from '@/components/common/ConfirmToast';
 import { createPortal } from 'react-dom';
 
+// 리뷰PR 커밋용 주석 열기
 const StoreReviewPage = () => {
   const { storeId } = useParams<{ storeId: string }>();
   const navigate = useNavigate();
@@ -71,6 +72,7 @@ const StoreReviewPage = () => {
       alert('리뷰 작성에 실패했습니다.');
     }
   };
+  // 리뷰PR 커밋용 주석 닫기
   return (
     <div>
       <div className="flex flex-col w-full mt-[11px] mb-[29px] gap-[12px] font-pretendard">

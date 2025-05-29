@@ -21,6 +21,8 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
   const [reviewCount, setReviewCount] = useState<number>(0);
 
   const [showLoginModal, setShowLoginModal] = useState(false);
+
+  // 리뷰PR 커밋용 주석 열기
   const handleReviewClick = () => {
     const isLoggedIn = !!localStorage.getItem('accessToken');
 
@@ -40,6 +42,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
       setShowLoginModal(true);
     }
   };
+  // 리뷰PR 커밋용 주석 닫기
 
   const fetchReviews = async (pageToLoad: number) => {
     const res = await axios.get(`/api/v1/${store.storeId}/review`, {
