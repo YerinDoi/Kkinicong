@@ -96,6 +96,26 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
           <div className="flex items-center gap-[12px] self-stretch">
             <BusinessHours weekly={weekly} />
           </div>
+        </div>
+
+        {/* 수정요청 버튼 + 업데이트 날짜 */}
+        <div className="flex justify-between">
+          <div className="flex gap-[8px] items-end">
+            {storeId !== undefined && (
+              <RequestEditButton
+                storeId={storeId}
+                storeInfo={{
+                  name,
+                  category,
+                  mapComponent: <StoreDetailMap store={store} />,
+                }}
+              />
+            )}
+            <p className="text-xs font-medium text-[#C3C3C3]">
+              업데이트 {dayjs(updatedDate).format('YYYY.MM.DD')}
+            </p>
+          </div>
+
           <div className="flex justify-end items-center gap-[8px]">
             <button onClick={handleLikeClick} className="cursor-pointer">
               <Icon name={isLiked ? 'heart-filled' : 'heart'} />
@@ -108,23 +128,6 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
               {favoriteCount}
             </span>
           </div>
-        </div>
-
-        {/* 수정요청 버튼 + 업데이트 날짜 */}
-        <div className="flex gap-[8px] items-end">
-          {storeId !== undefined && (
-            <RequestEditButton
-              storeId={storeId}
-              storeInfo={{
-                name,
-                category,
-                mapComponent: <StoreDetailMap store={store} />
-              }}
-            />
-          )}
-          <p className="text-xs font-medium text-[#C3C3C3]">
-            업데이트 {dayjs(updatedDate).format('YYYY.MM.DD')}
-          </p>
         </div>
       </div>
 

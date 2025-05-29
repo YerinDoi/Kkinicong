@@ -11,7 +11,7 @@ interface UploadImageProps {
 const UploadImage: React.FC<UploadImageProps> = ({ onFileSelect }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string[] | null>(null);
   const [showToast, setShowToast] = useState(false);
 
   const handleUploadClick = () => {
@@ -32,14 +32,17 @@ const UploadImage: React.FC<UploadImageProps> = ({ onFileSelect }) => {
 
     try {
       if (!allowedTypes.includes(file.type)) {
-        setToastMessage('지원하지 않는 형식이에요');
+        setToastMessage(['지원하지 않는 형식이에요', '다시 시도해주세요']);
         setShowToast(true);
         e.target.value = '';
         return;
       }
 
       if (file.size > maxSizeInBytes) {
-        setToastMessage('업로드 가능한 용량을 초과했어요');
+        setToastMessage([
+          '업로드 가능한 용량을 초과했어요',
+          '다시 시도해주세요',
+        ]);
         setShowToast(true);
         e.target.value = '';
         return;
@@ -49,9 +52,9 @@ const UploadImage: React.FC<UploadImageProps> = ({ onFileSelect }) => {
       setPreview(imageURL);
       onFileSelect(file);
     } catch {
-      setToastMessage('이미지 업로드에 실패했어요');
+      setToastMessage(['이미지 업로드에 실패했어요', '다시 시도해주세요']);
       setShowToast(true);
-      onFileSelect(null); 
+      onFileSelect(null);
     }
   };
 

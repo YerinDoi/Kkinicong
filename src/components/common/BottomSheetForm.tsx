@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ProfileImg from '@/assets/svgs/common/profile-img.svg';
 
 interface BottomSheetFormProps {
@@ -32,6 +32,12 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
 }) => {
   const [selected, setSelected] = useState<string | null>(null);
   const [text, setText] = useState('');
+  useEffect(() => {
+    if (text.trim().length > 0) {
+      setSelected('기타');
+    }
+  }, [text]);
+
   const isDisabled =
     !selected || (selected === '기타' && text.trim().length === 0);
 
@@ -140,7 +146,6 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
         >
           {buttonText}
         </button>
-
       </div>
     </div>
   );

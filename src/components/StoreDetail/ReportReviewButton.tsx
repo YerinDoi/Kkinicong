@@ -6,6 +6,7 @@ import AlarmIcon from '@/assets/svgs/common/alarm.svg';
 import axiosInstance from '@/api/axiosInstance';
 import axios from 'axios';
 import { createPortal } from 'react-dom';
+import WarningToast from '@/components/common/WarningToast';
 
 interface Props {
   onClick?: () => void;
@@ -19,6 +20,7 @@ interface Props {
 const ReportReviewButton: React.FC<Props> = ({ onClick, review, reviewId }) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [showWarningToast, setShowWarningToast] = useState(false);
 
   const reasonMap = {
     '부적절한 언어 사용 (욕설, 비방 등)': 'ABUSIVE_LANGUAGE',
@@ -70,7 +72,9 @@ const ReportReviewButton: React.FC<Props> = ({ onClick, review, reviewId }) => {
         console.error('신고 실패 코드:', errorCode);
 
         if (errorCode === 'REPORT_ALREADY_EXISTS') {
-          alert('이미 신고한 리뷰입니다.');
+          setIsEditOpen(false);
+          setShowWarningToast(true);
+          setTimeout(() => setShowWarningToast(false), 3000);
           return;
         }
 
@@ -113,14 +117,22 @@ const ReportReviewButton: React.FC<Props> = ({ onClick, review, reviewId }) => {
           reviewInfo={review}
         />
       </BottomSheet>
-      {showToast && (
-         createPortal(
+      {showToast &&
+        createPortal(
           <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
-            <ConfirmToast text="신고 완료! " />
+            <ConfirmToast
+              text={['신고 완료!', '최대한 빠르게 확인하고 반영할게요']}
+            />
           </div>,
-          document.body
-        )
-      )}
+          document.body,
+        )}
+      {showWarningToast &&
+        createPortal(
+          <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
+            <WarningToast text="이미 신고 완료된 리뷰에요" />
+          </div>,
+          document.body,
+        )}
     </>
   );
 };
