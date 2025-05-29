@@ -13,12 +13,12 @@ import { tagMap } from '@/constants/tagMap';
 import ConfirmToast from '@/components/common/ConfirmToast';
 import { createPortal } from 'react-dom';
 
-
 const StoreReviewPage = () => {
   const { storeId } = useParams<{ storeId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const { name, address, category, mainTag,latitude, longitude } = location.state ?? {};
+  const { name, address, category, mainTag, latitude, longitude } =
+    location.state ?? {};
 
   // 입력 값 상태 관리
   const [rating, setRating] = useState(0);
@@ -28,7 +28,7 @@ const StoreReviewPage = () => {
   const mappedTags = selectedTags.map((tag) => tagMap[tag]).filter(Boolean);
   const [checked, setChecked] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  const isSubmitEnabled = rating>0 && checked;
+  const isSubmitEnabled = rating > 0 && checked;
 
   if (!storeId) {
     return <div>가게 정보를 찾을 수 없습니다.</div>;
@@ -77,15 +77,14 @@ const StoreReviewPage = () => {
         <TopBar title="리뷰 쓰기" />
         <StoreInfo
           store={{
-          storeId: Number(storeId),
-          storeName: name,
-          storeCategory: category,
-          storeAddress: address,
-          latitude,
-          longitude,
-        }}
-        badgeText={mainTag}
-          
+            storeId: Number(storeId),
+            storeName: name,
+            storeCategory: category,
+            storeAddress: address,
+            latitude,
+            longitude,
+          }}
+          badgeText={mainTag}
         />
 
         <div className="px-[16px] flex flex-col gap-[28px]">
@@ -93,12 +92,14 @@ const StoreReviewPage = () => {
           <SelectTag selected={selectedTags} onChange={setSelectedTags} />
           <CommentBox value={comment} onChange={setComment} />
           <UploadImage onFileSelect={setImageFile} />
-          <CheckBox onCheckChange = {setChecked}/>
+          <CheckBox onCheckChange={setChecked} />
           <button
             onClick={handleSubmitReview}
             disabled={!isSubmitEnabled}
             className={`text-white font-semibold text-base px-[16px] py-[12px] rounded-[8px] mt-[24px] ${
-              isSubmitEnabled ? 'bg-[#65CE58]' : 'bg-[#E6E6E6] cursor-not-allowed'
+              isSubmitEnabled
+                ? 'bg-[#65CE58]'
+                : 'bg-[#E6E6E6] cursor-not-allowed'
             }`}
           >
             공유하기
@@ -108,11 +109,12 @@ const StoreReviewPage = () => {
         {showToast &&
           createPortal(
             <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-[9999]">
-              <ConfirmToast text="리뷰 작성 완료!" />
+              <ConfirmToast
+                text={['리뷰 작성 완료!', '소중한 의견이 등록되었어요']}
+              />
             </div>,
-            document.body
-          )
-        }
+            document.body,
+          )}
       </div>
     </div>
   );

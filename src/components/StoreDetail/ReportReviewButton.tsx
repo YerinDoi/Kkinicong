@@ -120,7 +120,9 @@ const ReportReviewButton: React.FC<Props> = ({ onClick, review, reviewId }) => {
       {showToast &&
         createPortal(
           <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
-            <ConfirmToast text="신고 완료! " />
+            <ConfirmToast
+              text={['신고 완료!', '최대한 빠르게 확인하고 반영할게요']}
+            />
           </div>,
           document.body,
         )}
