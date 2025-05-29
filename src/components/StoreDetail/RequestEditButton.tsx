@@ -5,6 +5,7 @@ import ConfirmToast from '@/components/common/ConfirmToast';
 import axiosInstance from '@/api/axiosInstance';
 import axios from 'axios';
 import { createPortal } from 'react-dom';
+import WarningToast from '@/components/common/WarningToast';
 
 interface Props {
   storeId: number;
@@ -23,6 +24,7 @@ const RequestEditButton: React.FC<Props> = ({
 }) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [showWarningToast, setShowWarningToast] = useState(false);
 
   const reasonMap = {
     '음식 카테고리': 'CATEGORY',
@@ -61,7 +63,10 @@ const RequestEditButton: React.FC<Props> = ({
         console.error('수정 요청 실패 코드:', errorCode);
 
         if (errorCode === 'STORE_REPORT_ALREADY_EXISTS') {
-          alert('이미 수정 요청을 보낸 가게입니다.');
+          setIsEditOpen(false);
+          setShowWarningToast(true);
+
+          setTimeout(() => setShowWarningToast(false), 3000); // 3초 뒤 자동 닫힘
           return;
         }
 
@@ -108,9 +113,20 @@ const RequestEditButton: React.FC<Props> = ({
           <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
             <ConfirmToast text="수정 요청 완료! " />
           </div>,
-          document.body
-        )
-      }
+          document.body,
+        )}
+      {showWarningToast &&
+        createPortal(
+          <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
+            <WarningToast
+              text={[
+                '동일 가게에 대한 정보 수정 요청은',
+                '요청 이후 7일 뒤 가능해요',
+              ]}
+            />
+          </div>,
+          document.body,
+        )}
     </>
   );
 };
