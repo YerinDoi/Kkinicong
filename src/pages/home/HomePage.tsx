@@ -1,30 +1,16 @@
-import HomeTopBar from '@/components/home/HomeTopBar';
-import Icons from '@/assets/icons';
-import SearchInput from '@/components/common/SearchInput';
-import { useState } from 'react';
-function HomePage() {
-  const [inputValue, setInputValue] = useState('');
+import HeaderToCarouselSection from "@/components/home/HeaderToCarouselSection";
 
-  
+function HomePage() {
   return (
-    <div className="bg-[#F3F5ED] min-h-screen py-[8px] flex flex-col ">
-      <div className='px-[15px]'>
-        <HomeTopBar />
-      </div>
-      <div className="flex gap-[8px] px-[20px] w-full">
-          <button>
-            <Icons name="gps" />
-          </button>
-          <SearchInput
-            placeholder="가게이름을 검색하세요"
-            value={inputValue}
-            onChange={setInputValue}
-            onSearch={() => handleSearch(inputValue)}
-          />
-        </div>
-     
+    <div className="flex flex-col font-pretendard">
+      <HeaderToCarouselSection/>
+      <span>카테고리</span>
+      <span>오늘 끼니는 여기 어때요?</span>
+      <span>편의점 구매 가능 리스트</span>
     </div>
+    
   );
 }
 
 export default HomePage;
+
