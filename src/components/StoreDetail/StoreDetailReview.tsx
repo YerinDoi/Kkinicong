@@ -10,9 +10,10 @@ import LoginModal from '@/components/common/LoginRequiredBottomSheet';
 
 interface StoreDetailReviewProps {
   store: StoreDetail;
+  onReviewChange?: () => void;
 }
 
-const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
+const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store , onReviewChange }) => {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(1);
@@ -125,7 +126,10 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
               isOwner={review.isOwner ?? false}
               storeId={store.storeId}
               setReviews={setReviews}
-              refreshReviews={() => fetchReviews(0)}
+              refreshReviews={() => {
+                fetchReviews(0);
+                onReviewChange?.(); 
+              }}
             />
           ))
         )}
