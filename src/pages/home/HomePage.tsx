@@ -1,15 +1,28 @@
 import HomeTopBar from '@/components/home/HomeTopBar';
-
+import Icons from '@/assets/icons';
+import SearchInput from '@/components/common/SearchInput';
+import { useState } from 'react';
 function HomePage() {
+  const [inputValue, setInputValue] = useState('');
+
+  
   return (
-    <div className="font-sans bg-[#F3F5ED)] min-h-screen">
-      <HomeTopBar />
-      <div className="px-4 pt-1 max-w-md mx-auto">
-        <div className="flex flex-col items-center justify-center h-screen">
-          <h1 className="text-3xl font-bold">홈 페이지</h1>
-          <p className="mt-4 text-lg">여기는 홈 페이지입니다.</p>
-        </div>
+    <div className="bg-[#F3F5ED] min-h-screen py-[8px] flex flex-col ">
+      <div className='px-[15px]'>
+        <HomeTopBar />
       </div>
+      <div className="flex gap-[8px] px-[20px] w-full">
+          <button>
+            <Icons name="gps" />
+          </button>
+          <SearchInput
+            placeholder="가게이름을 검색하세요"
+            value={inputValue}
+            onChange={setInputValue}
+            onSearch={() => handleSearch(inputValue)}
+          />
+        </div>
+     
     </div>
   );
 }
