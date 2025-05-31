@@ -1,13 +1,15 @@
 import LogoTextIcon from '@/assets/svgs/logo/logo-text.svg?react';
 import LogoIcon from '@/assets/svgs/logo/logo-icon.svg?react';
 import MenuBar from '@/components/common/MenuBar';
-import { useState, Fragment } from 'react';
-import Icon from '@/assets/icons';
+import { useState, Fragment ,useEffect} from 'react';
+import AlarmIcon from '@/assets/icons/system/alarm.svg'
 import { useNavigate } from 'react-router-dom';
+import Icon from '@/assets/icons';
 
 export default function HomeTopBar() {
   // 메뉴 열림/닫힘 상태 관리
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
   // 메뉴 열기/닫기 함수
@@ -22,6 +24,11 @@ export default function HomeTopBar() {
   const login = () => {
     navigate('/login');
   }
+
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    setIsLoggedIn(!!token); // accessToken 존재 여부로 로그인 상태 판단
+  }, []);
 
   return (
     <Fragment>
@@ -38,8 +45,16 @@ export default function HomeTopBar() {
           
         </div>
         {/* 오른쪽 영역 : 로그인 버튼, 메뉴버튼(햄버거) */}
-        <div className="flex items-center gap-2">
-          <button onClick = {login} className="text-sm text-[#919191]">로그인하기</button>
+        <div className="flex items-center gap-[14px]">
+          {isLoggedIn ? (
+            <button>
+              <img src={AlarmIcon} className="w-[18px] h-[20px]" />
+            </button>
+          ) : (
+            <button onClick={login} className="text-sm text-[#919191]">
+              로그인하기
+            </button>
+          )}
           {/* 햄버거 버튼 클릭 시 toggleMenu 호출 */}
           <button onClick={toggleMenu}>
             {/* MenuIcon 대신 Icon name="menubar" 사용 (일관성 유지) */}
