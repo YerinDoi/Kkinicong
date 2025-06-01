@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import BottomSheet from '@/components/common/BottomSheet';
 import BottomSheetForm from '@/components/common/BottomSheetForm';
 import ConfirmToast from '@/components/common/ConfirmToast';
-import AlarmIcon from '@/assets/svgs/common/alarm.svg';
+import AlarmIcon from '@/assets/svgs/common/report.svg';
 import axiosInstance from '@/api/axiosInstance';
 import axios from 'axios';
 import { createPortal } from 'react-dom';

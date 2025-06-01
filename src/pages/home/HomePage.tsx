@@ -1,17 +1,17 @@
-import HomeTopBar from '@/components/home/HomeTopBar';
+import HeaderToCarouselSection from "@/components/home/HeaderToCarouselSection";
+import CategorySection from "@/components/home/CategorySection";
 
 function HomePage() {
   return (
-    <div className="font-sans bg-[#F3F5ED)] min-h-screen">
-      <HomeTopBar />
-      <div className="px-4 pt-1 max-w-md mx-auto">
-        <div className="flex flex-col items-center justify-center h-screen">
-          <h1 className="text-3xl font-bold">홈 페이지</h1>
-          <p className="mt-4 text-lg">여기는 홈 페이지입니다.</p>
-        </div>
-      </div>
+    <div className="flex flex-col font-pretendard">
+      <HeaderToCarouselSection/>
+      <CategorySection/>
+      <span>오늘 끼니는 여기 어때요?</span>
+      <span>편의점 구매 가능 리스트</span>
     </div>
+    
   );
 }
 
 export default HomePage;
+
