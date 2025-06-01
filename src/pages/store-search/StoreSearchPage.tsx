@@ -8,6 +8,7 @@ import StoreList from '@/components/StoreSearch/StoreList';
 import { Store } from '@/types/store';
 import Icons from '@/assets/icons';
 import NoSearchResults from '@/components/common/NoSearchResults';
+import { useLocation } from 'react-router-dom';
 
 const categoryMapping: { [key: string]: string } = {
   한식: 'KOREAN',
@@ -31,7 +32,10 @@ const sortMapping: { [key: string]: string } = {
 };
 
 const StoreSearchPage = () => {
-  const [selectedCategory, setSelectedCategory] = useState('전체');
+  const location = useLocation();
+  const [selectedCategory, setSelectedCategory] = useState(() =>
+  location.state?.selectedCategory || '전체'
+);
   const [inputValue, setInputValue] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [stores, setStores] = useState<Store[]>([]);
@@ -49,6 +53,7 @@ const StoreSearchPage = () => {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loaderRef = useRef<HTMLDivElement | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  
 
   // 카카오 API를 사용하여 주소 검색 및 위경도 변환
   const searchAddress = async (keyword: string) => {
