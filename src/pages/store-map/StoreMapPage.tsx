@@ -1,14 +1,15 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { Store } from '@/types/store';
 import axiosInstance from '@/api/axiosInstance';
+import { useRef, useCallback, useEffect } from 'react';
 import Header from '@/components/Header';
 import SearchInput from '@/components/common/SearchInput';
 import MenuCategoryCarousel from '@/components/StoreSearch/MenuCategoryCarousel';
-import Dropdown from '@/components/common/Dropdown';
 import StoreList from '@/components/StoreSearch/StoreList';
-import { Store } from '@/types/store';
-import Icons from '@/assets/icons';
 import NoSearchResults from '@/components/common/NoSearchResults';
-import { useLocation } from 'react-router-dom';
+import Icons from '@/assets/icons';
+import StoreMap from '@/components/StoreMap/StoreMap';
 
 const categoryMapping: { [key: string]: string } = {
   한식: 'KOREAN',
@@ -24,14 +25,7 @@ const categoryMapping: { [key: string]: string } = {
   기타: 'ETC',
 };
 
-const sortMapping: { [key: string]: string } = {
-  '조회수 순': 'VIEW_COUNT',
-  '가까운 순': 'DISTANCE',
-  '리뷰 많은 순': 'REVIEW_COUNT',
-  '별점 높은 순': 'RATING',
-};
-
-const StoreSearchPage = () => {
+const StoreMapPage = () => {
   const location = useLocation();
   const [selectedCategory, setSelectedCategory] = useState(
     () => location.state?.selectedCategory || '전체',
@@ -39,7 +33,6 @@ const StoreSearchPage = () => {
   const [inputValue, setInputValue] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [stores, setStores] = useState<Store[]>([]);
-  const [sort, setsort] = useState('조회수 순');
   const [isLoading, setIsLoading] = useState(false);
   const [isLocation, setIsLocation] = useState(false);
   const [coordinates, setCoordinates] = useState({
@@ -118,7 +111,6 @@ const StoreSearchPage = () => {
       // 지역 검색인 경우 위경도 정보 사용
       const params: Record<string, any> = {
         page: 0,
-        sort: sortMapping[sort],
         latitude: locationCoordinates.latitude,
         longitude: locationCoordinates.longitude,
       };
@@ -133,7 +125,7 @@ const StoreSearchPage = () => {
         longitude: locationCoordinates.longitude,
       });
 
-      const response = await axiosInstance.get('/api/v1/store/list', {
+      const response = await axiosInstance.get('/api/v1/store/map', {
         params,
       });
 
@@ -158,11 +150,9 @@ const StoreSearchPage = () => {
           selectedCategory !== '전체'
             ? categoryMapping[selectedCategory]
             : undefined;
-        const sortParam = sortMapping[sort];
 
         const params: Record<string, any> = {
           page: pageRef.current,
-          sort: sortParam,
         };
 
         if (categoryParam) {
@@ -186,7 +176,7 @@ const StoreSearchPage = () => {
 
         console.log('API 요청 파라미터:', params);
 
-        const response = await axiosInstance.get('/api/v1/store/list', {
+        const response = await axiosInstance.get('/api/v1/store/map', {
           params,
         });
 
@@ -220,7 +210,7 @@ const StoreSearchPage = () => {
         setIsLoading(false);
       }
     },
-    [selectedCategory, sort, isLocation, coordinates],
+    [selectedCategory, isLocation, coordinates],
   );
 
   // 카테고리나 정렬 변경 시에만 검색 실행
@@ -229,7 +219,7 @@ const StoreSearchPage = () => {
     pageRef.current = 0;
     hasNextPageRef.current = true;
     fetchStores(searchTerm);
-  }, [selectedCategory, sort, fetchStores, searchTerm]);
+  }, [selectedCategory, fetchStores, searchTerm]);
 
   useEffect(() => {
     if (!loaderRef.current) return;
@@ -254,8 +244,8 @@ const StoreSearchPage = () => {
 
   return (
     <div>
-      <div className="flex flex-col items-center w-full mt-[11px] shadow-custom shrink-0">
-        <Header title="가맹점 찾기" />
+      <div className="flex flex-col items-center w-full mt-[11px]">
+        <Header title="가맹점 지도" />
 
         <div className="flex gap-[12px] px-[20px] w-full">
           <button>
@@ -268,6 +258,29 @@ const StoreSearchPage = () => {
             onSearch={() => handleSearch(inputValue)}
           />
         </div>
+      </div>
+      {/* 지도 영역 */}
+      <div className="flex flex-col items-center w-full z-0">
+        <StoreMap stores={stores} />
+      </div>
+      {/* Drag Handle Container */}-{' '}
+      <div
+        className="flex justify-center items-center"
+        style={{
+          width: '100%',
+          height: '16px',
+          flexShrink: 0,
+          borderRadius: '12px 12px 0px 0px',
+          background: '#FFF',
+          boxShadow: '0px -13px 12px 0px rgba(0, 0, 0, 0.10)',
+          zIndex: 100,
+        }}
+      >
+        {/* 회색 핸들 표시 */}
+        <div className="w-[85px] h-[4px] flex-shrink-0 rounded-md bg-[#D9D9D9]"></div>
+      </div>
+      {/* 카테고리 캐러셀 */}
+      <div className="flex flex-col items-center w-full">
         <MenuCategoryCarousel
           selectedCategory={selectedCategory}
           onSelectCategory={(cat) => {
@@ -275,24 +288,19 @@ const StoreSearchPage = () => {
           }}
         />
       </div>
-
       {/* 캐러셀 아래 영역 전체 */}
       {/* 로딩 중이 아니고, 검색 결과가 없으며, 검색어가 있을 경우 NoSearchResults 표시 */}
       {!isLoading && stores.length === 0 && searchTerm ? (
-        <div className="flex items-center justify-center h-[calc(100vh-240px)]">
+        <div className="flex items-center justify-center h-[calc(100vh-485px)]">
           <NoSearchResults query={searchTerm} />
         </div>
       ) : (
         <>
           {/* 검색 결과가 있거나 로딩 중, 또는 검색어가 없는 경우 목록 표시 */}
           <div className="pt-[20px] px-[16px]">
-            {/* 정렬 드롭다운 */}
-            <div className="flex justify-end pb-[20px]">
-              <Dropdown onSelect={setsort} />
-            </div>
             {/* 가게 목록 */}
             <div
-              className="h-[calc(100vh-310px)] overflow-y-auto scrollbar-hide"
+              className="h-[calc(100vh-485px)] overflow-y-auto scrollbar-hide"
               ref={scrollContainerRef}
             >
               <StoreList stores={stores} />
@@ -306,4 +314,4 @@ const StoreSearchPage = () => {
   );
 };
 
-export default StoreSearchPage;
+export default StoreMapPage;
