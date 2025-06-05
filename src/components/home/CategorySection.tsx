@@ -1,4 +1,4 @@
-import CategoryItem from './CategoryItem';
+import CategoryItem from '@/components/common/CategoryItem';
 import { categories } from '@/constants/categories';
 import { useNavigate } from 'react-router-dom';
 
