@@ -1,17 +1,18 @@
-import HeaderToCarouselSection from "@/components/home/HeaderToCarouselSection";
-import CategorySection from "@/components/home/CategorySection";
-
+import HeaderToCarouselSection from '@/components/home/HeaderToCarouselSection';
+import CategorySection from '@/components/home/CategorySection';
+import Top8StoreSection from '@/components/home/Top8StoreSection';
 function HomePage() {
   return (
     <div className="flex flex-col font-pretendard">
-      <HeaderToCarouselSection/>
-      <CategorySection/>
-      <span>오늘 끼니는 여기 어때요?</span>
-      <span>편의점 구매 가능 리스트</span>
+      <HeaderToCarouselSection />
+
+      <div className="flex flex-col gap-[16px]">
+        <CategorySection />
+        <Top8StoreSection />
+        <span>편의점 구매 가능 리스트</span>
+      </div>
     </div>
-    
   );
 }
 
 export default HomePage;
-

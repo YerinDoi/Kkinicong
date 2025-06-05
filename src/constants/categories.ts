@@ -1,4 +1,3 @@
-
 import type { IconName } from '@/assets/icons';
 
 export interface Category {
@@ -20,3 +19,7 @@ export const categories: Category[] = [
   { id: 'snack', name: '간식', icon: 'snack' },
   { id: 'etc', name: '기타', icon: 'etc' },
 ];
+
+export const categoryIconMap = Object.fromEntries(
+  categories.map((cat) => [cat.name, cat.icon]),
+);
