@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import Tag from '@/components/StoreReview/Tag';
+import Tag from '@/components/common/Tag';
 
 const meta: Meta<typeof Tag> = {
   title: 'Components/Tag',
