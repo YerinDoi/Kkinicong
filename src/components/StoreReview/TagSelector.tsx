@@ -1,5 +1,5 @@
 import React from 'react';
-import Tag from './Tag';
+import Tag from '../common/Tag';
 
 export interface TagSelectorProps {
   tags: string[];
@@ -33,6 +33,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({
           label={tag}
           selected={selectedTags.includes(tag)}
           onClick={() => toggleTag(tag)}
+          className="h-[32px]"
         />
       ))}
     </div>
