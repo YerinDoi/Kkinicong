@@ -5,7 +5,7 @@ import ConvenienceStoreSection from '@/components/home/ConvenienceStoreSection';
 
 function HomePage() {
   return (
-    <div className="flex flex-col font-pretendard">
+    <div className="flex flex-col font-pretendard pb-[61px]">
       <HeaderToCarouselSection />
 
       <div className="flex flex-col gap-[16px]">
