@@ -11,6 +11,8 @@ import StoreSearchPage from '@/pages/store-search/StoreSearchPage';
 import StoreReviewPage from '@/pages/store-review/StoreReviewPage';
 import StoreDetailPage from '@/pages/store-detail/StoreDetailPage';
 
+import ConvenienceStorePage from '@/pages/convenience-store/ConvenienceStorePage';
+
 const Router = () => {
   return (
     <Routes>
@@ -19,10 +21,13 @@ const Router = () => {
       <Route path="/oauth/:provider/callback" element={<CallbackPage />} />
       <Route path="/nickname" element={<NicknamePage />} />
       <Route path="/nicknameXXX" element={<NicknamePageXXX />} />
+
       <Route path="/store-map" element={<StoreMapPage />} />
       <Route path="/store-search" element={<StoreSearchPage />} />
       <Route path="/store-review/:storeId" element={<StoreReviewPage />} />
       <Route path="/store/:storeId" element={<StoreDetailPage />} />
+
+      <Route path="/convenience-store" element={<ConvenienceStorePage />} />
     </Routes>
   );
 };

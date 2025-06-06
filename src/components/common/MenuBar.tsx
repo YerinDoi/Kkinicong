@@ -12,8 +12,16 @@ const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
 
   const menuItems = [
     { icon: 'store-map' as IconName, text: '가맹점 지도', path: '/store-map' },
-    { icon: 'store-search' as IconName, text: '가맹점 찾기', path: '/store-search' },
-    { icon: 'convenience-store' as IconName, text: '편의점 구매가능 품목 게시판', path: '/convenience-store', },
+    {
+      icon: 'store-search' as IconName,
+      text: '가맹점 찾기',
+      path: '/store-search',
+    },
+    {
+      icon: 'convenience-store' as IconName,
+      text: '편의점 구매가능 품목 게시판',
+      path: '/convenience-store',
+    },
     { icon: 'community' as IconName, text: '커뮤니티', path: '/community' },
     { icon: 'login' as IconName, text: '로그인', path: '/login' },
     { icon: 'mypage' as IconName, text: '마이페이지', path: '/mypage' },
@@ -45,7 +53,9 @@ const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
                   {item.text}
                 </span>
               </button>
-              {index === 3 && <div className="mt-[4px] pb-[20px] border-b-4 border-[#F4F6F8]" />}
+              {index === 3 && (
+                <div className="mt-[4px] pb-[20px] border-b-4 border-[#F4F6F8]" />
+              )}
             </div>
           ))}
         </div>
