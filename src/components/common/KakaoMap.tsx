@@ -10,6 +10,7 @@ interface KakaoMapProps {
     sw: { lat: number; lng: number };
     ne: { lat: number; lng: number };
   }) => void;
+  onZoomChange?: (level: number) => void; // 줌 레벨 변경 핸들러 추가
 }
 
 const KakaoMap: React.FC<KakaoMapProps> = ({
@@ -17,22 +18,50 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   markers,
   level = 3,
   onBoundsChange,
+  onZoomChange, // prop 추가
 }) => {
   const { kakao, loading, error } = useKakaoMapLoader();
   const mapRef = useRef<kakao.maps.Map | null>(null);
 
-  const handleBoundsChange = () => {
-    if (mapRef.current && onBoundsChange) {
-      const bounds = mapRef.current.getBounds();
-      const swLatLng = bounds.getSouthWest();
-      const neLatLng = bounds.getNorthEast();
-
-      onBoundsChange({
-        sw: { lat: swLatLng.getLat(), lng: swLatLng.getLng() },
-        ne: { lat: neLatLng.getLat(), lng: neLatLng.getLng() },
-      });
+  // 지도 중심 또는 줌 레벨 변경 시 호출되는 핸들러
+  const handleMapChange = () => {
+    if (mapRef.current) {
+      // 영역 변경 이벤트 핸들러 호출
+      if (onBoundsChange) {
+        const bounds = mapRef.current.getBounds();
+        const swLatLng = bounds.getSouthWest();
+        const neLatLng = bounds.getNorthEast();
+        onBoundsChange({
+          sw: { lat: swLatLng.getLat(), lng: swLatLng.getLng() },
+          ne: { lat: neLatLng.getLat(), lng: neLatLng.getLng() },
+        });
+      }
+      // 줌 레벨 변경 이벤트 핸들러 호출
+      if (onZoomChange) {
+        onZoomChange(mapRef.current.getLevel());
+      }
     }
   };
+
+  // 지도가 생성되었을 때 초기 줌 레벨 설정 및 영역 변경 감지 시작
+  useEffect(() => {
+    if (mapRef.current) {
+      // 지도가 로드된 후 초기 줌 레벨 설정
+      if (onZoomChange) {
+        onZoomChange(mapRef.current.getLevel());
+      }
+      // 초기 지도 영역 정보 전달
+      if (onBoundsChange) {
+        const bounds = mapRef.current.getBounds();
+        const swLatLng = bounds.getSouthWest();
+        const neLatLng = bounds.getNorthEast();
+        onBoundsChange({
+          sw: { lat: swLatLng.getLat(), lng: swLatLng.getLng() },
+          ne: { lat: neLatLng.getLat(), lng: neLatLng.getLng() },
+        });
+      }
+    }
+  }, [mapRef.current, onBoundsChange, onZoomChange]); // mapRef, onBoundsChange, onZoomChange 변경 시 useEffect 실행
 
   if (loading) {
     return <div>지도를 불러오는 중입니다.</div>;
@@ -49,8 +78,8 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         center={center}
         level={level}
         style={{ width: '100%', height: '100%', minHeight: '224px' }}
-        onCenterChanged={handleBoundsChange}
-        onZoomChanged={handleBoundsChange}
+        onCenterChanged={handleMapChange} // 중심 변경 시 핸들러 호출
+        onZoomChanged={handleMapChange} // 줌 변경 시 핸들러 호출
         onCreate={(map: kakao.maps.Map) => {
           mapRef.current = map;
         }}
