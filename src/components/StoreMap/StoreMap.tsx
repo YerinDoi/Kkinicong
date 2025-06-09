@@ -6,19 +6,16 @@ interface StoreMapProps {
   stores: Store[];
   center: { lat: number; lng: number }; // 지도 중심 좌표
   level: number; // 지도 확대 레벨
-  onBoundsChange?: (bounds: {
-    sw: { lat: number; lng: number };
-    ne: { lat: number; lng: number };
-  }) => void;
-  onZoomChange?: (level: number) => void; // 줌 레벨 변경 핸들러
+  onMapChange?: (center: { lat: number; lng: number }, level: number) => void; // 통합된 지도 변경 핸들러
+  onMarkerClick?: (marker: { lat: number; lng: number; name: string }) => void; // 마커 클릭 핸들러 추가
 }
 
 const StoreMap = ({
   stores,
   center,
   level,
-  onBoundsChange,
-  onZoomChange,
+  onMapChange,
+  onMarkerClick,
 }: StoreMapProps) => {
   console.log('받은 stores 데이터:', stores); // 디버깅용 로그 추가
 
@@ -27,6 +24,7 @@ const StoreMap = ({
       stores.map((store) => ({
         lat: store.latitude,
         lng: store.longitude,
+        name: store.name,
       })),
     [stores],
   );
@@ -49,13 +47,13 @@ const StoreMap = ({
   // }, [stores]);
 
   return (
-    <div className="w-full h-[224px]">
+    <div className="w-full h-full">
       <KakaoMap
         center={center}
         markers={markers}
         level={level}
-        onBoundsChange={onBoundsChange}
-        onZoomChange={onZoomChange}
+        onMapChange={onMapChange}
+        onMarkerClick={onMarkerClick}
       />
     </div>
   );
