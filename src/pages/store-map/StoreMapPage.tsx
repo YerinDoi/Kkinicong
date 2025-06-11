@@ -15,7 +15,17 @@ const calculateRadius = (level: number): number => {
   if (level >= 4) return 500;
   if (level >= 3) return 1000;
   if (level >= 2) return 3000;
-  return 10000;
+  return 5000;
+};
+
+// 두 좌표 간의 차이가 임계값(0.01도) 이상인지 확인
+const isSignificantChange = (
+  prev: { lat: number; lng: number },
+  current: { lat: number; lng: number },
+): boolean => {
+  const latDiff = Math.abs(prev.lat - current.lat);
+  const lngDiff = Math.abs(prev.lng - current.lng);
+  return latDiff > 0.01 || lngDiff > 0.01;
 };
 
 const categoryMapping: { [key: string]: string } = {
@@ -76,6 +86,9 @@ const StoreMapPage = () => {
   const mapLevelRef = useRef(mapLevel);
   const selectedCategoryRef = useRef(selectedCategory);
   const searchTermRef = useRef(searchTerm);
+
+  const prevMapCenterRef = useRef(mapCenter);
+  const isZoomingRef = useRef(false);
 
   // 헤더 및 검색 입력창을 포함하는 고정된 상단 영역의 높이를 계산
   const headerHeight = 11 + 40 + 12 + 40 + 11; // mt-[11px] + Header(40) + gap-[12px] + SearchInput(40) + 여유분
@@ -218,9 +231,22 @@ const StoreMapPage = () => {
             ? results.totalPage <= results.currentPage + 1
             : true;
 
-        setStores((prev) =>
-          isInitialLoadOrReset ? newStores : [...prev, ...newStores],
-        );
+        // 중복 제거를 위해 Map 사용
+        if (isInitialLoadOrReset) {
+          setStores(newStores);
+        } else {
+          setStores((prev) => {
+            const storeMap = new Map(
+              prev.map((store: Store) => [store.id, store]),
+            );
+            newStores.forEach((store: Store) => {
+              if (!storeMap.has(store.id)) {
+                storeMap.set(store.id, store);
+              }
+            });
+            return Array.from(storeMap.values());
+          });
+        }
 
         hasNextPageRef.current = !isLastPage;
         console.log(
@@ -248,11 +274,36 @@ const StoreMapPage = () => {
   // 지도 영역 및 줌 레벨 변경 시 상태 업데이트 핸들러
   const handleMapChange = useCallback(
     (center: { lat: number; lng: number }, level: number) => {
-      setMapCenter(center); // 지도 상태 업데이트
-      setMapLevel(level); // 지도 상태 업데이트
-      setSelectedStore(null);
+      const prevLevel = mapLevelRef.current;
+      const prevCenter = mapCenterRef.current;
+      const isZoomChanged = prevLevel !== level;
+      const isCenterChanged =
+        prevCenter.lat !== center.lat || prevCenter.lng !== center.lng;
+
+      // center(중심좌표)가 바뀌었고, level(줌레벨)은 그대로일 때만 mapCenter를 변경 (즉, 이동만 했을 때)
+      if (isCenterChanged && !isZoomChanged) {
+        setMapCenter(center);
+        // mapLevel은 그대로 두기
+      }
+      // level(줌레벨)만 바뀌었을 때는 상태만 바꿈 (API 트리거 X)
+      if (isZoomChanged && !isCenterChanged) {
+        setMapLevel(level);
+        // 페이지네이션 상태만 초기화
+        pageRef.current = 0;
+        hasNextPageRef.current = true;
+        // 기존 데이터는 그대로 두고 fetchStores는 호출하지 않음
+      }
+      // 둘 다 바뀌었을 때(드래그+줌 동시): center 우선
+      if (isCenterChanged && isZoomChanged) {
+        setMapCenter(center);
+        setMapLevel(level);
+        // 페이지네이션 상태도 초기화
+        pageRef.current = 0;
+        hasNextPageRef.current = true;
+      }
+      // 둘 다 안 바뀌면 아무것도 안 함
       console.log(
-        `handleMapChange: 지도 상태 업데이트 - center: ${center.lat}, ${center.lng}, level: ${level}`,
+        `handleMapChange: center: ${center.lat}, ${center.lng}, level: ${level}, isZoomChanged: ${isZoomChanged}, isCenterChanged: ${isCenterChanged}`,
       );
     },
     [],
@@ -273,31 +324,54 @@ const StoreMapPage = () => {
     console.log(
       'useEffect [search/category]: 검색어 또는 카테고리 변경 감지. 즉시 데이터 로드 시작.',
     );
-    pageRef.current = 0; // 항상 초기 페이지부터 로드
-    hasNextPageRef.current = true; // 새로운 검색이므로 다음 페이지가 있을 수 있음
+    pageRef.current = 0;
+    hasNextPageRef.current = true;
+    setStores([]); // 기존 데이터 초기화
+    fetchStores(0, true);
 
-    fetchStores(0, true); // 첫 페이지 로드, 기존 목록 대체
+    // 지도를 맨 위로 스크롤
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+
+    // 스크롤 컨테이너도 맨 위로 스크롤
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = 0;
+    }
   }, [selectedCategory, searchTerm, fetchStores]);
 
-  // 2. 지도 중심/줌 레벨 변경 시 데이터 로드 (디바운스, 페이지 초기화)
+  // 2. 지도 중심 변경 시 데이터 로드 (디바운스, 페이지 초기화)
   useEffect(() => {
-    console.log(
-      'useEffect [mapChange]: 지도 중심 또는 줌 레벨 변경 감지. 디바운스 시작.',
-    );
+    // mapCenter가 바뀔 때만 동작 (줌만 바뀌면 동작 X)
     if (mapDebounceTimeoutRef.current) {
       clearTimeout(mapDebounceTimeoutRef.current);
       console.log('useEffect [mapChange]: 이전 디바운스 타이머 클리어됨.');
     }
 
-    mapDebounceTimeoutRef.current = setTimeout(() => {
-      console.log(
-        'useEffect [mapChange]: 디바운스 완료. 지도 변경에 따른 데이터 로드 시작.',
-      );
-      pageRef.current = 0; // 지도 변경 시 페이지 초기화
-      hasNextPageRef.current = true; // 새로운 지도 위치이므로 다음 페이지가 있을 수 있음
+    const prev = prevMapCenterRef.current;
+    const latDiff = Math.abs(prev.lat - mapCenter.lat);
+    const lngDiff = Math.abs(prev.lng - mapCenter.lng);
 
-      fetchStores(0, true); // 첫 페이지 로드, 기존 목록 대체
-    }, 500); // 500ms 디바운스
+    console.log(
+      `지도 이동 변화량 - 위도: ${latDiff.toFixed(4)}도, 경도: ${lngDiff.toFixed(4)}도`,
+    );
+
+    // 중심 좌표 변경이 0.01도 이상일 때만 API 요청
+    if (isSignificantChange(prev, mapCenter)) {
+      console.log('중심 좌표 변경이 0.01도 이상 감지됨. API 요청 예정');
+      mapDebounceTimeoutRef.current = setTimeout(() => {
+        console.log(
+          'useEffect [mapChange]: 디바운스 완료. 지도 변경에 따른 데이터 로드 시작.',
+        );
+        prevMapCenterRef.current = mapCenter;
+        pageRef.current = 0;
+        hasNextPageRef.current = true;
+        fetchStores(0, true);
+      }, 500);
+    } else {
+      console.log('중심 좌표 변경이 0.01도 미만. API 요청하지 않음');
+    }
 
     return () => {
       if (mapDebounceTimeoutRef.current) {
@@ -305,7 +379,7 @@ const StoreMapPage = () => {
         console.log('useEffect [mapChange] cleanup: 타이머 클리어됨.');
       }
     };
-  }, [mapCenter, mapLevel, fetchStores]);
+  }, [mapCenter, fetchStores]);
 
   // 3. 무한 스크롤 로직 (다음 페이지 로드)
   useEffect(() => {
@@ -325,7 +399,8 @@ const StoreMapPage = () => {
         if (
           target.isIntersecting &&
           !isLoadingRef.current &&
-          hasNextPageRef.current
+          hasNextPageRef.current &&
+          !isZoomingRef.current // 줌 변경 중이 아닐 때만 스크롤 로드
         ) {
           console.log(
             'useEffect [infiniteScroll]: 무한 스크롤 조건 만족. 다음 페이지 로드 시작.',
@@ -453,10 +528,14 @@ const StoreMapPage = () => {
       >
         <StoreMap
           stores={selectedStore ? [selectedStore] : stores}
+          latestBatchStores={
+            selectedStore ? [selectedStore] : stores.slice(-10)
+          }
           center={mapCenter}
           level={mapLevel}
           onMapChange={handleMapChange}
           onMarkerClick={handleMarkerClick}
+          onMapClick={() => setSelectedStore(null)}
         />
       </div>
 
@@ -485,6 +564,12 @@ const StoreMapPage = () => {
             selectedCategory={selectedCategory}
             onSelectCategory={(cat) => {
               setSelectedCategory(cat);
+              setSelectedStore(null);
+              setMapCenter({
+                lat: 37.495472,
+                lng: 126.676902,
+              });
+              setMapLevel(3);
             }}
           />
         </div>
