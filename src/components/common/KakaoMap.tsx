@@ -1,24 +1,36 @@
 import { Map, MapMarker, CustomOverlayMap } from 'react-kakao-maps-sdk';
 import useKakaoMapLoader from '@/hooks/useKakaoMapLoader';
 import { useEffect, useRef, useState } from 'react';
+import React from 'react';
+import { KakaoMapContext } from '@/contexts/KakaoMapContext';
 
 interface KakaoMapProps {
   center: { lat: number; lng: number }; // 지도 중심 좌표
-  markers: { lat: number; lng: number; name: string }[]; // 마커 위치 및 이름 배열
   level: number; // 지도 확대 레벨 (선택 아님)
   onMapChange?: (center: { lat: number; lng: number }, level: number) => void; // 통합된 지도 변경 핸들러
-  onMarkerClick?: (marker: { lat: number; lng: number; name: string }) => void; // 마커 클릭 핸들러 추가
+  onMapLoad?: (map: kakao.maps.Map) => void; // 지도 인스턴스 로드 시 콜백 추가
+  children?: React.ReactNode; // 마커 및 오버레이를 자식으로 받음
 }
+
+// 마커 이미지 소스 (KakaoMap 외부에 정의하여 재사용성 높임)
+export const MARKER =
+  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="28" height="41" viewBox="0 0 28 41"><path fill="%2365CE58" d="M14 0c7.732 0 14 6.268 14 14 0 10.5-14 27-14 27S0 24.5 0 14C0 6.268 6.268 0 14 0z"/><circle fill="%23FFFFFF" cx="14" cy="14" r="6"/></svg>';
+export const MARKER_IMAGE_SIZE = { width: 28, height: 41 };
+
+export const DOT_MARKER =
+  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><circle fill="%2365CE58" cx="6" cy="6" r="6"/></svg>';
+export const DOT_IMAGE_SIZE = { width: 12, height: 12 };
 
 const KakaoMap: React.FC<KakaoMapProps> = ({
   center,
-  markers,
   level,
-  onMapChange, // prop 변경
-  onMarkerClick,
+  onMapChange,
+  onMapLoad,
+  children, // children prop 받음
 }) => {
   const { kakao, loading, error } = useKakaoMapLoader();
   const mapRef = useRef<kakao.maps.Map | null>(null);
+  const [mapLoaded, setMapLoaded] = useState(false); // mapLoaded 상태 추가
 
   // 지도 중심 또는 줌 레벨 변경 시 호출되는 핸들러
   const handleMapChange = () => {
@@ -36,7 +48,8 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
   // 지도가 생성되었을 때 초기 줌 레벨 설정 및 영역 변경 감지 시작
   useEffect(() => {
-    if (mapRef.current) {
+    if (mapRef.current && mapLoaded) {
+      // mapLoaded 상태가 true일 때만 실행
       const currentCenter = mapRef.current.getCenter();
       const currentLevel = mapRef.current.getLevel();
       if (onMapChange) {
@@ -46,7 +59,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         );
       }
     }
-  }, [mapRef.current, onMapChange]); // mapRef, onMapChange 변경 시 useEffect 실행
+  }, [mapRef.current, onMapChange, mapLoaded]); // mapLoaded 의존성 추가
 
   if (loading) {
     return <div>지도를 불러오는 중입니다.</div>;
@@ -62,55 +75,23 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         center={center}
         level={level}
         style={{ width: '100%', height: '100%' }}
-        onCenterChanged={handleMapChange} // 중심 변경 시 핸들러 호출
-        onZoomChanged={handleMapChange} // 줌 변경 시 핸들러 호출
-        onClick={(_map, mouseEvent) => {
-          // console.log(
-          //   '지도 클릭 감지됨:',
-          //   mouseEvent.latLng.getLat(),
-          //   mouseEvent.latLng.getLng(),
-          // );
-        }} // 지도 클릭 이벤트 핸들러 추가
+        onCenterChanged={handleMapChange}
+        onZoomChanged={handleMapChange}
+        onClick={(_map, mouseEvent) => {}}
         onCreate={(map: kakao.maps.Map) => {
           mapRef.current = map;
+          setMapLoaded(true); // 지도가 로드되면 mapLoaded 상태를 true로 설정
+          if (onMapLoad) {
+            onMapLoad(map);
+          }
         }}
       >
-        {markers.map((marker, index) => (
-          <MapMarker
-            key={index}
-            position={{ lat: marker.lat, lng: marker.lng }}
-            // onClick prop 대신 onCreate를 통해 원본 마커에 이벤트 리스너 직접 연결
-            onCreate={(markerInstance) => {
-              if (kakao) {
-                kakao.maps.event.addListener(markerInstance, 'click', () => {
-                  onMarkerClick && onMarkerClick(marker);
-                });
-              }
-            }}
-            zIndex={100} // 마커의 z-index를 높게 설정
-          />
-        ))}
-        {/* 마커 이름 오버레이 복원 및 z-index 조정 */}
-        {level <= 4 &&
-          markers.map((marker, index) => (
-            <CustomOverlayMap
-              key={`custom-overlay-${index}`}
-              position={{ lat: marker.lat, lng: marker.lng }}
-              yAnchor={-0.2}
-              xAnchor={0.5}
-              zIndex={1} // 마커(zIndex: 100)보다 낮은 z-index 설정
-            >
-              <div
-                style={{
-                  fontSize: '11px',
-                  fontWeight: 'bold',
-                  pointerEvents: 'none', // 클릭 이벤트를 통과시키도록 설정
-                }}
-              >
-                {marker.name}
-              </div>
-            </CustomOverlayMap>
-          ))}
+        {/* 자식 컴포넌트들을 여기에 렌더링 */}
+        {mapLoaded && ( // 지도가 로드된 후에만 Context Provider와 자식들 렌더링
+          <KakaoMapContext.Provider value={{ kakao }}>
+            {children}
+          </KakaoMapContext.Provider>
+        )}
       </Map>
     );
   }
