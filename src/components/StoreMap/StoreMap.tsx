@@ -5,7 +5,7 @@ import KakaoMap, {
   DOT_IMAGE_SIZE,
 } from '@/components/common/KakaoMap';
 import { Store } from '@/types/store';
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { MapMarker, CustomOverlayMap } from 'react-kakao-maps-sdk';
 
 interface StoreMapProps {
@@ -16,6 +16,7 @@ interface StoreMapProps {
   onMapChange?: (center: { lat: number; lng: number }, level: number) => void; // 통합된 지도 변경 핸들러
   onMarkerClick?: (marker: { lat: number; lng: number; name: string }) => void; // 마커 클릭 핸들러 추가
   onMapClick?: () => void; // 지도 빈 곳 클릭 핸들러 추가
+  onMapLoad?: (map: any) => void; // 지도 인스턴스 전달
 }
 
 const StoreMap = ({
@@ -26,8 +27,20 @@ const StoreMap = ({
   onMapChange,
   onMarkerClick,
   onMapClick,
+  onMapLoad,
 }: StoreMapProps) => {
   console.log('받은 stores 데이터:', stores); // 디버깅용 로그 추가
+
+  // KakaoMap 인스턴스 저장
+  const [mapInstance, setMapInstance] = useState<any>(null);
+
+  // center prop이 바뀔 때마다 지도 인스턴스의 setCenter를 직접 호출
+  useEffect(() => {
+    if (mapInstance && window.kakao && window.kakao.maps) {
+      const newCenter = new window.kakao.maps.LatLng(center.lat, center.lng);
+      mapInstance.setCenter(newCenter);
+    }
+  }, [center.lat, center.lng, mapInstance]);
 
   // 가게들의 평균 위경도 계산 (이 로직은 StoreMapPage로 이동)
   // const center = useMemo(() => {
@@ -46,7 +59,15 @@ const StoreMap = ({
 
   return (
     <div className="w-full h-full" onClick={onMapClick}>
-      <KakaoMap center={center} level={level} onMapChange={onMapChange}>
+      <KakaoMap
+        center={center}
+        level={level}
+        onMapChange={onMapChange}
+        onMapLoad={(map) => {
+          setMapInstance(map);
+          if (onMapLoad) onMapLoad(map);
+        }}
+      >
         {stores.map((store) => {
           const isDot = !latestBatchStores.some(
             (latest) => latest.id === store.id,
