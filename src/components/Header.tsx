@@ -6,14 +6,12 @@ import MenuBar from './common/MenuBar';
 interface HeaderProps {
   title: string;
   location?: string;
-  showLocationDropdown?: boolean;
   showMenubarButton?: boolean;
 }
 
 const Header = ({
   title,
   location,
-  showLocationDropdown = true,
   showMenubarButton = true,
 }: HeaderProps) => {
   const navigate = useNavigate();
@@ -37,21 +35,16 @@ const Header = ({
           <Icon name="backward" />
         </button>
 
-        <div className="flex items-end gap-[8px] ml-[4px]">
+        <div className="flex items-center gap-[8px] ml-[4px]">
           <span className="text-black text-[20px] font-semibold leading-[32px]">
             {title}
           </span>
 
           {location && (
-            <div className="flex items-center gap-[4px] mb-[2px]">
-              <span className="text-[#919191] font-pretendard text-sm font-medium leading-[18px]">
+            <div className="flex items-center gap-[4px]">
+              <span className="text-[#919191] text-[12px] font-normal leading-[18px]">
                 {location}
               </span>
-              {showLocationDropdown && (
-                <button>
-                  <Icon name="location-dropdown" />
-                </button>
-              )}
             </div>
           )}
         </div>
