@@ -9,6 +9,7 @@ import StoreList from '@/components/StoreSearch/StoreList';
 import NoSearchResults from '@/components/common/NoSearchResults';
 import Icons from '@/assets/icons';
 import StoreMap from '@/components/StoreMap/StoreMap';
+import useUserLocation from '@/hooks/useUserLocation';
 
 // 줌 레벨에 따른 반경 계산 함수 (컴포넌트 외부로 이동)
 const calculateRadius = (level: number): number => {
@@ -95,6 +96,19 @@ const StoreMapPage = () => {
 
   // 바텀시트가 올라갔을 때(지도가 224px일 때)의 바텀시트 높이 (동적으로 계산)
   const [raisedSheetHeight, setRaisedSheetHeight] = useState(0);
+
+  // GPS 위치 hook 사용
+  const {
+    isGpsActive,
+    address: gpsAddress,
+    location: gpsLocation,
+    requestGps,
+    error: gpsError,
+    isLoading: gpsLoading,
+  } = useUserLocation();
+
+  // StoreMap에서 지도 인스턴스 받아오기
+  const [mapInstance, setMapInstance] = useState<any>(null);
 
   useEffect(() => {
     const calculateAndSetInitialHeights = () => {
@@ -502,10 +516,28 @@ const StoreMapPage = () => {
   return (
     <div className="flex flex-col h-screen">
       <div className="flex flex-col items-center w-full mt-[11px] z-[100]">
-        <Header title="가맹점 지도" />
+        <Header title="가맹점 지도" location={gpsAddress} />
 
         <div className="flex gap-[12px] px-[20px] w-full">
-          <button>
+          <button
+            onClick={() =>
+              requestGps((lat, lng) => {
+                const newCenter = {
+                  lat: lat + Math.random() * 1e-10,
+                  lng: lng + Math.random() * 1e-10,
+                };
+                setMapCenter(newCenter);
+                if (mapInstance && window.kakao && window.kakao.maps) {
+                  const kakaoCenter = new window.kakao.maps.LatLng(lat, lng);
+                  mapInstance.setCenter(kakaoCenter);
+                }
+                pageRef.current = 0;
+                hasNextPageRef.current = true;
+                setStores([]);
+                fetchStores(0, true);
+              })
+            }
+          >
             <Icons name="gps" />
           </button>
           <SearchInput
@@ -531,11 +563,16 @@ const StoreMapPage = () => {
           latestBatchStores={
             selectedStore ? [selectedStore] : stores.slice(-10)
           }
-          center={mapCenter}
+          center={
+            isGpsActive
+              ? { lat: gpsLocation.latitude, lng: gpsLocation.longitude }
+              : mapCenter
+          }
           level={mapLevel}
           onMapChange={handleMapChange}
           onMarkerClick={handleMarkerClick}
           onMapClick={() => setSelectedStore(null)}
+          onMapLoad={setMapInstance}
         />
       </div>
 
@@ -575,9 +612,13 @@ const StoreMapPage = () => {
         </div>
 
         {/* 캐러셀 아래 영역 전체 */}
-        {!isLoading && stores.length === 0 && searchTerm ? (
-          <div className="flex items-center justify-center flex-grow">
-            <NoSearchResults query={searchTerm} />
+        {!isLoading && stores.length === 0 ? (
+          <div className="mt-[32px]">
+            {searchTerm ? (
+              <NoSearchResults type="search" query={searchTerm} />
+            ) : (
+              <NoSearchResults type="nearby" />
+            )}
           </div>
         ) : (
           <div className="pt-[20px] px-[16px] overflow-hidden flex-grow flex flex-col">
