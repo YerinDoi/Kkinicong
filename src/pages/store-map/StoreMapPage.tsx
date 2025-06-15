@@ -10,6 +10,10 @@ import NoSearchResults from '@/components/common/NoSearchResults';
 import Icons from '@/assets/icons';
 import StoreMap from '@/components/StoreMap/StoreMap';
 import useUserLocation from '@/hooks/useUserLocation';
+import useStoreSearch from '@/hooks/useStoreSearch';
+import useInfiniteScroll from '@/hooks/useInfiniteScroll';
+import useBottomSheet from '@/hooks/useBottomSheet';
+import { categoryMapping } from '@/constants/storeMapping';
 
 // 줌 레벨에 따른 반경 계산 함수 (컴포넌트 외부로 이동)
 const calculateRadius = (level: number): number => {
@@ -29,48 +33,31 @@ const isSignificantChange = (
   return latDiff > 0.01 || lngDiff > 0.01;
 };
 
-const categoryMapping: { [key: string]: string } = {
-  한식: 'KOREAN',
-  양식: 'WESTERN',
-  일식: 'JAPANESE',
-  중식: 'CHINESE',
-  치킨: 'CHICKEN',
-  분식: 'BUNSIK',
-  샤브샤브: 'SHABU',
-  아시안: 'ASIAN',
-  도시락: 'LUNCHBOX',
-  간식: 'DESSERT',
-  기타: 'ETC',
-};
-
 const StoreMapPage = () => {
   const location = useLocation();
   const [selectedCategory, setSelectedCategory] = useState(
     () => location.state?.selectedCategory || '전체',
   );
-  const [inputValue, setInputValue] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
   const [stores, setStores] = useState<Store[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isLocation, setIsLocation] = useState(false);
-  const [coordinates, setCoordinates] = useState({
-    latitude: 0,
-    longitude: 0,
-  });
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
 
   const pageRef = useRef(0);
   const hasNextPageRef = useRef(true);
   const isLoadingRef = useRef(false);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const loaderRef = useRef<HTMLDivElement | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
-  // 바텀시트 높이 관리
-  const [sheetHeight, setSheetHeight] = useState(0); // 초기 높이를 0으로 설정 (useEffect에서 동적으로 설정)
-  const initialSheetHeightRef = useRef(0);
-  const startYRef = useRef(0);
-  const isDraggingRef = useRef(false);
+  // 바텀시트 커스텀 훅 사용
+  const headerHeight = 11 + 40 + 12 + 40 + 11;
+  const {
+    sheetHeight,
+    setSheetHeight,
+    raisedSheetHeight,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
+    isDraggingRef,
+  } = useBottomSheet(headerHeight);
 
   // 지도 상태 관리
   const [mapCenter, setMapCenter] = useState<{
@@ -86,16 +73,10 @@ const StoreMapPage = () => {
   const mapCenterRef = useRef(mapCenter);
   const mapLevelRef = useRef(mapLevel);
   const selectedCategoryRef = useRef(selectedCategory);
-  const searchTermRef = useRef(searchTerm);
+  const searchTermRef = useRef('');
 
   const prevMapCenterRef = useRef(mapCenter);
   const isZoomingRef = useRef(false);
-
-  // 헤더 및 검색 입력창을 포함하는 고정된 상단 영역의 높이를 계산
-  const headerHeight = 11 + 40 + 12 + 40 + 11; // mt-[11px] + Header(40) + gap-[12px] + SearchInput(40) + 여유분
-
-  // 바텀시트가 올라갔을 때(지도가 224px일 때)의 바텀시트 높이 (동적으로 계산)
-  const [raisedSheetHeight, setRaisedSheetHeight] = useState(0);
 
   // GPS 위치 hook 사용
   const {
@@ -103,36 +84,21 @@ const StoreMapPage = () => {
     address: gpsAddress,
     location: gpsLocation,
     requestGps,
-    error: gpsError,
-    isLoading: gpsLoading,
   } = useUserLocation();
 
   // StoreMap에서 지도 인스턴스 받아오기
   const [mapInstance, setMapInstance] = useState<any>(null);
 
-  useEffect(() => {
-    const calculateAndSetInitialHeights = () => {
-      // 지도가 224px일 때의 바텀시트 높이
-      const calculatedRaisedHeight = window.innerHeight - headerHeight - 224;
-      setRaisedSheetHeight(calculatedRaisedHeight);
-
-      // 컴포넌트 마운트 시 초기 바텀시트 높이를 올린 상태로 설정
-      if (sheetHeight === 0) {
-        // 최초 렌더링 시에만 초기 높이 설정
-        setSheetHeight(calculatedRaisedHeight);
-      }
-    };
-
-    calculateAndSetInitialHeights();
-    window.addEventListener('resize', calculateAndSetInitialHeights);
-
-    return () => {
-      window.removeEventListener('resize', calculateAndSetInitialHeights);
-    };
-  }, [headerHeight, sheetHeight]); // sheetHeight를 의존성에 추가하여 최초 설정 이후 재계산 방지
-
-  // 바텀시트가 내려갔을 때의 고정된 높이
-  const LOWERED_SHEET_HEIGHT_FIXED = 144;
+  // 검색/주소 변환 관련 상태 및 함수 (커스텀 훅 사용)
+  const {
+    inputValue,
+    setInputValue,
+    searchTerm,
+    setSearchTerm,
+    isLocation,
+    coordinates,
+    handleSearch,
+  } = useStoreSearch();
 
   useEffect(() => {
     mapCenterRef.current = mapCenter;
@@ -147,59 +113,19 @@ const StoreMapPage = () => {
     searchTermRef.current = searchTerm;
   }, [searchTerm]);
 
-  // 카카오 API를 사용하여 주소 검색 및 위경도 변환
-  const searchAddress = async (keyword: string) => {
-    try {
-      const isAddress = /동$|구$|역$/.test(keyword);
-
-      if (!isAddress) {
-        setIsLocation(false);
-        return { isLocation: false, coordinates: null };
-      }
-
-      const response = await fetch(
-        `https://dapi.kakao.com/v2/local/search/keyword.json?query=${encodeURIComponent(keyword)}`,
-        {
-          headers: {
-            Authorization: `KakaoAK ${import.meta.env.VITE_KAKAO_REST_API_KEY}`,
-          },
-        },
-      );
-      const data = await response.json();
-
-      if (data.documents && data.documents.length > 0) {
-        const { y: latitude, x: longitude } = data.documents[0];
-        const newCoordinates = {
-          latitude: parseFloat(latitude),
-          longitude: parseFloat(longitude),
-        };
-        setCoordinates(newCoordinates);
-        setIsLocation(true);
-        return { isLocation: true, coordinates: newCoordinates };
-      }
-      setIsLocation(false);
-      return { isLocation: false, coordinates: null };
-    } catch (error) {
-      console.error('주소 검색 중 오류 발생:', error);
-      setIsLocation(false);
-      return { isLocation: false, coordinates: null };
-    }
-  };
-
-  const handleSearch = async (searchInput: string) => {
-    const { isLocation, coordinates: locationCoordinates } =
-      await searchAddress(searchInput);
-
-    setSearchTerm(searchInput);
-    setSelectedStore(null);
-
-    if (isLocation && locationCoordinates) {
+  // 검색 결과 좌표가 바뀌면 지도 중심 이동
+  useEffect(() => {
+    if (isLocation && coordinates) {
       setMapCenter({
-        lat: locationCoordinates.latitude,
-        lng: locationCoordinates.longitude,
+        lat: coordinates.latitude,
+        lng: coordinates.longitude,
       });
     }
-  };
+  }, [isLocation, coordinates]);
+  // 검색 시 선택된 가게 초기화
+  useEffect(() => {
+    setSelectedStore(null);
+  }, [searchTerm]);
 
   // API 호출 함수 (fetchStores 호출 시 페이지 관리)
   const fetchStores = useCallback(
@@ -279,7 +205,7 @@ const StoreMapPage = () => {
         console.log('fetchStores - API 요청 완료. isLoadingRef.current: false');
       }
     },
-    [setStores, setIsLoading], // setStores, setIsLoading는 안정적인 참조이므로 deps에 포함
+    [setStores, setIsLoading],
   );
 
   // 지도 이동/줌 디바운스 관리를 위한 useRef
@@ -335,9 +261,6 @@ const StoreMapPage = () => {
 
   // 1. 검색어/카테고리 변경 시 데이터 로드 (즉시, 페이지 초기화)
   useEffect(() => {
-    console.log(
-      'useEffect [search/category]: 검색어 또는 카테고리 변경 감지. 즉시 데이터 로드 시작.',
-    );
     pageRef.current = 0;
     hasNextPageRef.current = true;
     setStores([]); // 기존 데이터 초기화
@@ -395,102 +318,20 @@ const StoreMapPage = () => {
     };
   }, [mapCenter, fetchStores]);
 
-  // 3. 무한 스크롤 로직 (다음 페이지 로드)
-  useEffect(() => {
-    if (!loaderRef.current) {
-      console.log(
-        'useEffect [infiniteScroll]: loaderRef가 없어 무한 스크롤 observer 설정 건너뜀.',
-      );
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const target = entries[0];
-        console.log(
-          `useEffect [infiniteScroll]: IntersectionObserver 트리거됨. isIntersecting: ${target.isIntersecting}, isLoading: ${isLoadingRef.current}, hasNextPage: ${hasNextPageRef.current}`,
-        );
-        if (
-          target.isIntersecting &&
-          !isLoadingRef.current &&
-          hasNextPageRef.current &&
-          !isZoomingRef.current // 줌 변경 중이 아닐 때만 스크롤 로드
-        ) {
-          console.log(
-            'useEffect [infiniteScroll]: 무한 스크롤 조건 만족. 다음 페이지 로드 시작.',
-          );
-          const nextPage = pageRef.current + 1;
-          pageRef.current = nextPage; // pageRef.current 먼저 업데이트
-          console.log(
-            `useEffect [infiniteScroll]: pageRef.current 업데이트됨: ${pageRef.current}`,
-          );
-
-          fetchStores(nextPage, false); // 다음 페이지 로드, 기존 목록에 추가
-        }
-      },
-      { threshold: 0.2, root: scrollContainerRef.current },
-    );
-
-    observer.observe(loaderRef.current);
-    observerRef.current = observer;
-    console.log('useEffect [infiniteScroll]: IntersectionObserver 설정 완료.');
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-        console.log(
-          'useEffect [infiniteScroll] cleanup: IntersectionObserver 연결 해제됨.',
-        );
+  // useInfiniteScroll 훅 사용 (무한스크롤)
+  const { loaderRef } = useInfiniteScroll({
+    onIntersect: () => {
+      if (!isZoomingRef.current) {
+        const nextPage = pageRef.current + 1;
+        pageRef.current = nextPage;
+        fetchStores(nextPage, false);
       }
-    };
-  }, [fetchStores]); // fetchStores만 의존성으로 포함 (ref를 통해 최신 값 참조)
-
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    isDraggingRef.current = true;
-    initialSheetHeightRef.current = sheetHeight;
-    startYRef.current = e.touches[0].clientY;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (!isDraggingRef.current) return;
-
-    const deltaY = e.touches[0].clientY - startYRef.current;
-    const newHeight = initialSheetHeightRef.current - deltaY;
-    // 최소(올린 상태) 높이 제한은 동적으로 계산된 값, 최대(내린 상태) 높이 제한은 고정된 값
-    const clampedHeight = Math.max(
-      LOWERED_SHEET_HEIGHT_FIXED,
-      Math.min(raisedSheetHeight, newHeight),
-    );
-    setSheetHeight(clampedHeight);
-    console.log(
-      `handleTouchMove: newHeight=${newHeight}, clampedHeight=${clampedHeight}`,
-    ); // 디버깅 로그 추가
-  };
-
-  const handleTouchEnd = () => {
-    isDraggingRef.current = false;
-    // 드래그가 끝났을 때 특정 위치로 스냅
-    const RAISED_SNAP_HEIGHT = raisedSheetHeight; // 동적으로 계산된 올린 상태 높이
-    const LOWERED_SNAP_SNAP_HEIGHT = LOWERED_SHEET_HEIGHT_FIXED; // 고정된 내린 상태 높이
-    // 스냅 임계점을 중간으로 설정 (평균)
-    const halfway = (RAISED_SNAP_HEIGHT + LOWERED_SNAP_SNAP_HEIGHT) / 2;
-
-    console.log(
-      `handleTouchEnd: sheetHeight=${sheetHeight}, halfway=${halfway}, RAISED_SNAP_HEIGHT=${RAISED_SNAP_HEIGHT}, LOWERED_SNAP_SNAP_HEIGHT=${LOWERED_SNAP_SNAP_HEIGHT}`,
-    ); // 디버깅 로그 추가
-
-    if (sheetHeight < halfway) {
-      console.log(
-        `handleTouchEnd: Snapping to LOWERED_SNAP_SNAP_HEIGHT (${LOWERED_SNAP_SNAP_HEIGHT})`,
-      ); // 디버깅 로그 추가
-      setSheetHeight(LOWERED_SNAP_SNAP_HEIGHT); // 사용자가 바텀 시트를 '내려서' 짧은 상태로 가려 할 때 144px로 스냅
-    } else {
-      console.log(
-        `handleTouchEnd: Snapping to RAISED_SNAP_HEIGHT (${RAISED_SNAP_HEIGHT})`,
-      ); // 디버깅 로그 추가
-      setSheetHeight(RAISED_SNAP_HEIGHT); // 사용자가 바텀 시트를 '올려서' 긴 상태로 가려 할 때 raisedSheetHeight로 스냅
-    }
-  };
+    },
+    isLoadingRef,
+    hasNextPageRef,
+    root: scrollContainerRef.current,
+    threshold: 0.2,
+  });
 
   // 헤더 및 검색 입력창을 포함하는 고정된 상단 영역의 높이를 계산
   const mapAreaHeight = `calc(100vh - ${headerHeight}px - ${sheetHeight}px)`; // 바텀시트 높이에 따라 동적으로 계산
@@ -526,7 +367,10 @@ const StoreMapPage = () => {
                   lat: lat + Math.random() * 1e-10,
                   lng: lng + Math.random() * 1e-10,
                 };
-                setMapCenter(newCenter);
+                setMapCenter({
+                  lat: gpsLocation.latitude,
+                  lng: gpsLocation.longitude,
+                });
                 if (mapInstance && window.kakao && window.kakao.maps) {
                   const kakaoCenter = new window.kakao.maps.LatLng(lat, lng);
                   mapInstance.setCenter(kakaoCenter);
@@ -602,10 +446,6 @@ const StoreMapPage = () => {
             onSelectCategory={(cat) => {
               setSelectedCategory(cat);
               setSelectedStore(null);
-              setMapCenter({
-                lat: 37.495472,
-                lng: 126.676902,
-              });
               setMapLevel(3);
             }}
           />
