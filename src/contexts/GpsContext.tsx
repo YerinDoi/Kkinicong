@@ -1,16 +1,15 @@
-import { useState } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
-const DEFAULT_LOCATION = {
-  latitude: 37.495472,
-  longitude: 126.676902,
-};
+const DEFAULT_LOCATION = { latitude: 37.495472, longitude: 126.676902 };
 
-export interface UserLocation {
+interface UserLocation {
   latitude: number;
   longitude: number;
 }
 
-interface UseUserLocationResult {
+interface GpsContextType {
   isGpsActive: boolean;
   address: string;
   location: UserLocation;
@@ -19,7 +18,16 @@ interface UseUserLocationResult {
   isLoading: boolean;
 }
 
-const useUserLocation = (): UseUserLocationResult => {
+const GpsContext = createContext<GpsContextType | null>(null);
+
+interface GpsProviderProps {
+  children: ReactNode;
+}
+
+export function GpsProvider({ children }: GpsProviderProps) {
+  // 회원/비회원 여부 Redux에서 받아오기
+  const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
+
   const [isGpsActive, setIsGpsActive] = useState(false);
   const [address, setAddress] = useState('');
   const [location, setLocation] = useState<UserLocation>(DEFAULT_LOCATION);
@@ -27,7 +35,7 @@ const useUserLocation = (): UseUserLocationResult => {
   const [isLoading, setIsLoading] = useState(false);
 
   // 카카오 reverse geocoding
-  const fetchAddress = async (lat: number, lng: number) => {
+  const fetchAddress = async (lat: number, lng: number): Promise<string> => {
     try {
       const response = await fetch(
         `https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${lng}&y=${lat}`,
@@ -54,6 +62,15 @@ const useUserLocation = (): UseUserLocationResult => {
       setError('이 브라우저에서는 위치 정보가 지원되지 않습니다.');
       setIsLoading(false);
       setIsGpsActive(false);
+      // 비회원: 디폴트, 회원: 자주 가는 지역 → 없으면 디폴트
+      if (isLoggedIn) {
+        // TODO: 자주 가는 지역 구현 후 아래와 같은 코드로 대체
+        // if (favoriteRegion) {
+        //   setLocation(favoriteRegion);
+        //   setAddress('자주 가는 지역 주소');
+        //   return;
+        // }
+      }
       setLocation(DEFAULT_LOCATION);
       setAddress('');
       return;
@@ -71,6 +88,15 @@ const useUserLocation = (): UseUserLocationResult => {
       (err) => {
         setError('위치 권한이 거부되었습니다.');
         setIsGpsActive(false);
+        // 비회원: 디폴트, 회원: 자주 가는 지역 → 없으면 디폴트
+        if (isLoggedIn) {
+          // TODO: 자주 가는 지역 구현 후 아래와 같은 코드로 대체
+          // if (favoriteRegion) {
+          //   setLocation(favoriteRegion);
+          //   setAddress('자주 가는 지역 주소');
+          //   return;
+          // }
+        }
         setLocation(DEFAULT_LOCATION);
         setAddress('');
         setIsLoading(false);
@@ -79,14 +105,25 @@ const useUserLocation = (): UseUserLocationResult => {
     );
   };
 
-  return {
-    isGpsActive,
-    address,
-    location,
-    requestGps,
-    error,
-    isLoading,
-  };
-};
+  return (
+    <GpsContext.Provider
+      value={{
+        isGpsActive,
+        address,
+        location,
+        requestGps,
+        error,
+        isLoading,
+      }}
+    >
+      {children}
+    </GpsContext.Provider>
+  );
+}
 
-export default useUserLocation;
+export function useGps() {
+  const context = useContext(GpsContext);
+  if (!context)
+    throw new Error('useGps는 GpsProvider 내부에서만 사용해야 합니다.');
+  return context;
+}

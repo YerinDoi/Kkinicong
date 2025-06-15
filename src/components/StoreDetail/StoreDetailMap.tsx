@@ -114,18 +114,6 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
                 },
               },
             }}
-            onCreate={(markerInstance) => {
-              // 마커 클릭 이벤트 리스너 제거
-              // if (window.kakao) {
-              //   window.kakao.maps.event.addListener(
-              //     markerInstance,
-              //     'click',
-              //     () => {
-              //       onMarkerClick();
-              //     },
-              //   );
-              // }
-            }}
             zIndex={100} // zIndex를 핀 마커에 맞게 100으로 변경
           />
         </KakaoMap>

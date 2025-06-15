@@ -12,6 +12,8 @@ import { useLocation } from 'react-router-dom';
 import useStoreSearch from '@/hooks/useStoreSearch';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import { categoryMapping, sortMapping } from '@/constants/storeMapping';
+import { useGps } from '@/contexts/GpsContext';
+import { useGpsFetch } from '@/hooks/useGpsFetch';
 
 const StoreSearchPage = () => {
   const location = useLocation();
@@ -19,7 +21,7 @@ const StoreSearchPage = () => {
     () => location.state?.selectedCategory || '전체',
   );
   const [stores, setStores] = useState<Store[]>([]);
-  const [sort, setsort] = useState('조회수 순');
+  const [sort, setsort] = useState('가까운 순');
   const [isLoading, setIsLoading] = useState(false);
 
   const pageRef = useRef(0);
@@ -37,8 +39,12 @@ const StoreSearchPage = () => {
     handleSearch,
   } = useStoreSearch();
 
+  const { address: gpsAddress, location: gpsLocation, requestGps } = useGps();
+
   const fetchStores = useCallback(
-    async (page: number, currentSearchTerm: string) => {
+    async (lat?: number, lng?: number) => {
+      const page = 0;
+      const currentSearchTerm = searchTerm;
       if (isLoadingRef.current) {
         return;
       }
@@ -63,7 +69,14 @@ const StoreSearchPage = () => {
           params.category = categoryParam;
         }
 
-        if (currentSearchTerm) {
+        console.log('[fetchStores] isLocation:', isLocation);
+        console.log('[fetchStores] coordinates:', coordinates);
+        console.log('[fetchStores] gpsLocation:', gpsLocation);
+
+        if (lat !== undefined && lng !== undefined) {
+          params.latitude = lat;
+          params.longitude = lng;
+        } else if (currentSearchTerm) {
           if (isLocation && coordinates) {
             params.latitude = coordinates.latitude;
             params.longitude = coordinates.longitude;
@@ -74,8 +87,13 @@ const StoreSearchPage = () => {
           if (isLocation && coordinates) {
             params.latitude = coordinates.latitude;
             params.longitude = coordinates.longitude;
+          } else if (gpsLocation) {
+            params.latitude = gpsLocation.latitude;
+            params.longitude = gpsLocation.longitude;
           }
         }
+
+        console.log('[fetchStores] 최종 params:', params);
 
         const response = await axiosInstance.get('/api/v1/store/list', {
           params,
@@ -120,7 +138,7 @@ const StoreSearchPage = () => {
         setIsLoading(false);
       }
     },
-    [selectedCategory, sort, isLocation, coordinates],
+    [selectedCategory, sort, isLocation, coordinates, searchTerm],
   );
 
   const { loaderRef } = useInfiniteScroll({
@@ -129,7 +147,9 @@ const StoreSearchPage = () => {
         console.log('onIntersect 조건 충족, fetchStores 호출 예정', {
           nextPage: pageRef.current + 1,
         });
-        fetchStores(pageRef.current + 1, searchTerm);
+        // 무한스크롤에서는 기존 방식대로 동작
+        // (필요하다면 여기도 lat, lng를 넘길 수 있음)
+        // fetchStores(pageRef.current + 1, searchTerm);
       }
     }, [fetchStores, isLoadingRef, hasNextPageRef, pageRef, searchTerm]),
     isLoadingRef: isLoadingRef,
@@ -137,11 +157,18 @@ const StoreSearchPage = () => {
     root: scrollContainerRef.current,
   });
 
+  const handleGpsClick = useGpsFetch((lat, lng) => {
+    pageRef.current = 0;
+    hasNextPageRef.current = true;
+    setStores([]);
+    fetchStores(lat, lng);
+  }, requestGps);
+
   useEffect(() => {
     pageRef.current = 0;
     hasNextPageRef.current = true;
     setStores([]);
-    fetchStores(0, searchTerm);
+    fetchStores();
   }, [
     selectedCategory,
     sort,
@@ -154,10 +181,10 @@ const StoreSearchPage = () => {
   return (
     <div>
       <div className="flex flex-col items-center w-full mt-[11px] shadow-custom shrink-0">
-        <Header title="가맹점 찾기" />
+        <Header title="가맹점 찾기" location={gpsAddress} />
 
         <div className="flex gap-[12px] px-[20px] w-full">
-          <button>
+          <button onClick={handleGpsClick}>
             <Icons name="gps" />
           </button>
           <SearchInput
@@ -175,9 +202,14 @@ const StoreSearchPage = () => {
         />
       </div>
 
-      {!isLoading && stores.length === 0 && searchTerm && !isLocation ? (
+
+      {!isLoading && stores.length === 0 ? (
         <div className="flex items-center justify-center h-[calc(100vh-240px)]">
-          <NoSearchResults type="search" query={searchTerm} />
+          {searchTerm && !isLocation ? (
+            <NoSearchResults type="search" query={searchTerm} />
+          ) : (
+            <NoSearchResults type="nearby" />
+          )}
         </div>
       ) : (
         <>

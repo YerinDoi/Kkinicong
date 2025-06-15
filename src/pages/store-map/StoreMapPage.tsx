@@ -9,11 +9,12 @@ import StoreList from '@/components/StoreSearch/StoreList';
 import NoSearchResults from '@/components/common/NoSearchResults';
 import Icons from '@/assets/icons';
 import StoreMap from '@/components/StoreMap/StoreMap';
-import useUserLocation from '@/hooks/useUserLocation';
+import { useGps } from '@/contexts/GpsContext';
 import useStoreSearch from '@/hooks/useStoreSearch';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import useBottomSheet from '@/hooks/useBottomSheet';
 import { categoryMapping } from '@/constants/storeMapping';
+import { useGpsFetch } from '@/hooks/useGpsFetch';
 
 // 줌 레벨에 따른 반경 계산 함수 (컴포넌트 외부로 이동)
 const calculateRadius = (level: number): number => {
@@ -84,7 +85,7 @@ const StoreMapPage = () => {
     address: gpsAddress,
     location: gpsLocation,
     requestGps,
-  } = useUserLocation();
+  } = useGps();
 
   // StoreMap에서 지도 인스턴스 받아오기
   const [mapInstance, setMapInstance] = useState<any>(null);
@@ -129,7 +130,9 @@ const StoreMapPage = () => {
 
   // API 호출 함수 (fetchStores 호출 시 페이지 관리)
   const fetchStores = useCallback(
-    async (page: number, isInitialLoadOrReset: boolean) => {
+    async (lat?: number, lng?: number) => {
+      const page = 0;
+      const isInitialLoadOrReset = true;
       if (isLoadingRef.current) {
         console.log(
           `fetchStores: 로딩 중이므로 요청 무시 (isLoadingRef.current = ${isLoadingRef.current})`,
@@ -146,8 +149,8 @@ const StoreMapPage = () => {
         const params = {
           page: page,
           size: 10,
-          latitude: mapCenterRef.current.lat,
-          longitude: mapCenterRef.current.lng,
+          latitude: lat !== undefined ? lat : mapCenterRef.current.lat,
+          longitude: lng !== undefined ? lng : mapCenterRef.current.lng,
           radius: calculateRadius(mapLevelRef.current),
           category:
             selectedCategoryRef.current !== '전체'
@@ -264,7 +267,7 @@ const StoreMapPage = () => {
     pageRef.current = 0;
     hasNextPageRef.current = true;
     setStores([]); // 기존 데이터 초기화
-    fetchStores(0, true);
+    fetchStores();
 
     // 지도를 맨 위로 스크롤
     window.scrollTo({
@@ -304,7 +307,7 @@ const StoreMapPage = () => {
         prevMapCenterRef.current = mapCenter;
         pageRef.current = 0;
         hasNextPageRef.current = true;
-        fetchStores(0, true);
+        fetchStores(mapCenter.lat, mapCenter.lng);
       }, 500);
     } else {
       console.log('중심 좌표 변경이 0.01도 미만. API 요청하지 않음');
@@ -324,7 +327,7 @@ const StoreMapPage = () => {
       if (!isZoomingRef.current) {
         const nextPage = pageRef.current + 1;
         pageRef.current = nextPage;
-        fetchStores(nextPage, false);
+        fetchStores(mapCenter.lat, mapCenter.lng);
       }
     },
     isLoadingRef,
@@ -354,34 +357,25 @@ const StoreMapPage = () => {
     [stores],
   ); // stores 배열이 변경될 수 있으므로 의존성 배열에 추가
 
+  const handleGpsClick = useGpsFetch((lat, lng) => {
+    pageRef.current = 0;
+    hasNextPageRef.current = true;
+    setStores([]);
+    setMapCenter({ lat, lng });
+    if (mapInstance && window.kakao && window.kakao.maps) {
+      const kakaoCenter = new window.kakao.maps.LatLng(lat, lng);
+      mapInstance.setCenter(kakaoCenter);
+    }
+    fetchStores(lat, lng);
+  }, requestGps);
+
   return (
     <div className="flex flex-col h-screen">
       <div className="flex flex-col items-center w-full mt-[11px] z-[100]">
         <Header title="가맹점 지도" location={gpsAddress} />
 
         <div className="flex gap-[12px] px-[20px] w-full">
-          <button
-            onClick={() =>
-              requestGps((lat, lng) => {
-                const newCenter = {
-                  lat: lat + Math.random() * 1e-10,
-                  lng: lng + Math.random() * 1e-10,
-                };
-                setMapCenter({
-                  lat: gpsLocation.latitude,
-                  lng: gpsLocation.longitude,
-                });
-                if (mapInstance && window.kakao && window.kakao.maps) {
-                  const kakaoCenter = new window.kakao.maps.LatLng(lat, lng);
-                  mapInstance.setCenter(kakaoCenter);
-                }
-                pageRef.current = 0;
-                hasNextPageRef.current = true;
-                setStores([]);
-                fetchStores(0, true);
-              })
-            }
-          >
+          <button onClick={handleGpsClick}>
             <Icons name="gps" />
           </button>
           <SearchInput
