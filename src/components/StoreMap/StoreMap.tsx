@@ -5,7 +5,7 @@ import KakaoMap, {
   DOT_IMAGE_SIZE,
 } from '@/components/common/KakaoMap';
 import { Store } from '@/types/store';
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MapMarker, CustomOverlayMap } from 'react-kakao-maps-sdk';
 
 interface StoreMapProps {
@@ -41,21 +41,6 @@ const StoreMap = ({
       mapInstance.setCenter(newCenter);
     }
   }, [center.lat, center.lng, mapInstance]);
-
-  // 가게들의 평균 위경도 계산 (이 로직은 StoreMapPage로 이동)
-  // const center = useMemo(() => {
-  //   if (stores.length === 0) {
-  //     return { lat: 37.494589, lng: 126.868346 }; // 기본 중심 좌표
-  //   }
-
-  //   const totalLat = stores.reduce((sum, store) => sum + store.latitude, 0);
-  //   const totalLng = stores.reduce((sum, store) => sum + store.longitude, 0);
-
-  //   return {
-  //     lat: totalLat / stores.length,
-  //     lng: totalLng / stores.length,
-  //   };
-  // }, [stores]);
 
   return (
     <div className="w-full h-full" onClick={onMapClick}>
