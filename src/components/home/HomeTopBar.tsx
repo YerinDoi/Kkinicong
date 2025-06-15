@@ -1,12 +1,16 @@
 import LogoTextIcon from '@/assets/svgs/logo/logo-text.svg?react';
 import LogoIcon from '@/assets/svgs/logo/logo-icon.svg?react';
 import MenuBar from '@/components/common/MenuBar';
-import { useState, Fragment ,useEffect} from 'react';
-import AlarmIcon from '@/assets/icons/system/alarm.svg'
+import { useState, Fragment, useEffect } from 'react';
+import AlarmIcon from '@/assets/icons/system/alarm.svg';
 import { useNavigate } from 'react-router-dom';
 import Icon from '@/assets/icons';
 
-export default function HomeTopBar() {
+interface HomeTopBarProps {
+  address?: string;
+}
+
+export default function HomeTopBar({ address = '' }: HomeTopBarProps) {
   // 메뉴 열림/닫힘 상태 관리
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -23,7 +27,7 @@ export default function HomeTopBar() {
 
   const login = () => {
     navigate('/login');
-  }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -41,8 +45,7 @@ export default function HomeTopBar() {
             <LogoTextIcon className="w-16" />
             <LogoIcon className="w-6 h-6" />
           </div>
-          <span className="text-xs text-[#919191] font-regular">서구 크리스탈로 78</span>
-          
+          <span className="text-xs text-[#919191] font-regular">{address}</span>
         </div>
         {/* 오른쪽 영역 : 로그인 버튼, 메뉴버튼(햄버거) */}
         <div className="flex items-center gap-[14px]">

@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import Home from '../pages/home/HomePage';
+import { GpsProvider } from '@/contexts/GpsContext';
 
 import LoginPage from '@/pages/auth/LoginPage';
 import CallbackPage from '@/pages/auth/CallbackPage';
@@ -16,14 +17,14 @@ import ConvenienceStorePage from '@/pages/convenience-store/ConvenienceStorePage
 const Router = () => {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<GpsProvider><Home /></GpsProvider>}/>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/oauth/:provider/callback" element={<CallbackPage />} />
       <Route path="/nickname" element={<NicknamePage />} />
       <Route path="/nicknameXXX" element={<NicknamePageXXX />} />
 
-      <Route path="/store-map" element={<StoreMapPage />} />
-      <Route path="/store-search" element={<StoreSearchPage />} />
+      <Route path="/store-map" element={<GpsProvider><StoreMapPage /></GpsProvider>}/>
+      <Route path="/store-search" element={<GpsProvider><StoreSearchPage /></GpsProvider>}/>
       <Route path="/store-review/:storeId" element={<StoreReviewPage />} />
       <Route path="/store/:storeId" element={<StoreDetailPage />} />
 
