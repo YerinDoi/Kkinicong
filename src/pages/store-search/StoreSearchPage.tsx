@@ -11,27 +11,7 @@ import NoSearchResults from '@/components/common/NoSearchResults';
 import { useLocation } from 'react-router-dom';
 import useStoreSearch from '@/hooks/useStoreSearch';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
-
-const categoryMapping: { [key: string]: string } = {
-  한식: 'KOREAN',
-  양식: 'WESTERN',
-  일식: 'JAPANESE',
-  중식: 'CHINESE',
-  치킨: 'CHICKEN',
-  분식: 'BUNSIK',
-  샤브샤브: 'SHABU',
-  아시안: 'ASIAN',
-  도시락: 'LUNCHBOX',
-  간식: 'DESSERT',
-  기타: 'ETC',
-};
-
-const sortMapping: { [key: string]: string } = {
-  '조회수 순': 'VIEW_COUNT',
-  '가까운 순': 'DISTANCE',
-  '리뷰 많은 순': 'REVIEW_COUNT',
-  '별점 높은 순': 'RATING',
-};
+import { categoryMapping, sortMapping } from '@/constants/storeMapping';
 
 const StoreSearchPage = () => {
   const location = useLocation();
@@ -92,7 +72,6 @@ const StoreSearchPage = () => {
           }
         } else {
           if (isLocation && coordinates) {
-            const defaultRadius = 5000;
             params.latitude = coordinates.latitude;
             params.longitude = coordinates.longitude;
           }
@@ -198,7 +177,7 @@ const StoreSearchPage = () => {
 
       {!isLoading && stores.length === 0 && searchTerm && !isLocation ? (
         <div className="flex items-center justify-center h-[calc(100vh-240px)]">
-          <NoSearchResults query={searchTerm} />
+          <NoSearchResults type="search" query={searchTerm} />
         </div>
       ) : (
         <>
