@@ -18,7 +18,6 @@ import { useGpsFetch } from '@/hooks/useGpsFetch';
 
 // 줌 레벨에 따른 반경 계산 함수 (컴포넌트 외부로 이동)
 const calculateRadius = (level: number): number => {
-  if (level >= 4) return 500;
   if (level >= 3) return 1000;
   if (level >= 2) return 3000;
   return 5000;
@@ -131,20 +130,11 @@ const StoreMapPage = () => {
   // API 호출 함수 (fetchStores 호출 시 페이지 관리)
   const fetchStores = useCallback(
     async (lat?: number, lng?: number) => {
-      const page = pageRef.current;
-      const isInitialLoadOrReset = page === 0;
-      if (isLoadingRef.current) {
-        console.log(
-          `fetchStores: 로딩 중이므로 요청 무시 (isLoadingRef.current = ${isLoadingRef.current})`,
-        );
-        return;
-      }
-
+      if (isLoadingRef.current) return;
       isLoadingRef.current = true;
       setIsLoading(true);
-      console.log(
-        `fetchStores: API 요청 시작 (page: ${page}, isInitialLoadOrReset: ${isInitialLoadOrReset})`,
-      );
+      const page = pageRef.current;
+      const isInitialLoadOrReset = page === 0;
       try {
         const params = {
           page: page,
@@ -231,10 +221,7 @@ const StoreMapPage = () => {
       // level(줌레벨)만 바뀌었을 때는 상태만 바꿈 (API 트리거 X)
       if (isZoomChanged && !isCenterChanged) {
         setMapLevel(level);
-        // 페이지네이션 상태만 초기화
-        pageRef.current = 0;
-        hasNextPageRef.current = true;
-        // 기존 데이터는 그대로 두고 fetchStores는 호출하지 않음
+        // 페이지네이션 상태, 데이터 등은 건드리지 않음
       }
       // 둘 다 바뀌었을 때(드래그+줌 동시): center 우선
       if (isCenterChanged && isZoomChanged) {
@@ -244,10 +231,6 @@ const StoreMapPage = () => {
         pageRef.current = 0;
         hasNextPageRef.current = true;
       }
-      // 둘 다 안 바뀌면 아무것도 안 함
-      console.log(
-        `handleMapChange: center: ${center.lat}, ${center.lng}, level: ${level}, isZoomChanged: ${isZoomChanged}, isCenterChanged: ${isCenterChanged}`,
-      );
     },
     [],
   );
@@ -268,12 +251,6 @@ const StoreMapPage = () => {
     hasNextPageRef.current = true;
     setStores([]); // 기존 데이터 초기화
     fetchStores();
-
-    // 지도를 맨 위로 스크롤
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
 
     // 스크롤 컨테이너도 맨 위로 스크롤
     if (scrollContainerRef.current) {
@@ -324,7 +301,7 @@ const StoreMapPage = () => {
   // useInfiniteScroll 훅 사용 (무한스크롤)
   const { loaderRef } = useInfiniteScroll({
     onIntersect: () => {
-      if (!isZoomingRef.current) {
+      if (!isZoomingRef.current && !selectedStore) {
         const nextPage = pageRef.current + 1;
         pageRef.current = nextPage;
         fetchStores(mapCenter.lat, mapCenter.lng);
