@@ -131,8 +131,8 @@ const StoreMapPage = () => {
   // API 호출 함수 (fetchStores 호출 시 페이지 관리)
   const fetchStores = useCallback(
     async (lat?: number, lng?: number) => {
-      const page = 0;
-      const isInitialLoadOrReset = true;
+      const page = pageRef.current;
+      const isInitialLoadOrReset = page === 0;
       if (isLoadingRef.current) {
         console.log(
           `fetchStores: 로딩 중이므로 요청 무시 (isLoadingRef.current = ${isLoadingRef.current})`,
