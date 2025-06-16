@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 
-const LOWERED_SHEET_HEIGHT_FIXED = 144;
+const LOWERED_SHEET_HEIGHT_FIXED = 148;
 
 export default function useBottomSheet(headerHeight: number) {
   const [sheetHeight, setSheetHeight] = useState(0);

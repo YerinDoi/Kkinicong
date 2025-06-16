@@ -389,7 +389,7 @@ const StoreMapPage = () => {
 
       {/* 지도 영역 */}
       <div
-        className="fixed left-0 mt-[12px] w-full z-[1]"
+        className="fixed left-0 mt-[14px] w-full z-[1]"
         style={{
           top: headerHeight,
           height: mapAreaHeight,
@@ -447,7 +447,10 @@ const StoreMapPage = () => {
 
         {/* 캐러셀 아래 영역 전체 */}
         {!isLoading && stores.length === 0 ? (
-          <div className="mt-[32px]">
+          <div
+            className="mt-[32px] overflow-hidden overflow-y-auto"
+            ref={scrollContainerRef}
+          >
             {searchTerm ? (
               <NoSearchResults type="search" query={searchTerm} />
             ) : (
@@ -455,7 +458,7 @@ const StoreMapPage = () => {
             )}
           </div>
         ) : (
-          <div className="pt-[20px] px-[16px] overflow-hidden flex-grow flex flex-col">
+          <div className="pt-[16px] px-[16px] overflow-hidden flex-grow flex flex-col">
             {/* 가게 목록 */}
             <div
               className="h-full overflow-y-auto scrollbar-hide flex-grow"
