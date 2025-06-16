@@ -43,7 +43,7 @@ const StoreSearchPage = () => {
 
   const fetchStores = useCallback(
     async (lat?: number, lng?: number) => {
-      const page = 0;
+      const page = pageRef.current;
       const currentSearchTerm = searchTerm;
       if (isLoadingRef.current) {
         return;
@@ -144,16 +144,12 @@ const StoreSearchPage = () => {
   const { loaderRef } = useInfiniteScroll({
     onIntersect: useCallback(() => {
       if (!isLoadingRef.current && hasNextPageRef.current) {
-        console.log('onIntersect 조건 충족, fetchStores 호출 예정', {
-          nextPage: pageRef.current + 1,
-        });
-        // 무한스크롤에서는 기존 방식대로 동작
-        // (필요하다면 여기도 lat, lng를 넘길 수 있음)
-        // fetchStores(pageRef.current + 1, searchTerm);
+        pageRef.current += 1;
+        fetchStores();
       }
-    }, [fetchStores, isLoadingRef, hasNextPageRef, pageRef, searchTerm]),
-    isLoadingRef: isLoadingRef,
-    hasNextPageRef: hasNextPageRef,
+    }, [fetchStores, isLoadingRef, hasNextPageRef]),
+    isLoadingRef,
+    hasNextPageRef,
     root: scrollContainerRef.current,
   });
 
@@ -180,7 +176,7 @@ const StoreSearchPage = () => {
 
   return (
     <div>
-      <div className="flex flex-col items-center w-full mt-[11px] shadow-custom shrink-0">
+      <div className="flex flex-col items-center w-full pt-[11px] shadow-bottom shrink-0">
         <Header title="가맹점 찾기" location={gpsAddress} />
 
         <div className="flex gap-[12px] px-[20px] w-full">
@@ -201,7 +197,6 @@ const StoreSearchPage = () => {
           }}
         />
       </div>
-
 
       {!isLoading && stores.length === 0 ? (
         <div className="flex items-center justify-center h-[calc(100vh-240px)]">
