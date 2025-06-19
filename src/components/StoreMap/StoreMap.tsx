@@ -19,6 +19,45 @@ interface StoreMapProps {
   onMapLoad?: (map: any) => void; // 지도 인스턴스 전달
 }
 
+// 두 지점 간의 거리를 계산하는 함수 (단위: degree)
+function calculateDistance(
+  pos1: { lat: number; lng: number },
+  pos2: { lat: number; lng: number },
+): number {
+  const latDiff = Math.abs(pos1.lat - pos2.lat);
+  const lngDiff = Math.abs(pos1.lng - pos2.lng);
+  return Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
+}
+
+// 도트 마커 이름 표시 여부 결정 함수
+function shouldShowDotMarkerName(
+  mapLevel: number,
+  currentPosition: { lat: number; lng: number },
+  allPositions: Array<{ lat: number; lng: number }>,
+): boolean {
+  if (mapLevel <= 2) return true; // level 1~2: 모두 표시
+
+  // 줌 레벨에 따른 거리 임계값 설정
+  let DISTANCE_THRESHOLD;
+  if (mapLevel === 3) {
+    DISTANCE_THRESHOLD = 0.0005; // 약 80-90m
+  } else if (mapLevel === 4) {
+    DISTANCE_THRESHOLD = 0.001; // 약 120-130m
+  } else {
+    return false; // level 5 이상: 표시 안 함
+  }
+
+  // 주변 마커와의 거리를 체크
+  const nearbyMarkers = allPositions.filter(
+    (pos) =>
+      pos !== currentPosition &&
+      calculateDistance(pos, currentPosition) < DISTANCE_THRESHOLD,
+  );
+
+  // 주변 마커가 2개 초과면 이름 표시하지 않음
+  return nearbyMarkers.length <= 2;
+}
+
 const StoreMap = ({
   stores,
   latestBatchStores,
@@ -53,50 +92,102 @@ const StoreMap = ({
           if (onMapLoad) onMapLoad(map);
         }}
       >
-        {stores.map((store) => {
+        {stores.map((store, idx) => {
           const isDot = !latestBatchStores.some(
             (latest) => latest.id === store.id,
           );
           const markerPosition = { lat: store.latitude, lng: store.longitude };
 
           if (isDot) {
+            // 모든 도트 마커의 위치 정보 수집
+            const dotMarkerPositions = stores
+              .filter(
+                (s) => !latestBatchStores.some((latest) => latest.id === s.id),
+              )
+              .map((s) => ({ lat: s.latitude, lng: s.longitude }));
+
+            const showName = shouldShowDotMarkerName(
+              level,
+              markerPosition,
+              dotMarkerPositions,
+            );
+
             // 점 마커 (이름 없음)
             return (
-              <MapMarker
-                key={`dot-marker-${store.id}`}
-                position={markerPosition}
-                image={{
-                  src: DOT_MARKER,
-                  size: {
-                    width: DOT_IMAGE_SIZE.width,
-                    height: DOT_IMAGE_SIZE.height,
-                  },
-                  options: {
-                    offset: {
-                      x: DOT_IMAGE_SIZE.width / 2,
-                      y: DOT_IMAGE_SIZE.height / 2,
+              <React.Fragment key={`dot-marker-group-${store.id}`}>
+                <MapMarker
+                  key={`dot-marker-${store.id}`}
+                  position={markerPosition}
+                  image={{
+                    src: DOT_MARKER,
+                    size: {
+                      width: DOT_IMAGE_SIZE.width,
+                      height: DOT_IMAGE_SIZE.height,
                     },
-                  },
-                }}
-                onCreate={(markerInstance) => {
-                  if (window.kakao) {
-                    window.kakao.maps.event.addListener(
-                      markerInstance,
-                      'click',
-                      (e: any) => {
-                        if (e && e.domEvent) e.domEvent.stopPropagation();
+                    options: {
+                      offset: {
+                        x: DOT_IMAGE_SIZE.width / 2,
+                        y: DOT_IMAGE_SIZE.height / 2,
+                      },
+                    },
+                  }}
+                  onCreate={(markerInstance) => {
+                    if (window.kakao) {
+                      window.kakao.maps.event.addListener(
+                        markerInstance,
+                        'click',
+                        (e: any) => {
+                          if (e && e.domEvent) e.domEvent.stopPropagation();
+                          onMarkerClick &&
+                            onMarkerClick({
+                              lat: store.latitude,
+                              lng: store.longitude,
+                              name: store.name,
+                            });
+                        },
+                      );
+                    }
+                  }}
+                  zIndex={50}
+                />
+                {showName && (
+                  <CustomOverlayMap
+                    key={`dot-overlay-${store.id}`}
+                    position={markerPosition}
+                    yAnchor={1.1}
+                    xAnchor={0.5}
+                    zIndex={51}
+                  >
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: '#222',
+                        background: 'none',
+                        padding: 0,
+                        borderRadius: 0,
+                        whiteSpace: 'nowrap',
+                        pointerEvents: 'auto',
+                        transform: 'translateY(130%)',
+                        textAlign: 'center',
+                        fontWeight: 500,
+                        textShadow:
+                          '-1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff',
+                      }}
+                      onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                        e.stopPropagation();
                         onMarkerClick &&
                           onMarkerClick({
                             lat: store.latitude,
                             lng: store.longitude,
                             name: store.name,
                           });
-                      },
-                    );
-                  }
-                }}
-                zIndex={50}
-              />
+                      }}
+                    >
+                      {store.name}
+                    </div>
+                  </CustomOverlayMap>
+                )}
+              </React.Fragment>
             );
           }
           // 핀 마커 (이름 포함)
@@ -149,14 +240,15 @@ const StoreMap = ({
                     fontSize: '12px',
                     fontWeight: 'bold',
                     color: '#65CE58',
-                    backgroundColor: 'white',
-                    padding: '4px 8px',
-                    borderRadius: '5px',
+                    background: 'none',
+                    padding: 0,
+                    borderRadius: 0,
                     whiteSpace: 'nowrap',
                     pointerEvents: 'auto',
-                    transform: 'translateY(-100%)',
+                    transform: 'translateY(130%)',
                     textAlign: 'center',
-                    boxShadow: '0px 2px 4px rgba(0,0,0,0.2)',
+                    textShadow:
+                      '-1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff',
                   }}
                   onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                     e.stopPropagation();
