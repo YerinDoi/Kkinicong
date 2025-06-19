@@ -10,11 +10,37 @@ interface SearchAddressResult {
   coordinates: Coordinates | null;
 }
 
+// API 요청 시 사용할 파라미터 타입 정의
+interface FetchParams {
+  latitude: number;
+  longitude: number;
+  keyword?: string;
+  [key: string]: any;
+}
+
 const useStoreSearch = () => {
   const [inputValue, setInputValue] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [isLocation, setIsLocation] = useState(false);
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null); // 초기값을 null로 설정
+
+  // 검색어 처리 로직을 별도 함수로 분리
+  const processSearchParams = useCallback(
+    (params: FetchParams, searchTerm: string) => {
+      // 동/구/역으로 끝나는 검색어이고 위경도가 있을 때는 keyword 제외
+      if (
+        /동$|구$|역$/.test(searchTerm) &&
+        params.latitude &&
+        params.longitude
+      ) {
+        const { keyword, ...restParams } = params;
+        return restParams;
+      }
+      // 그 외에는 keyword 포함
+      return params;
+    },
+    [],
+  );
 
   // 카카오 API를 사용하여 주소 검색 및 위경도 변환
   const searchAddress = useCallback(
@@ -70,29 +96,65 @@ const useStoreSearch = () => {
   );
 
   const handleSearch = useCallback(
-    async (searchInput: string) => {
-      console.log('useStoreSearch: handleSearch: 검색 시작', searchInput);
+    async (
+      searchInput: string,
+      fetchStores: (params: FetchParams) => void,
+      gpsLocation: { latitude: number; longitude: number },
+      isGpsActive: boolean,
+      setMapCenter: (center: { lat: number; lng: number }) => void,
+    ) => {
+      setInputValue(searchInput);
 
-      // 위경도 변환 시도
-      const { isLocation: newIsLocation, coordinates: newCoordinates } =
-        await searchAddress(searchInput);
+      // 동/구/역으로 끝나면 위경도 변환
+      const { isLocation, coordinates } = await searchAddress(searchInput);
 
-      // 검색어 상태 업데이트
+      // searchTerm 업데이트를 fetchStores 호출 직전에 수행
       setSearchTerm(searchInput);
 
-      // 주소 검색 결과 상태 업데이트 (searchAddress 내부에서 이미 처리되지만, 콜백 반환값도 사용 가능)
-      setIsLocation(newIsLocation);
-      setCoordinates(newCoordinates);
+      if (isLocation && coordinates) {
+        // 지도 중심 이동
+        setMapCenter({
+          lat: coordinates.latitude,
+          lng: coordinates.longitude,
+        });
 
-      // StoreSearchPage나 StoreMapPage에서 이 결과를 사용하여 다음 작업을 수행
-      console.log('useStoreSearch: handleSearch 완료', {
-        newIsLocation,
-        newCoordinates,
-        searchInput,
+        const params = processSearchParams(
+          {
+            latitude: coordinates.latitude,
+            longitude: coordinates.longitude,
+            keyword: searchInput,
+          },
+          searchInput,
+        );
+
+        fetchStores(params);
+        return;
+      }
+
+      // 그 외: GPS(없으면 디폴트) + 키워드
+      const gps = isGpsActive
+        ? gpsLocation
+        : { latitude: 37.495472, longitude: 126.676902 };
+
+      // GPS 위치로 지도 중심 이동
+      setMapCenter({
+        lat: gps.latitude,
+        lng: gps.longitude,
       });
+
+      const params = processSearchParams(
+        {
+          latitude: gps.latitude,
+          longitude: gps.longitude,
+          keyword: searchInput,
+        },
+        searchInput,
+      );
+
+      fetchStores(params);
     },
-    [searchAddress],
-  ); // searchAddress가 useCallback 내부에서 사용되므로 의존성에 포함
+    [searchAddress, processSearchParams],
+  );
 
   return {
     inputValue,
@@ -103,6 +165,7 @@ const useStoreSearch = () => {
     coordinates,
     handleSearch,
     searchAddress, // 필요에 따라 searchAddress 함수 자체를 노출
+    processSearchParams, // 외부에서도 사용할 수 있도록 export
   };
 };
 

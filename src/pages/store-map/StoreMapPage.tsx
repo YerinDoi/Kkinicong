@@ -66,7 +66,27 @@ const StoreMapPage = () => {
   }>({
     lat: 37.495472,
     lng: 126.676902,
-  }); // 기본값: 인천 서구청 좌표
+  });
+
+  // StoreMap에서 지도 인스턴스 받아오기
+  const [mapInstance, setMapInstance] = useState<any>(null);
+
+  const moveMap = useCallback(
+    (center: { lat: number; lng: number }) => {
+      console.log('moveMap 호출됨:', center);
+      setMapCenter(center);
+
+      // mapInstance가 있으면 직접 지도 이동
+      if (mapInstance && window.kakao && window.kakao.maps) {
+        console.log('카카오맵 이동 시도:', center);
+        const moveLatLng = new window.kakao.maps.LatLng(center.lat, center.lng);
+        mapInstance.setCenter(moveLatLng);
+      }
+    },
+    [mapInstance],
+  );
+
+  // 지도 상태 관리
   const [mapLevel, setMapLevel] = useState(3); // 기본 줌 레벨
 
   // 최신 상태 값을 참조하기 위한 ref들
@@ -86,9 +106,6 @@ const StoreMapPage = () => {
     requestGps,
   } = useGps();
 
-  // StoreMap에서 지도 인스턴스 받아오기
-  const [mapInstance, setMapInstance] = useState<any>(null);
-
   // 검색/주소 변환 관련 상태 및 함수 (커스텀 훅 사용)
   const {
     inputValue,
@@ -98,6 +115,7 @@ const StoreMapPage = () => {
     isLocation,
     coordinates,
     handleSearch,
+    searchAddress,
   } = useStoreSearch();
 
   useEffect(() => {
@@ -129,29 +147,32 @@ const StoreMapPage = () => {
 
   // API 호출 함수 (fetchStores 호출 시 페이지 관리)
   const fetchStores = useCallback(
-    async (lat?: number, lng?: number) => {
+    async (params: {
+      latitude: number;
+      longitude: number;
+      keyword?: string;
+    }) => {
       if (isLoadingRef.current) return;
       isLoadingRef.current = true;
       setIsLoading(true);
       const page = pageRef.current;
       const isInitialLoadOrReset = page === 0;
       try {
-        const params = {
+        const requestParams = {
           page: page,
           size: 10,
-          latitude: lat !== undefined ? lat : mapCenterRef.current.lat,
-          longitude: lng !== undefined ? lng : mapCenterRef.current.lng,
+          ...params,
           radius: calculateRadius(mapLevelRef.current),
           category:
             selectedCategoryRef.current !== '전체'
               ? categoryMapping[selectedCategoryRef.current]
               : undefined,
-          keyword: searchTermRef.current,
         };
-        console.log('fetchStores - API 요청 파라미터:', params);
+
+        console.log('fetchStores - API 요청 파라미터:', requestParams);
 
         const response = await axiosInstance.get('/api/v1/store/map', {
-          params,
+          params: requestParams,
         });
 
         const results = response.data.results;
@@ -250,13 +271,13 @@ const StoreMapPage = () => {
     pageRef.current = 0;
     hasNextPageRef.current = true;
     setStores([]); // 기존 데이터 초기화
-    fetchStores();
+    fetchStores({ latitude: mapCenter.lat, longitude: mapCenter.lng });
 
     // 스크롤 컨테이너도 맨 위로 스크롤
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = 0;
     }
-  }, [selectedCategory, searchTerm, fetchStores]);
+  }, [selectedCategory, fetchStores]);
 
   // 2. 지도 중심 변경 시 데이터 로드 (디바운스, 페이지 초기화)
   useEffect(() => {
@@ -284,7 +305,7 @@ const StoreMapPage = () => {
         prevMapCenterRef.current = mapCenter;
         pageRef.current = 0;
         hasNextPageRef.current = true;
-        fetchStores(mapCenter.lat, mapCenter.lng);
+        fetchStores({ latitude: mapCenter.lat, longitude: mapCenter.lng });
       }, 500);
     } else {
       console.log('중심 좌표 변경이 0.01도 미만. API 요청하지 않음');
@@ -304,7 +325,7 @@ const StoreMapPage = () => {
       if (!isZoomingRef.current && !selectedStore) {
         const nextPage = pageRef.current + 1;
         pageRef.current = nextPage;
-        fetchStores(mapCenter.lat, mapCenter.lng);
+        fetchStores({ latitude: mapCenter.lat, longitude: mapCenter.lng });
       }
     },
     isLoadingRef,
@@ -326,7 +347,7 @@ const StoreMapPage = () => {
       );
       if (foundStore) {
         setSelectedStore(foundStore); // 선택된 가맹점 상태 업데이트
-        setSheetHeight(518); // 마커 클릭 시 바텀 시트 전체 높이로 확장
+        setSheetHeight(300); // 마커 클릭 시 바텀 시트 전체 높이로 확장
       } else {
         setSelectedStore(null); // 찾지 못하면 초기화
       }
@@ -343,7 +364,7 @@ const StoreMapPage = () => {
       const kakaoCenter = new window.kakao.maps.LatLng(lat, lng);
       mapInstance.setCenter(kakaoCenter);
     }
-    fetchStores(lat, lng);
+    fetchStores({ latitude: lat, longitude: lng });
   }, requestGps);
 
   return (
@@ -359,7 +380,15 @@ const StoreMapPage = () => {
             placeholder="가게이름을 검색하세요"
             value={inputValue}
             onChange={setInputValue}
-            onSearch={() => handleSearch(inputValue)}
+            onSearch={() =>
+              handleSearch(
+                inputValue,
+                fetchStores,
+                gpsLocation,
+                isGpsActive,
+                moveMap, // setMapCenter 대신 moveMap 사용
+              )
+            }
           />
         </div>
       </div>
@@ -386,7 +415,10 @@ const StoreMapPage = () => {
           level={mapLevel}
           onMapChange={handleMapChange}
           onMarkerClick={handleMarkerClick}
-          onMapClick={() => setSelectedStore(null)}
+          onMapClick={() => {
+            setSelectedStore(null);
+            setSheetHeight(518);
+          }}
           onMapLoad={setMapInstance}
         />
       </div>
@@ -415,9 +447,11 @@ const StoreMapPage = () => {
           <MenuCategoryCarousel
             selectedCategory={selectedCategory}
             onSelectCategory={(cat) => {
+              setSheetHeight(518);
               setSelectedCategory(cat);
               setSelectedStore(null);
               setMapLevel(3);
+              setSearchTerm('');
             }}
           />
         </div>

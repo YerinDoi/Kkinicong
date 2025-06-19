@@ -15,6 +15,13 @@ import { categoryMapping, sortMapping } from '@/constants/storeMapping';
 import { useGps } from '@/contexts/GpsContext';
 import { useGpsFetch } from '@/hooks/useGpsFetch';
 
+interface FetchParams {
+  latitude?: number;
+  longitude?: number;
+  keyword?: string;
+  [key: string]: any;
+}
+
 const StoreSearchPage = () => {
   const location = useLocation();
   const [selectedCategory, setSelectedCategory] = useState(
@@ -42,7 +49,7 @@ const StoreSearchPage = () => {
   const { address: gpsAddress, location: gpsLocation, requestGps } = useGps();
 
   const fetchStores = useCallback(
-    async (lat?: number, lng?: number) => {
+    async (params?: FetchParams) => {
       const page = pageRef.current;
       const currentSearchTerm = searchTerm;
       if (isLoadingRef.current) {
@@ -59,44 +66,40 @@ const StoreSearchPage = () => {
             : undefined;
         const sortParam = sortMapping[sort];
 
-        const params: Record<string, any> = {
+        const requestParams: FetchParams = {
           page: page,
           size: 10,
           sort: sortParam,
+          ...params,
         };
 
         if (categoryParam) {
-          params.category = categoryParam;
+          requestParams.category = categoryParam;
         }
 
-        console.log('[fetchStores] isLocation:', isLocation);
-        console.log('[fetchStores] coordinates:', coordinates);
-        console.log('[fetchStores] gpsLocation:', gpsLocation);
-
-        if (lat !== undefined && lng !== undefined) {
-          params.latitude = lat;
-          params.longitude = lng;
-        } else if (currentSearchTerm) {
-          if (isLocation && coordinates) {
-            params.latitude = coordinates.latitude;
-            params.longitude = coordinates.longitude;
+        if (!params) {
+          if (currentSearchTerm) {
+            if (isLocation && coordinates) {
+              requestParams.latitude = coordinates.latitude;
+              requestParams.longitude = coordinates.longitude;
+            } else {
+              requestParams.keyword = currentSearchTerm;
+            }
           } else {
-            params.keyword = currentSearchTerm;
-          }
-        } else {
-          if (isLocation && coordinates) {
-            params.latitude = coordinates.latitude;
-            params.longitude = coordinates.longitude;
-          } else if (gpsLocation) {
-            params.latitude = gpsLocation.latitude;
-            params.longitude = gpsLocation.longitude;
+            if (isLocation && coordinates) {
+              requestParams.latitude = coordinates.latitude;
+              requestParams.longitude = coordinates.longitude;
+            } else if (gpsLocation) {
+              requestParams.latitude = gpsLocation.latitude;
+              requestParams.longitude = gpsLocation.longitude;
+            }
           }
         }
 
-        console.log('[fetchStores] 최종 params:', params);
+        console.log('[fetchStores] 최종 params:', requestParams);
 
         const response = await axiosInstance.get('/api/v1/store/list', {
-          params,
+          params: requestParams,
         });
 
         const results = response.data.results;
@@ -157,7 +160,7 @@ const StoreSearchPage = () => {
     pageRef.current = 0;
     hasNextPageRef.current = true;
     setStores([]);
-    fetchStores(lat, lng);
+    fetchStores({ latitude: lat, longitude: lng });
   }, requestGps);
 
   useEffect(() => {
@@ -165,14 +168,7 @@ const StoreSearchPage = () => {
     hasNextPageRef.current = true;
     setStores([]);
     fetchStores();
-  }, [
-    selectedCategory,
-    sort,
-    searchTerm,
-    isLocation,
-    coordinates,
-    fetchStores,
-  ]);
+  }, [selectedCategory, sort, isLocation, coordinates, fetchStores]);
 
   return (
     <div>
@@ -187,7 +183,9 @@ const StoreSearchPage = () => {
             placeholder="가게이름을 검색하세요"
             value={inputValue}
             onChange={setInputValue}
-            onSearch={() => handleSearch(inputValue)}
+            onSearch={() =>
+              handleSearch(inputValue, fetchStores, gpsLocation, true, () => {})
+            }
           />
         </div>
         <MenuCategoryCarousel
