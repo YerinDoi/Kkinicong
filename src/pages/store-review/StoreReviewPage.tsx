@@ -76,7 +76,7 @@ const StoreReviewPage = () => {
   return (
     <div>
       <div className="flex flex-col w-full mt-[11px] mb-[29px] gap-[12px] font-pretendard">
-        <TopBar title="리뷰 쓰기" />
+        <TopBar title="리뷰 쓰기" rightType="none" />
         <StoreInfo
           store={{
             storeId: Number(storeId),
