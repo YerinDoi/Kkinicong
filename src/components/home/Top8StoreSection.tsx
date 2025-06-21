@@ -3,31 +3,39 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '@/api/axiosInstance';
 import TopStoreItem from '@/components/home/TopStoreItem';
 import { Store } from '@/types/store';
+import { useGps } from '@/contexts/GpsContext';
 
 function Top8StoreSection() {
   const [stores, setStores] = useState<Store[]>([]);
+  const { location: gpsLocation, isGpsActive } = useGps();
   const navigate = useNavigate();
 
   useEffect(() => {
+    const getEffectiveLocation = () => {
+      if (isGpsActive && gpsLocation) return gpsLocation;
+
+      const stored = localStorage.getItem('manualLocation');
+      if (stored) return JSON.parse(stored);
+
+      return { latitude: 37.495472, longitude: 126.676902 };
+    };
+
     const fetchTopStores = async () => {
       try {
+        const { latitude, longitude } = getEffectiveLocation();
         const response = await axiosInstance.get('/api/v1/store/top', {
-          params: {
-            latitude: 37.545472,
-            longitude: 126.676902, //gps 연동시 수정 예정정
-          },
+          params: { latitude, longitude },
         });
         if (response.data.isSuccess) {
           setStores(response.data.results);
         }
-        console.log(response.data.results);
       } catch (error) {
         console.error('Top 8 가맹점 조회 실패:', error);
       }
     };
 
     fetchTopStores();
-  }, []); //컴포넌트가 처음 마운트될 때만 한 번 실행
+  }, [isGpsActive, gpsLocation]); //컴포넌트가 처음 마운트될 때만 한 번 실행
 
   const handleStoreClick = (store: Store) => {
     navigate(`/store/${store.id}`, {});

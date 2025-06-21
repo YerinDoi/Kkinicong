@@ -33,6 +33,11 @@ export function GpsProvider({ children }: GpsProviderProps) {
   const [location, setLocation] = useState<UserLocation>(DEFAULT_LOCATION);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  // 수동(즐겨찾기) 위치 설정
+  const setManualLocation = (lat: number, lng: number) => {
+    setLocation({ latitude: lat, longitude: lng });
+    setIsGpsActive(false); // GPS 기반이 아님을 명시
+  };
 
   // 카카오 reverse geocoding
   const fetchAddress = async (lat: number, lng: number): Promise<string> => {
