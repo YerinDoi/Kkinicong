@@ -82,7 +82,14 @@ const StoreMap = ({
   }, [center.lat, center.lng, mapInstance]);
 
   return (
-    <div className="w-full h-full" onClick={onMapClick}>
+    <div
+      className="w-full h-full"
+      onClick={(e) => {
+        // 마커 클릭 시에는 지도 클릭 이벤트가 실행되지 않도록 함
+        if (e.defaultPrevented) return;
+        if (onMapClick) onMapClick();
+      }}
+    >
       <KakaoMap
         center={center}
         level={level}
@@ -131,21 +138,13 @@ const StoreMap = ({
                       },
                     },
                   }}
-                  onCreate={(markerInstance) => {
-                    if (window.kakao) {
-                      window.kakao.maps.event.addListener(
-                        markerInstance,
-                        'click',
-                        (e: any) => {
-                          if (e && e.domEvent) e.domEvent.stopPropagation();
-                          onMarkerClick &&
-                            onMarkerClick({
-                              lat: store.latitude,
-                              lng: store.longitude,
-                              name: store.name,
-                            });
-                        },
-                      );
+                  onClick={() => {
+                    if (onMarkerClick) {
+                      onMarkerClick({
+                        lat: store.latitude,
+                        lng: store.longitude,
+                        name: store.name,
+                      });
                     }
                   }}
                   zIndex={50}
@@ -173,14 +172,15 @@ const StoreMap = ({
                         textShadow:
                           '-1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff',
                       }}
-                      onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                        e.stopPropagation();
-                        onMarkerClick &&
+                      onClick={(e) => {
+                        e.preventDefault(); // 상위 div의 onClick 방지
+                        if (onMarkerClick) {
                           onMarkerClick({
                             lat: store.latitude,
                             lng: store.longitude,
                             name: store.name,
                           });
+                        }
                       }}
                     >
                       {store.name}
@@ -209,21 +209,13 @@ const StoreMap = ({
                     },
                   },
                 }}
-                onCreate={(markerInstance) => {
-                  if (window.kakao) {
-                    window.kakao.maps.event.addListener(
-                      markerInstance,
-                      'click',
-                      (e: any) => {
-                        if (e && e.domEvent) e.domEvent.stopPropagation();
-                        onMarkerClick &&
-                          onMarkerClick({
-                            lat: store.latitude,
-                            lng: store.longitude,
-                            name: store.name,
-                          });
-                      },
-                    );
+                onClick={() => {
+                  if (onMarkerClick) {
+                    onMarkerClick({
+                      lat: store.latitude,
+                      lng: store.longitude,
+                      name: store.name,
+                    });
                   }
                 }}
                 zIndex={100}
@@ -250,14 +242,15 @@ const StoreMap = ({
                     textShadow:
                       '-1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff',
                   }}
-                  onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                    e.stopPropagation();
-                    onMarkerClick &&
+                  onClick={(e) => {
+                    e.preventDefault(); // 상위 div의 onClick 방지
+                    if (onMarkerClick) {
                       onMarkerClick({
                         lat: store.latitude,
                         lng: store.longitude,
                         name: store.name,
                       });
+                    }
                   }}
                 >
                   {store.name}
