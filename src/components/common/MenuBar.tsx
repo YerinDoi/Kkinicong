@@ -1,6 +1,7 @@
 import Icon from '@/assets/icons';
 import { useNavigate } from 'react-router-dom';
 import type { IconName } from '@/assets/icons';
+import ReactDOM from 'react-dom';
 
 interface MenuBarProps {
   isOpen: boolean;
@@ -27,9 +28,9 @@ const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
     { icon: 'mypage' as IconName, text: '마이페이지', path: '/mypage' },
   ];
 
-  return (
+  const menuBarContent = (
     <div
-      className={`fixed top-0 pt-[20px] w-full bg-white shadow-md transition-transform duration-300 ease-in-out transform z-50 ${
+      className={`fixed top-0 left-0 pt-[20px] w-full bg-white shadow-md transition-transform duration-300 ease-in-out transform z-50 ${
         isOpen ? 'translate-y-0' : '-translate-y-full'
       }`}
     >
@@ -62,6 +63,8 @@ const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
       </div>
     </div>
   );
+
+  return ReactDOM.createPortal(menuBarContent, document.body);
 };
 
 export default MenuBar;
