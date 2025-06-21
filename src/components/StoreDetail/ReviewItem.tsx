@@ -8,7 +8,6 @@ import MainTag from '@/components/StoreReview/MainTag';
 import axios from '@/api/axiosInstance';
 import type { StoreReview } from '@/types/store';
 
-
 interface ReviewItemProps {
   userName: string;
   date: string;
@@ -34,8 +33,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
   tags,
   storeId,
   setReviews,
-  refreshReviews
-
+  refreshReviews,
 }) => {
   const isLoggedIn = !!localStorage.getItem('accessToken');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -50,54 +48,48 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
     console.log('이미지 URL:', imageUrl);
   }, [imageUrl]);
   useEffect(() => {
-  console.log('[ReviewItem] storeId:', storeId); // 여기 확인
-}, [storeId]);
-useEffect(() => {
-  console.log('[debug] props:', { refreshReviews });
-}, []);
-
-
+    console.log('[ReviewItem] storeId:', storeId); // 여기 확인
+  }, [storeId]);
+  useEffect(() => {
+    console.log('[debug] props:', { refreshReviews });
+  }, []);
 
   const handleDelete = async () => {
-    try{
+    try {
       const token = localStorage.getItem('accessToken');
       const response = await axios.delete(
-      `/api/v1/${storeId}/review/${reviewId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+        `/api/v1/${storeId}/review/${reviewId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      },
-    );
-
-    if (response.data.isSuccess) {
-
-      setShowDeleteModal(false);
-      setReviews((prev) =>
-      prev.filter((review) => review.reviewId !== reviewId)
       );
-      refreshReviews();
-    
-    } else {
-      alert('리뷰 삭제 실패: ' + response.data.message);
+
+      if (response.data.isSuccess) {
+        setShowDeleteModal(false);
+        setReviews((prev) =>
+          prev.filter((review) => review.reviewId !== reviewId),
+        );
+        refreshReviews();
+      } else {
+        alert('리뷰 삭제 실패: ' + response.data.message);
+      }
+    } catch (err) {
+      console.error('리뷰 삭제 중 오류:', err);
+      alert('리뷰 삭제 중 오류가 발생했습니다.');
     }
-  } catch (err) {
-    console.error('리뷰 삭제 중 오류:', err);
-    alert('리뷰 삭제 중 오류가 발생했습니다.');
-  }
-};
-  
+  };
 
   const openDeleteModal = () => setShowDeleteModal(true);
   const closeDeleteModal = () => setShowDeleteModal(false);
 
   return (
-    
     <div className="flex flex-col gap-[12px] px-[16px] pb-[12px] border-b-[1.5px] border-[#E6E6E6]">
       <div className="flex flex-col gap-[12px]">
         <div className="flex justify-between items-center">
-          <div className="flex items-center gap-[4px] ">
-            <img src={ProfileImg} className="w-[36.3px]" />
+          <div className="flex items-center gap-[8px] ">
+            <img src={ProfileImg} className="w-[40px]" />
             <div className="flex gap-[4px]">
               <span className="font-meidum text-sm">{userName}</span>
               <span className="text-xs text-[#919191] self-end">{date}</span>

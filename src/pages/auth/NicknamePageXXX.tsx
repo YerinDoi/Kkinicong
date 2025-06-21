@@ -3,7 +3,7 @@ import TopBar from '@/components/common/TopBar';
 function NicknamePageXXX() {
   return (
     <div className="flex flex-col h-full px-4">
-      <TopBar />
+      <TopBar rightType="none" />
 
       {/* 타이틀 영역 */}
       <div className="mb-6">

@@ -5,9 +5,15 @@ const axiosInstance = axios.create({
   // withCredentials: true, // refreshToken이 쿠키로 올 경우 사용
 });
 
-// if (import.meta.env.MODE === 'development' && !localStorage.getItem('accessToken')) {
+// if (
+//   import.meta.env.MODE === 'development' &&
+//   !localStorage.getItem('accessToken')
+// ) {
 //   console.log('[DEV MODE] Swagger용 accessToken 임시 주입');
-//   localStorage.setItem('Swagger용 accessToken 임시로 바꿔서 넣기');
+//   localStorage.setItem(
+//     'accessToken',
+//     '발급받은 임시토큰',
+//   );
 // }
 
 axiosInstance.interceptors.request.use((config) => {
@@ -41,6 +47,7 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest); // 요청 재시도
       } catch (refreshError) {
         // refresh 실패 시 logout 처리
+        console.error(' refresh 실패:', refreshError);
         localStorage.removeItem('accessToken');
         window.location.href = '/login'; // or navigate('/login');
       }

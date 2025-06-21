@@ -7,8 +7,8 @@ interface DropdownProps {
 
 const Dropdown = ({ onSelect }: DropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState<string>('조회수 순');
-  const options = ['조회수 순', '가까운 순', '리뷰 많은 순', '별점 높은 순'];
+  const [selected, setSelected] = useState<string>('가까운 순');
+  const options = ['가까운 순', '리뷰 많은 순', '별점 높은 순', '조회수 순'];
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [dropdownWidth, setDropdownWidth] = useState<number>(0);
 

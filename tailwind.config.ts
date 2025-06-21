@@ -17,7 +17,8 @@ const config: Config = {
         'main-color': '#65CE58', // 이미 추가된 색상
       },
       boxShadow: {
-        custom: '0px 4px 8px rgba(0, 0, 0, 0.10)',
+        custom: '2px 4px 10px 0px rgba(0, 0, 0, 0.20)',
+        bottom: '0px 4px 8px 0px rgba(0, 0, 0, 0.10)',
       },
       fontSize: {
         'headline-sb-main'    : ['20px', { lineHeight: '32px', letterSpacing: '0' }],

@@ -27,7 +27,7 @@ const CommentBox: React.FC<CommentBoxProps> = ({ value, onChange }) => {
         onChange={(e) => onChange(e.target.value)}
         maxLength={maxLength}
         placeholder={`다녀온 식당 어땠나요?\n맛이나 친절도, 분위기를 솔직하게 공유해주세요!`}
-        className="text-[#919191] text-xs px-[16px] pt-[12px] pb-[40px] flex border border-[#C3C3C3] rounded-[12px]"
+        className="placeholder-[#919191] text-[#616161] text-xs px-[16px] pt-[12px] pb-[40px] flex border border-[#C3C3C3] rounded-[12px]"
       ></textarea>
     </div>
   );

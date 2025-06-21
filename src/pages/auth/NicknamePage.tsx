@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import GreenButton from '@/components/common/GreenButton';
 import TopBar from '@/components/common/TopBar';
 
 import { checkNicknameDuplicate, registerNickname } from '@/api/user';
@@ -69,7 +69,7 @@ export default function NicknamePage() {
       // localStorage.setItem('nickname', result.nickname);
       // localStorage.setItem('email', result.email);
 
-      navigate('/'); // 홈으로 이동
+      navigate('/my-neighborhood'); 
     } catch (error) {
       console.error('닉네임 등록 에러:', error);
       setError('닉네임 등록 중 오류가 발생했어요');
@@ -79,17 +79,20 @@ export default function NicknamePage() {
   };
 
   return (
-    <div className="flex flex-col h-full pb-8">
+    <div className="flex flex-col h-full pb-[68px] font-pretendard">
       {/* 뒤로가기 버튼 */}
-      <TopBar />
+      <TopBar paddingX="px-[15px]" rightType="none" />
 
       {/* 타이틀 영역 */}
-      <div className="mb-48px px-6">
-        <h1 className="text-xl font-bold text-black">반가워요!</h1>
-        <p className="text-lg font-semibold text-[#65CE58]">
-          사용할 닉네임을 정해주세요
-        </p>
-        <p className="text-sm text-gray-400 mt-1">
+      <div className="mb-[48px] mt-[24px] px-6">
+        <div className="flex flex-col justify-between h-[60px]">
+          <h1 className="text-xl font-bold text-black">반가워요!</h1>
+          <p className="text-xl font-semibold text-[#65CE58]">
+            사용할 닉네임을 정해주세요
+          </p>
+        </div>
+
+        <p className="text-sm text-gray-400 mt-[16px]">
           설정한 닉네임은 마이페이지에서 수정할 수 있어요
         </p>
       </div>
@@ -121,18 +124,12 @@ export default function NicknamePage() {
       </div>
 
       {/* 하단 고정 버튼 */}
-      <div className="mt-auto px-6">
-        <button
+      <div className="flex mt-auto justify-center">
+        <GreenButton
           onClick={handleRegister}
           disabled={!!error || isDuplicate !== false || isSubmitting}
-          className={`w-full rounded-xl py-4 text-base font-semibold transition ${
-            !!error || isDuplicate !== false || isSubmitting
-              ? 'bg-gray-200 text-white'
-              : 'bg-green-500 text-white'
-          }`}
-        >
-          {isSubmitting ? '등록 중...' : '끼니콩 시작하기'}
-        </button>
+          text={'다음'}/>
+        
       </div>
     </div>
   );
