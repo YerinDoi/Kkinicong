@@ -1,9 +1,13 @@
-import KakaoMap from '@/components/common/KakaoMap';
+import KakaoMap, {
+  MARKER,
+  MARKER_IMAGE_SIZE,
+} from '@/components/common/KakaoMap';
 import { StoreDetail } from '@/types/store';
 import { useState, useEffect } from 'react';
 import MenuBtn from '@/assets/svgs/detail/menu-btn.svg?react';
 import NavigationBtn from '@/assets/svgs/detail/navigation-btn.svg?react';
 import axiosInstance from '@/api/axiosInstance';
+import { MapMarker } from 'react-kakao-maps-sdk';
 
 interface StoreDetailMapProps {
   hideButtons?: boolean;
@@ -90,7 +94,29 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
     <div>
       {/* 지도 영역 */}
       <div className="w-full h-[224px]">
-        <KakaoMap center={center} markers={marker} />
+        <KakaoMap
+          center={center}
+          level={3} // 가맹점 상세 페이지의 지도 줌 레벨 설정 (기본값)
+        >
+          {/* 커스텀 마커 렌더링 */}
+          <MapMarker
+            position={center}
+            image={{
+              src: MARKER,
+              size: {
+                width: MARKER_IMAGE_SIZE.width,
+                height: MARKER_IMAGE_SIZE.height,
+              },
+              options: {
+                offset: {
+                  x: MARKER_IMAGE_SIZE.width / 2,
+                  y: MARKER_IMAGE_SIZE.height,
+                },
+              },
+            }}
+            zIndex={100} // zIndex를 핀 마커에 맞게 100으로 변경
+          />
+        </KakaoMap>
       </div>
 
       {/* 버튼 영역 */}

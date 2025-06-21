@@ -57,6 +57,7 @@ export type Store = {
   isScrapped: boolean | null;
   latitude: number; // 위도
   longitude: number; // 경도
+  viewCount: number;
 };
 
 export type StoreApiResponse = {
@@ -84,7 +85,7 @@ export interface StoreDetail {
   reviews?: StoreReview[];
   reviewCount?: number;
   ratingAvg?: number;
-  latitude: number; 
+  latitude: number;
   longitude: number;
 }
 
@@ -99,5 +100,4 @@ export interface StoreReview {
   isOwner: boolean | null;
   latitude: number;
   longitude: number;
-
 }

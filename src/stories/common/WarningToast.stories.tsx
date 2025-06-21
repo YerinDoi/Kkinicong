@@ -20,21 +20,21 @@ const renderWithPosition = (
 
 export const Default: Story = {
   args: {
-    text: '업로드 가능한 용량을 초과했어요',
+    text: ['업로드 가능한 용량을 초과했어요', '다시 시도해주세요'],
   },
   render: renderWithPosition,
 };
 
 export const Format: Story = {
   args: {
-    text: '지원하지 않는 형식이에요',
+    text: ['지원하지 않는 형식이에요', '다시 시도해주세요'],
   },
   render: renderWithPosition,
 };
 
 export const Fail: Story = {
   args: {
-    text: '이미지 업로드에 실패했어요',
+    text: ['이미지 업로드에 실패했어요', '다시 시도해주세요'],
   },
   render: renderWithPosition,
 };

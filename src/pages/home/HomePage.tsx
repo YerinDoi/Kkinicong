@@ -1,14 +1,17 @@
-import HomeTopBar from '@/components/home/HomeTopBar';
+import HeaderToCarouselSection from '@/components/home/HeaderToCarouselSection';
+import CategorySection from '@/components/home/CategorySection';
+import Top8StoreSection from '@/components/home/Top8StoreSection';
+import ConvenienceStoreSection from '@/components/home/ConvenienceStoreSection';
 
 function HomePage() {
   return (
-    <div className="font-sans bg-[#F3F5ED)] min-h-screen">
-      <HomeTopBar />
-      <div className="px-4 pt-1 max-w-md mx-auto">
-        <div className="flex flex-col items-center justify-center h-screen">
-          <h1 className="text-3xl font-bold">홈 페이지</h1>
-          <p className="mt-4 text-lg">여기는 홈 페이지입니다.</p>
-        </div>
+    <div className="flex flex-col font-pretendard pb-[61px]">
+      <HeaderToCarouselSection />
+
+      <div className="flex flex-col gap-[16px]">
+        <CategorySection />
+        <Top8StoreSection />
+        <ConvenienceStoreSection />
       </div>
     </div>
   );

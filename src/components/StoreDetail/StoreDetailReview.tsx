@@ -10,9 +10,10 @@ import LoginModal from '@/components/common/LoginRequiredBottomSheet';
 
 interface StoreDetailReviewProps {
   store: StoreDetail;
+  onReviewChange?: () => void;
 }
 
-const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
+const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store , onReviewChange }) => {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(1);
@@ -21,6 +22,8 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
   const [reviewCount, setReviewCount] = useState<number>(0);
 
   const [showLoginModal, setShowLoginModal] = useState(false);
+
+  // 리뷰PR 커밋용 주석 열기
   const handleReviewClick = () => {
     const isLoggedIn = !!localStorage.getItem('accessToken');
 
@@ -40,6 +43,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
       setShowLoginModal(true);
     }
   };
+  // 리뷰PR 커밋용 주석 닫기
 
   const fetchReviews = async (pageToLoad: number) => {
     const res = await axios.get(`/api/v1/${store.storeId}/review`, {
@@ -122,7 +126,10 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store }) => {
               isOwner={review.isOwner ?? false}
               storeId={store.storeId}
               setReviews={setReviews}
-              refreshReviews={() => fetchReviews(0)}
+              refreshReviews={() => {
+                fetchReviews(0);
+                onReviewChange?.(); 
+              }}
             />
           ))
         )}
