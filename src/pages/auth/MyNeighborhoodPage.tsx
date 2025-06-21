@@ -1,15 +1,23 @@
 import TopBar from '@/components/common/TopBar';
 import { useState } from 'react';
+import regionData from '@/constants/region';
 
 function MyNeighborhoodPage() {
   const [input, setInput] = useState('');
-  const [dongList, setDongList] = useState<string[] | null>(null);
+  const [dongList, setDongList] = useState<
+    { name: string; lat: number; lng: number }[] | null
+  >(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.trim();
+    const value = e.target.value;
     setInput(value);
 
-    const [city, district] = value.split(' ');
+    const [city, district] = value.trim().split(/\s+/); // 여기서만 trim
+    console.log('입력된 city:', city);
+    console.log('입력된 district:', district);
+    console.log('regionData[city]:', regionData[city]);
+    console.log('regionData[city][district]:', regionData[city]?.[district]);
+
     if (city && district) {
       const list = regionData[city]?.[district] ?? null;
       setDongList(list);
@@ -17,6 +25,7 @@ function MyNeighborhoodPage() {
       setDongList(null);
     }
   };
+
   return (
     <div className="flex flex-col h-full gap-[32px] font-pretendard">
       <div className="flex flex-col gap-[24px] px-[15px]">
@@ -55,18 +64,27 @@ function MyNeighborhoodPage() {
           value={input}
           onChange={handleChange}
           placeholder="ex) 인천광역시 서구"
-          className="border border-[#C3C3C3] px-[16px] py-[12px] w-full rounded-[12px]"
+          className="border border-[#C3C3C3] text-black px-[16px] py-[12px] w-full rounded-[12px]"
         />
 
         {dongList ? (
-          <ul className="border px-[12px] py-[8px] bg-[#F4F6F8] max-h-[170px] overflow-y-auto text-[#616161] text-xs font-normal">
+          <ul className="border border-[#616161] mt-[20px] bg-[#F4F6F8] max-h-[170px] overflow-y-auto rounded-[12px] text-[#616161] text-xs font-normal">
             {dongList.map((dong) => (
-              <li key={dong} className="py-1">
-                {dong}
+              <li
+                key={dong.name}
+                className="px-[12px] py-[8px] h-[34px] text-xs cursor-pointer hover:bg-[#E0E0E0]"
+                onClick={() => {
+                  const [city, district] = input.trim().split(/\s+/);
+                  setInput(`${city} ${district} ${dong.name}`);
+                  setDongList(null);
+                }}
+              >
+                {`${input.trim().split(/\s+/)[0]} ${input.trim().split(/\s+/)[1]} ${dong.name}`}
               </li>
             ))}
           </ul>
-        ) : input.includes(' ') ? (
+        ) : input.trim().split(/\s+/).length === 2 &&
+          !input.trim().split(/\s+/)[2] ? (
           <p className="mt-[12px] h-[24px] text-[#FF6452] text-sm font-normal">
             *해당하는 지역이 없어요
           </p>
