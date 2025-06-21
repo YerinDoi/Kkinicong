@@ -2,9 +2,14 @@ import TopBar from '@/components/common/TopBar';
 import { useState } from 'react';
 import regionData from '@/constants/region';
 import axiosInstance from '@/api/axiosInstance';
+import { useNavigate } from 'react-router-dom';
+import GreenButton from '@/components/common/GreenButton';
 
 function MyNeighborhoodPage() {
   const [input, setInput] = useState('');
+  const [isLocationRegistered, setIsLocationRegistered] = useState(false);
+
+  const navigate = useNavigate();
   const [dongList, setDongList] = useState<
     { name: string; lat: number; lng: number }[] | null
   >(null);
@@ -54,17 +59,20 @@ function MyNeighborhoodPage() {
 
       if (response.data.isSuccess) {
         console.log('즐겨찾는 지역이 등록되었어요!');
+        setIsLocationRegistered(true); 
       } else {
         alert('등록 실패: ' + response.data.message);
+        setIsLocationRegistered(false); 
       }
     } catch (err) {
       console.error('API 오류:', err);
       alert('서버 요청 중 오류가 발생했어요.');
+      setIsLocationRegistered(true); 
     }
   };
 
   return (
-    <div className="flex flex-col h-full gap-[32px] font-pretendard">
+    <div className="flex flex-col h-full gap-[32px] font-pretendard pb-[68px]">
       <div className="flex flex-col gap-[24px] px-[15px]">
         <TopBar
           title="즐겨찾는 지역"
@@ -72,7 +80,7 @@ function MyNeighborhoodPage() {
           rightType="custom"
           customRightElement={
             <button
-              onClick={() => alert('건너뛰기')}
+              onClick={() => navigate('/')}
               className="text-xs font-normal"
             >
               건너뛰기
@@ -122,6 +130,14 @@ function MyNeighborhoodPage() {
             *해당하는 지역이 없어요
           </p>
         ) : null}
+      </div>
+      <div className="flex mt-auto justify-center">
+        <GreenButton
+          text="끼니콩 시작하기"
+          onClick={() => navigate('/')}
+          disabled={!isLocationRegistered}
+        />
+
       </div>
     </div>
   );

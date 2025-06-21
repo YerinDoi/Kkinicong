@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import GreenButton from '@/components/common/GreenButton';
 import TopBar from '@/components/common/TopBar';
 
 import { checkNicknameDuplicate, registerNickname } from '@/api/user';
@@ -69,7 +69,7 @@ export default function NicknamePage() {
       // localStorage.setItem('nickname', result.nickname);
       // localStorage.setItem('email', result.email);
 
-      navigate('/'); // 홈으로 이동
+      navigate('/my-neighborhood'); 
     } catch (error) {
       console.error('닉네임 등록 에러:', error);
       setError('닉네임 등록 중 오류가 발생했어요');
@@ -79,7 +79,7 @@ export default function NicknamePage() {
   };
 
   return (
-    <div className="flex flex-col h-full pb-8 font-pretendard">
+    <div className="flex flex-col h-full pb-[68px] font-pretendard">
       {/* 뒤로가기 버튼 */}
       <TopBar paddingX="px-[15px]" rightType="none" />
 
@@ -124,18 +124,12 @@ export default function NicknamePage() {
       </div>
 
       {/* 하단 고정 버튼 */}
-      <div className="mt-auto px-6">
-        <button
+      <div className="flex mt-auto justify-center">
+        <GreenButton
           onClick={handleRegister}
           disabled={!!error || isDuplicate !== false || isSubmitting}
-          className={`w-full rounded-xl py-4 text-base font-semibold transition ${
-            !!error || isDuplicate !== false || isSubmitting
-              ? 'bg-gray-200 text-white'
-              : 'bg-green-500 text-white'
-          }`}
-        >
-          {isSubmitting ? '등록 중...' : '다음'}
-        </button>
+          text={'다음'}/>
+        
       </div>
     </div>
   );
