@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Store } from '@/types/store';
 import axiosInstance from '@/api/axiosInstance';
 import Header from '@/components/Header';
@@ -35,6 +35,7 @@ const isSignificantChange = (
 
 const StoreMapPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState(
     () => location.state?.selectedCategory || '전체',
   );
@@ -46,6 +47,8 @@ const StoreMapPage = () => {
   const hasNextPageRef = useRef(true);
   const isLoadingRef = useRef(false);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const searchTriggeredRef = useRef(false);
+  const isHandlingSearchRef = useRef(false);
 
   // 바텀시트 커스텀 훅 사용
   const headerHeight = 11 + 40 + 12 + 40 + 11;
@@ -118,6 +121,12 @@ const StoreMapPage = () => {
     searchAddress,
   } = useStoreSearch();
 
+  // 최신 isLocation 값을 ref에 저장하여 콜백에서 사용
+  const isLocationRef = useRef(isLocation);
+  useEffect(() => {
+    isLocationRef.current = isLocation;
+  }, [isLocation]);
+
   useEffect(() => {
     mapCenterRef.current = mapCenter;
   }, [mapCenter]);
@@ -130,6 +139,19 @@ const StoreMapPage = () => {
   useEffect(() => {
     searchTermRef.current = searchTerm;
   }, [searchTerm]);
+
+  // 메인페이지에서 검색어 받고, 검색 실행
+  useEffect(() => {
+    const termFromState = location.state?.searchTerm;
+    if (termFromState) {
+      setInputValue(termFromState);
+      handleSearchAndFitBounds(termFromState);
+
+      // location.state에서 searchTerm을 제거하여, 새로고침 시 재검색 방지
+      const { searchTerm, ...restState } = location.state;
+      navigate(location.pathname, { state: restState, replace: true });
+    }
+  }, [location.state]);
 
   // 검색 결과 좌표가 바뀌면 지도 중심 이동
   useEffect(() => {
@@ -151,6 +173,7 @@ const StoreMapPage = () => {
       latitude: number;
       longitude: number;
       keyword?: string;
+      radius?: number;
     }) => {
       if (isLoadingRef.current) return;
       isLoadingRef.current = true;
@@ -158,11 +181,22 @@ const StoreMapPage = () => {
       const page = pageRef.current;
       const isInitialLoadOrReset = page === 0;
       try {
+        // 일반 키워드 검색인지 판별 (키워드가 있고, 지역명 검색이 아닐 때)
+        const isGeneralKeywordSearch =
+          !!params.keyword && !isLocationRef.current;
+
         const requestParams = {
           page: page,
           size: 10,
-          ...params,
-          radius: calculateRadius(mapLevelRef.current),
+          latitude: params.latitude,
+          longitude: params.longitude,
+          keyword: params.keyword,
+          radius:
+            params.radius !== undefined
+              ? params.radius
+              : isGeneralKeywordSearch
+                ? 20000 // 일반 키워드 검색: 20km
+                : calculateRadius(mapLevelRef.current), // 그 외: 지도 레벨 기준
           category:
             selectedCategoryRef.current !== '전체'
               ? categoryMapping[selectedCategoryRef.current]
@@ -266,58 +300,46 @@ const StoreMapPage = () => {
     };
   }, []);
 
-  // 1. 검색어/카테고리 변경 시 데이터 로드 (즉시, 페이지 초기화)
+  // 1. 카테고리 변경 시 데이터 로드
   useEffect(() => {
-    pageRef.current = 0;
-    hasNextPageRef.current = true;
-    setStores([]); // 기존 데이터 초기화
-    fetchStores({ latitude: mapCenter.lat, longitude: mapCenter.lng });
-
-    // 스크롤 컨테이너도 맨 위로 스크롤
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop = 0;
+    // 1. 카테고리 변경 시 데이터 로드
+    if (mapInstance) {
+      // mapInstance가 준비된 이후에만 실행
+      pageRef.current = 0;
+      hasNextPageRef.current = true;
+      setStores([]);
+      fetchStores({
+        latitude: mapCenterRef.current.lat,
+        longitude: mapCenterRef.current.lng,
+        keyword: isLocationRef.current ? undefined : searchTermRef.current,
+      });
     }
-  }, [selectedCategory, fetchStores]);
+  }, [selectedCategory]);
 
   // 2. 지도 중심 변경 시 데이터 로드 (디바운스, 페이지 초기화)
   useEffect(() => {
-    // mapCenter가 바뀔 때만 동작 (줌만 바뀌면 동작 X)
+    if (!mapInstance) return; // mapInstance가 준비된 이후에만 실행
+
     if (mapDebounceTimeoutRef.current) {
       clearTimeout(mapDebounceTimeoutRef.current);
-      console.log('useEffect [mapChange]: 이전 디바운스 타이머 클리어됨.');
     }
 
-    const prev = prevMapCenterRef.current;
-    const latDiff = Math.abs(prev.lat - mapCenter.lat);
-    const lngDiff = Math.abs(prev.lng - mapCenter.lng);
-
-    console.log(
-      `지도 이동 변화량 - 위도: ${latDiff.toFixed(4)}도, 경도: ${lngDiff.toFixed(4)}도`,
-    );
-
-    // 중심 좌표 변경이 0.01도 이상일 때만 API 요청
-    if (isSignificantChange(prev, mapCenter)) {
-      console.log('중심 좌표 변경이 0.01도 이상 감지됨. API 요청 예정');
-      mapDebounceTimeoutRef.current = setTimeout(() => {
-        console.log(
-          'useEffect [mapChange]: 디바운스 완료. 지도 변경에 따른 데이터 로드 시작.',
-        );
-        prevMapCenterRef.current = mapCenter;
-        pageRef.current = 0;
-        hasNextPageRef.current = true;
-        fetchStores({ latitude: mapCenter.lat, longitude: mapCenter.lng });
-      }, 500);
-    } else {
-      console.log('중심 좌표 변경이 0.01도 미만. API 요청하지 않음');
-    }
+    mapDebounceTimeoutRef.current = setTimeout(() => {
+      pageRef.current = 0;
+      hasNextPageRef.current = true;
+      fetchStores({
+        latitude: mapCenter.lat,
+        longitude: mapCenter.lng,
+        keyword: isLocationRef.current ? undefined : searchTermRef.current,
+      });
+    }, 500);
 
     return () => {
       if (mapDebounceTimeoutRef.current) {
         clearTimeout(mapDebounceTimeoutRef.current);
-        console.log('useEffect [mapChange] cleanup: 타이머 클리어됨.');
       }
     };
-  }, [mapCenter, fetchStores]);
+  }, [mapCenter, mapInstance]);
 
   // useInfiniteScroll 훅 사용 (무한스크롤)
   const { loaderRef } = useInfiniteScroll({
@@ -325,7 +347,11 @@ const StoreMapPage = () => {
       if (!isZoomingRef.current && !selectedStore) {
         const nextPage = pageRef.current + 1;
         pageRef.current = nextPage;
-        fetchStores({ latitude: mapCenter.lat, longitude: mapCenter.lng });
+        fetchStores({
+          latitude: mapCenterRef.current.lat,
+          longitude: mapCenterRef.current.lng,
+          keyword: isLocationRef.current ? undefined : searchTermRef.current,
+        });
       }
     },
     isLoadingRef,
@@ -364,8 +390,49 @@ const StoreMapPage = () => {
       const kakaoCenter = new window.kakao.maps.LatLng(lat, lng);
       mapInstance.setCenter(kakaoCenter);
     }
-    fetchStores({ latitude: lat, longitude: lng });
+    // GPS 클릭 시에는 검색어 초기화
+    setSearchTerm('');
+    setInputValue('');
   }, requestGps);
+
+  // 검색 실행 시, 결과에 맞춰 지도 범위를 재설정
+  useEffect(() => {
+    // '검색'이 실행되었고, 결과(가게)가 있으며, 지도 인스턴스가 준비되었을 때만 동작
+    if (searchTriggeredRef.current && stores.length > 0 && mapInstance) {
+      if (stores.length > 1) {
+        // 2개 이상의 결과가 있을 때만 모든 결과가 보이도록 지도 범위 조정
+        const bounds = new window.kakao.maps.LatLngBounds();
+        stores.forEach((store: Store) => {
+          bounds.extend(
+            new window.kakao.maps.LatLng(store.latitude, store.longitude),
+          );
+        });
+        mapInstance.setBounds(bounds);
+      }
+
+      searchTriggeredRef.current = false;
+    }
+  }, [stores, mapInstance]);
+
+  const handleSearchAndFitBounds = async (term?: string) => {
+    const termToSearch = typeof term === 'string' ? term : inputValue;
+    if (!termToSearch.trim()) {
+      setSearchTerm(''); // 검색어 없는 경우, 검색 상태도 초기화
+    }
+
+    pageRef.current = 0;
+    hasNextPageRef.current = true;
+    setStores([]);
+    searchTriggeredRef.current = true;
+    isHandlingSearchRef.current = true; // API 충돌 방지 플래그 설정
+
+    const { newMapCenter } = await handleSearch(
+      termToSearch.trim(),
+      gpsLocation,
+      isGpsActive,
+    );
+    moveMap(newMapCenter);
+  };
 
   return (
     <div className="flex flex-col h-screen">
@@ -380,15 +447,7 @@ const StoreMapPage = () => {
             placeholder="가게이름을 검색하세요"
             value={inputValue}
             onChange={setInputValue}
-            onSearch={() =>
-              handleSearch(
-                inputValue,
-                fetchStores,
-                gpsLocation,
-                isGpsActive,
-                moveMap, // setMapCenter 대신 moveMap 사용
-              )
-            }
+            onSearch={() => handleSearchAndFitBounds()}
           />
         </div>
       </div>
@@ -450,8 +509,6 @@ const StoreMapPage = () => {
               setSheetHeight(518);
               setSelectedCategory(cat);
               setSelectedStore(null);
-              setMapLevel(3);
-              setSearchTerm('');
             }}
           />
         </div>

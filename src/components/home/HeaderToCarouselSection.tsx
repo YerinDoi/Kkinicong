@@ -2,18 +2,56 @@ import HomeTopBar from '@/components/home/HomeTopBar';
 import Icons from '@/assets/icons';
 import SearchInput from '@/components/common/SearchInput';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CarouselBanner from '@/components/home/CarouselBanner';
 import { useGps } from '@/contexts/GpsContext';
+import axiosInstance from '@/api/axiosInstance';
+import { Store } from '@/types/store';
+
 const bgColors = ['#F3F5ED', '#F4F6F8'];
 
 function HeaderToCarouselSection() {
   const [inputValue, setInputValue] = useState('');
   const [activeSlide, setActiveSlide] = useState(0);
+  const navigate = useNavigate();
 
-  const { address, requestGps } = useGps();
+  const { address, requestGps, location: gpsLocation } = useGps();
 
-  // handleSearch 임시 함수 (에러 방지)
-  const handleSearch = () => {};
+  const handleSearch = async () => {
+    const searchTerm = inputValue.trim();
+    if (!searchTerm) return;
+
+    try {
+      // 검색 시 위치 정보를 포함하도록 파라미터 구성
+      const params: any = { keyword: searchTerm, size: 2 };
+      if (gpsLocation.latitude && gpsLocation.longitude) {
+        params.latitude = gpsLocation.latitude;
+        params.longitude = gpsLocation.longitude;
+        params.radius = 20000; // GPS 위치 기반 20km 반경
+      }
+
+      const response = await axiosInstance.get('/api/v1/store/map', {
+        params,
+      });
+
+      const stores: Store[] = response.data.results?.content || [];
+
+      // 결과가 정확히 1개이고, 이름이 검색어와 정확히 일치하면 상세 페이지로 이동
+      if (
+        stores.length === 1 &&
+        stores[0].name.toLowerCase() === searchTerm.toLowerCase()
+      ) {
+        navigate(`/store/${stores[0].id}`);
+      } else {
+        // 그 외의 경우, 지도 페이지로 검색어 전달
+        navigate('/store-map', { state: { searchTerm } });
+      }
+    } catch (error) {
+      console.error('Search failed, navigating to map page as fallback', error);
+      // 에러 발생 시에도 안전하게 지도 페이지로 이동
+      navigate('/store-map', { state: { searchTerm } });
+    }
+  };
 
   return (
     <div
@@ -33,7 +71,7 @@ function HeaderToCarouselSection() {
           placeholder="가게이름을 검색하세요"
           value={inputValue}
           onChange={setInputValue}
-          onSearch={() => handleSearch()} // 오류 떠서 인수 수정
+          onSearch={handleSearch}
         />
       </div>
 

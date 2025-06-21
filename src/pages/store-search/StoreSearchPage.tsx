@@ -17,6 +17,14 @@ import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import { categoryMapping, sortMapping } from '@/constants/storeMapping';
 import { Store } from '@/types/store';
 
+// interface FetchParams {
+//   latitude?: number;
+//   longitude?: number;
+//   keyword?: string;
+//   radius?: number;
+//   [key: string]: any;
+// }
+
 const StoreSearchPage = () => {
   const location = useLocation();
   const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
@@ -37,6 +45,7 @@ const StoreSearchPage = () => {
     inputValue,
     setInputValue,
     searchTerm,
+    setSearchTerm,
     isLocation,
     coordinates,
     handleSearch,
@@ -134,6 +143,10 @@ const StoreSearchPage = () => {
     fetchStores();
   }, [selectedCategory, sort, isLocation, coordinates, fetchStores]);
 
+  const handleSearchClick = async () => {
+    await handleSearch(inputValue, gpsLocation, true);
+  };
+
   return (
     <div>
       <div className="flex flex-col items-center w-full pt-[11px] shadow-bottom shrink-0">
@@ -146,9 +159,7 @@ const StoreSearchPage = () => {
             placeholder="가게이름을 검색하세요"
             value={inputValue}
             onChange={setInputValue}
-            onSearch={() =>
-              handleSearch(inputValue, fetchStores, gpsLocation, true, () => {})
-            }
+            onSearch={handleSearchClick}
           />
         </div>
         <MenuCategoryCarousel

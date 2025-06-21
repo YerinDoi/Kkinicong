@@ -15,7 +15,12 @@ interface FetchParams {
   latitude: number;
   longitude: number;
   keyword?: string;
+  radius?: number;
   [key: string]: any;
+}
+
+interface HandleSearchResult {
+  newMapCenter: { lat: number; lng: number };
 }
 
 const useStoreSearch = () => {
@@ -27,12 +32,8 @@ const useStoreSearch = () => {
   // 검색어 처리 로직을 별도 함수로 분리
   const processSearchParams = useCallback(
     (params: FetchParams, searchTerm: string) => {
-      // 동/구/역으로 끝나는 검색어이고 위경도가 있을 때는 keyword 제외
-      if (
-        /동$|구$|역$/.test(searchTerm) &&
-        params.latitude &&
-        params.longitude
-      ) {
+      // 동/구/역으로 끝나는 검색어일 때는 keyword 제외
+      if (/동$|구$|역$/.test(searchTerm)) {
         const { keyword, ...restParams } = params;
         return restParams;
       }
@@ -98,62 +99,28 @@ const useStoreSearch = () => {
   const handleSearch = useCallback(
     async (
       searchInput: string,
-      fetchStores: (params: FetchParams) => void,
       gpsLocation: { latitude: number; longitude: number },
       isGpsActive: boolean,
-      setMapCenter: (center: { lat: number; lng: number }) => void,
-    ) => {
+    ): Promise<HandleSearchResult> => {
       setInputValue(searchInput);
-
-      // 동/구/역으로 끝나면 위경도 변환
-      const { isLocation, coordinates } = await searchAddress(searchInput);
-
-      // searchTerm 업데이트를 fetchStores 호출 직전에 수행
       setSearchTerm(searchInput);
+      const { isLocation: isLoc, coordinates: coords } =
+        await searchAddress(searchInput);
+      setIsLocation(isLoc);
 
-      if (isLocation && coordinates) {
-        // 지도 중심 이동
-        setMapCenter({
-          lat: coordinates.latitude,
-          lng: coordinates.longitude,
-        });
-
-        const params = processSearchParams(
-          {
-            latitude: coordinates.latitude,
-            longitude: coordinates.longitude,
-            keyword: searchInput,
-          },
-          searchInput,
-        );
-
-        fetchStores(params);
-        return;
+      if (isLoc && coords) {
+        return {
+          newMapCenter: { lat: coords.latitude, lng: coords.longitude },
+        };
       }
 
-      // 그 외: GPS(없으면 디폴트) + 키워드
       const gps = isGpsActive
         ? gpsLocation
         : { latitude: 37.495472, longitude: 126.676902 };
 
-      // GPS 위치로 지도 중심 이동
-      setMapCenter({
-        lat: gps.latitude,
-        lng: gps.longitude,
-      });
-
-      const params = processSearchParams(
-        {
-          latitude: gps.latitude,
-          longitude: gps.longitude,
-          keyword: searchInput,
-        },
-        searchInput,
-      );
-
-      fetchStores(params);
+      return { newMapCenter: { lat: gps.latitude, lng: gps.longitude } };
     },
-    [searchAddress, processSearchParams],
+    [searchAddress, setInputValue, setSearchTerm, setIsLocation],
   );
 
   return {
