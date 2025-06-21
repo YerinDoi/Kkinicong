@@ -1,6 +1,7 @@
 import TopBar from '@/components/common/TopBar';
 import { useState } from 'react';
 import regionData from '@/constants/region';
+import axiosInstance from '@/api/axiosInstance';
 
 function MyNeighborhoodPage() {
   const [input, setInput] = useState('');
@@ -29,30 +30,32 @@ function MyNeighborhoodPage() {
     lat: number;
     lng: number;
   }) => {
-    setInput(`${city} ${district} ${dong.name}`);
+    const fullInput = `${city} ${district} ${dong.name}`;
+    setInput(fullInput);
     setDongList(null);
+    console.log(' 선택된 지역:', fullInput);
+    console.log(' 위도:', dong.lat);
+    console.log(' 경도:', dong.lng);
 
     try {
-      const response = await fetch(
+      const response = await axiosInstance.post(
         'https://kkinikong.store/api/v1/user/place',
         {
-          method: 'POST',
+          latitude: dong.lat,
+          longitude: dong.lng,
+        },
+        {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           },
-          body: JSON.stringify({
-            latitude: dong.lat,
-            longitude: dong.lng,
-          }),
         },
       );
 
-      const json = await response.json();
-      if (json.isSuccess) {
-        alert('즐겨찾는 지역이 등록되었어요!');
+      if (response.data.isSuccess) {
+        console.log('즐겨찾는 지역이 등록되었어요!');
       } else {
-        alert('등록 실패: ' + json.message);
+        alert('등록 실패: ' + response.data.message);
       }
     } catch (err) {
       console.error('API 오류:', err);
