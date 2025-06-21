@@ -27,7 +27,7 @@ const Header = ({
 
   return (
     <>
-      <div className="flex items-center w-full pt-[8px] pb-[8px] px-[20px]">
+      <div className="font-pretendard flex items-center w-full pt-[8px] pb-[8px] px-[20px]">
         <button
           className="flex items-center pt-[8px] pb-[8px] pr-[12px]"
           onClick={() => navigate('/')}
