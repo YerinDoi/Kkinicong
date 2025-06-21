@@ -44,7 +44,7 @@ function Top8StoreSection() {
   return (
     <div className="pt-[4px] px-[20px] pb-[14px] border-b-8 border-[#F4F6F8] flex flex-col gap-[16px]">
       <p className="text-black text-base font-semibold leading-[20px]">
-        오늘은 끼니는 여기 어때요?
+        오늘 끼니는 여기 어때요?
       </p>
       <div
         className="flex w-full overflow-x-auto scrollbar-hide gap-[12px] "
