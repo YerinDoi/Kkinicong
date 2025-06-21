@@ -18,7 +18,7 @@ const meta: Meta<typeof TopBar> = {
   ],
 };
 
-export default meta; // ✅ 이 줄 꼭 있어야 함!
+export default meta;
 
 type Story = StoryObj<typeof TopBar>;
 
@@ -38,7 +38,8 @@ export const WithSubtitle: Story = {
 export const WithRightIcon: Story = {
   args: {
     title: '가맹점',
-    rightElement: <button className="text-sm text-gray-600">메뉴</button>,
+    rightType: 'custom',
+    customRightElement: <button className="text-sm text-gray-600">메뉴</button>,
   },
 };
 
@@ -46,7 +47,10 @@ export const WithoutBackButton: Story = {
   args: {
     title: '메인',
     showBackButton: false,
-    rightElement: <button className="text-sm text-gray-600">햄버거</button>,
+    rightType: 'custom',
+    customRightElement: (
+      <button className="text-sm text-gray-600">햄버거</button>
+    ),
   },
 };
 
@@ -54,5 +58,6 @@ export const CustomBackAction: Story = {
   args: {
     title: '홈으로 이동',
     onBack: () => alert('홈으로 이동합니다'),
+    rightType: 'none', // 오른쪽 아무것도 안 보이게
   },
 };
