@@ -16,7 +16,6 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    // ✅ 유저 정보 저장 (닉네임 등록 시 호출됨)
     setUser: (
       state,
       action: PayloadAction<{ id: string; nickname: string }>,
@@ -25,15 +24,18 @@ const userSlice = createSlice({
       state.nickname = action.payload.nickname;
       state.isLoggedIn = true;
     },
-
-    // ✅ 로그아웃 또는 유저 정보 초기화
     clearUser: (state) => {
       state.id = null;
       state.nickname = null;
       state.isLoggedIn = false;
     },
+
+    setLoggedIn: (state, action: PayloadAction<boolean>) => {
+      state.isLoggedIn = action.payload;
+    },
   },
 });
 
-export const { setUser, clearUser } = userSlice.actions;
+export const { setUser, clearUser, setLoggedIn } = userSlice.actions;
+
 export default userSlice.reducer;
