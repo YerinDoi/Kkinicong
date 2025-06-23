@@ -1,6 +1,6 @@
 import TopBar from '@/components/common/TopBar';
 import { useState } from 'react';
-import regionData from '@/constants/region';
+import regionData from '@/constants/regionData';
 import axiosInstance from '@/api/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import GreenButton from '@/components/common/GreenButton';
@@ -59,15 +59,15 @@ function MyNeighborhoodPage() {
 
       if (response.data.isSuccess) {
         console.log('즐겨찾는 지역이 등록되었어요!');
-        setIsLocationRegistered(true); 
+        setIsLocationRegistered(true);
       } else {
         alert('등록 실패: ' + response.data.message);
-        setIsLocationRegistered(false); 
+        setIsLocationRegistered(false);
       }
     } catch (err) {
       console.error('API 오류:', err);
       alert('서버 요청 중 오류가 발생했어요.');
-      setIsLocationRegistered(true); 
+      setIsLocationRegistered(true);
     }
   };
 
@@ -137,7 +137,6 @@ function MyNeighborhoodPage() {
           onClick={() => navigate('/')}
           disabled={!isLocationRegistered}
         />
-
       </div>
     </div>
   );

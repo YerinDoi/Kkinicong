@@ -17,6 +17,7 @@ import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import { categoryMapping, sortMapping } from '@/constants/storeMapping';
 import { Store } from '@/types/store';
 
+
 // interface FetchParams {
 //   latitude?: number;
 //   longitude?: number;
