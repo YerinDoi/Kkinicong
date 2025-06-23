@@ -114,11 +114,12 @@ const useStoreSearch = () => {
         };
       }
 
-      const gps = isGpsActive
-        ? gpsLocation
-        : { latitude: 37.495472, longitude: 126.676902 };
-
-      return { newMapCenter: { lat: gps.latitude, lng: gps.longitude } };
+      // 일반 키워드 검색 시, 하드코딩된 위치 대신 페이지 컴포넌트로부터 전달받은 위치를 그대로 사용
+      // - 지도 페이지에서는 '지도 중심'이 전달
+      // - 찾기 페이지에서는 'GPS/즐겨찾기/기본값' 위치가 전달
+      return {
+        newMapCenter: { lat: gpsLocation.latitude, lng: gpsLocation.longitude },
+      };
     },
     [searchAddress, setInputValue, setSearchTerm, setIsLocation],
   );

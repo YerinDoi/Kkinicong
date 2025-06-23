@@ -12,7 +12,7 @@ import StoreMapPage from '@/pages/store-map/StoreMapPage';
 import StoreSearchPage from '@/pages/store-search/StoreSearchPage';
 import StoreReviewPage from '@/pages/store-review/StoreReviewPage';
 import StoreDetailPage from '@/pages/store-detail/StoreDetailPage';
-
+import MyPage from '@/pages/mypage/MyPage';
 import ConvenienceStorePage from '@/pages/convenience-store/ConvenienceStorePage';
 
 const Router = () => {
@@ -31,7 +31,7 @@ const Router = () => {
       <Route path="/nickname" element={<NicknamePage />} />
       <Route path="/nicknameXXX" element={<NicknamePageXXX />} />
       <Route path="/my-neighborhood" element={<MyNeighborhoodPage />} />
-
+      <Route path="/mypage" element={<MyPage />} />
       <Route
         path="/store-map"
         element={

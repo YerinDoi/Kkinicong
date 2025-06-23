@@ -1,8 +1,16 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+  useCallback,
+} from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
+import axiosInstance from '@/api/axiosInstance';
 
-const DEFAULT_LOCATION = { latitude: 37.495472, longitude: 126.676902 };
+const DEFAULT_LOCATION = { latitude: 37.495472, longitude: 126.676902 }; // 인천 서구청
 
 interface UserLocation {
   latitude: number;
@@ -13,7 +21,12 @@ interface GpsContextType {
   isGpsActive: boolean;
   address: string;
   location: UserLocation;
-  requestGps: (onLocated?: (lat: number, lng: number) => void) => void;
+  requestGps: (onLocated?: (lat: number, lng: number) => void) => Promise<void>;
+  fetchStoresWithLocation: (
+    apiPath: string,
+    setData: (stores: any[]) => void,
+    useFallback?: boolean,
+  ) => Promise<void>;
   error: string | null;
   isLoading: boolean;
 }
@@ -25,7 +38,6 @@ interface GpsProviderProps {
 }
 
 export function GpsProvider({ children }: GpsProviderProps) {
-  // 회원/비회원 여부 Redux에서 받아오기
   const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
 
   const [isGpsActive, setIsGpsActive] = useState(false);
@@ -33,13 +45,7 @@ export function GpsProvider({ children }: GpsProviderProps) {
   const [location, setLocation] = useState<UserLocation>(DEFAULT_LOCATION);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  // 수동(즐겨찾기) 위치 설정
-  const setManualLocation = (lat: number, lng: number) => {
-    setLocation({ latitude: lat, longitude: lng });
-    setIsGpsActive(false); // GPS 기반이 아님을 명시
-  };
 
-  // 카카오 reverse geocoding
   const fetchAddress = async (lat: number, lng: number): Promise<string> => {
     try {
       const response = await fetch(
@@ -55,31 +61,81 @@ export function GpsProvider({ children }: GpsProviderProps) {
         return data.documents[0].address.address_name;
       }
       return '';
-    } catch (e) {
+    } catch {
       return '';
     }
   };
 
-  const requestGps = (onLocated?: (lat: number, lng: number) => void) => {
-    setIsLoading(true);
-    setError(null);
-    if (!navigator.geolocation) {
-      setError('이 브라우저에서는 위치 정보가 지원되지 않습니다.');
-      setIsLoading(false);
-      setIsGpsActive(false);
-      // 비회원: 디폴트, 회원: 자주 가는 지역 → 없으면 디폴트
-      if (isLoggedIn) {
-        // TODO: 자주 가는 지역 구현 후 아래와 같은 코드로 대체
-        // if (favoriteRegion) {
-        //   setLocation(favoriteRegion);
-        //   setAddress('자주 가는 지역 주소');
-        //   return;
-        // }
+  const getFavoriteLocationFromServer =
+    async (): Promise<UserLocation | null> => {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        console.warn(
+          '[getFavoriteLocationFromServer] 토큰 없음, API 요청 생략',
+        );
+        return null;
       }
-      setLocation(DEFAULT_LOCATION);
-      setAddress('');
+      try {
+        const res = await axiosInstance.get('/api/v1/user/place', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log('[getFavoriteLocationFromServer] 응답:', res.data);
+
+        if (
+          res.data?.isSuccess &&
+          res.data?.results?.latitude &&
+          res.data?.results?.longitude
+        ) {
+          return {
+            latitude: res.data.results.latitude,
+            longitude: res.data.results.longitude,
+          };
+        } else {
+          console.log('[getFavoriteLocationFromServer] 좌표 정보 없음');
+        }
+      } catch (e) {
+        console.error('즐겨찾는 지역 로딩 실패', e);
+      }
+      return null;
+    };
+
+  const fallbackToDefaultOrFavorite = async () => {
+    console.log('[fallbackToDefaultOrFavorite] 시작');
+    const favorite = await getFavoriteLocationFromServer();
+
+    if (favorite) {
+      console.log(
+        '[fallbackToDefaultOrFavorite] 즐겨찾기 위치 사용:',
+        favorite,
+      );
+      setLocation(favorite);
+      const addr = await fetchAddress(favorite.latitude, favorite.longitude);
+      setAddress(addr);
       return;
     }
+
+    console.log('[fallbackToDefaultOrFavorite] 즐겨찾기 없음 → 기본 위치 사용');
+    setLocation(DEFAULT_LOCATION);
+    setAddress('');
+  };
+
+  //실제로 GPS 요청 시도
+  const requestGps = async (
+    onLocated?: (lat: number, lng: number) => void,
+  ): Promise<void> => {
+    setIsLoading(true);
+    setError(null);
+
+    if (!navigator.geolocation) {
+      setError('이 브라우저에서는 위치 정보가 지원되지 않습니다.');
+      setIsGpsActive(false);
+      await fallbackToDefaultOrFavorite();
+      setIsLoading(false);
+      return;
+    }
+    //성공하면 위경도 저장
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         const { latitude, longitude } = pos.coords;
@@ -90,25 +146,53 @@ export function GpsProvider({ children }: GpsProviderProps) {
         setIsLoading(false);
         if (onLocated) onLocated(latitude, longitude);
       },
-      (err) => {
+      async (err) => {
+        console.error('Geolocation error:', err);
         setError('위치 권한이 거부되었습니다.');
         setIsGpsActive(false);
-        // 비회원: 디폴트, 회원: 자주 가는 지역 → 없으면 디폴트
-        if (isLoggedIn) {
-          // TODO: 자주 가는 지역 구현 후 아래와 같은 코드로 대체
-          // if (favoriteRegion) {
-          //   setLocation(favoriteRegion);
-          //   setAddress('자주 가는 지역 주소');
-          //   return;
-          // }
-        }
-        setLocation(DEFAULT_LOCATION);
-        setAddress('');
+        await fallbackToDefaultOrFavorite(); //실패하면 fallback
         setIsLoading(false);
       },
       { enableHighAccuracy: true, timeout: 10000 },
     );
   };
+
+  // 현재 위치 기준으로 가맹점 데이터 불러오는 함수
+  const fetchStoresWithLocation = useCallback(
+    async (
+      apiPath: string,
+      setData: (stores: any[]) => void,
+      useFallback = false,
+    ) => {
+      const fallbackLoc = await getFavoriteLocationFromServer();
+      const currentLoc =
+        (isGpsActive && location) || fallbackLoc || DEFAULT_LOCATION;
+
+      try {
+        const res = await axiosInstance.get(apiPath, {
+          params: currentLoc,
+        });
+
+        if (useFallback && res.data?.results?.length === 0) {
+          const fallbackRes = await axiosInstance.get(apiPath, {
+            params: DEFAULT_LOCATION,
+          });
+          setData(fallbackRes.data?.results ?? []);
+        } else {
+          setData(res.data?.results ?? []);
+        }
+      } catch (err) {
+        console.error('가맹점 불러오기 실패', err);
+        setData([]);
+      }
+    },
+    [isGpsActive, location],
+  );
+
+  //사용자가 gps요청 안해도 기본 위치 세팅
+  useEffect(() => {
+    fallbackToDefaultOrFavorite();
+  }, []);
 
   return (
     <GpsContext.Provider
@@ -117,6 +201,7 @@ export function GpsProvider({ children }: GpsProviderProps) {
         address,
         location,
         requestGps,
+        fetchStoresWithLocation,
         error,
         isLoading,
       }}
