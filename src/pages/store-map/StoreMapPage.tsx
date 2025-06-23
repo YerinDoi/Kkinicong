@@ -133,6 +133,17 @@ const StoreMapPage = () => {
   useEffect(() => {
     mapLevelRef.current = mapLevel;
   }, [mapLevel]);
+
+  useEffect(() => {
+    if (!isGpsActive && gpsLocation) {
+      console.log('[초기 지도 위치] 즐겨찾기 위치로 설정됨:', gpsLocation);
+      setMapCenter({
+        lat: gpsLocation.latitude,
+        lng: gpsLocation.longitude,
+      });
+    }
+  }, [gpsLocation, isGpsActive]);
+
   useEffect(() => {
     selectedCategoryRef.current = selectedCategory;
   }, [selectedCategory]);
@@ -428,7 +439,7 @@ const StoreMapPage = () => {
 
     const { newMapCenter } = await handleSearch(
       termToSearch.trim(),
-      gpsLocation,
+      { latitude: mapCenter.lat, longitude: mapCenter.lng },
       isGpsActive,
     );
     moveMap(newMapCenter);
