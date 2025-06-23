@@ -66,50 +66,62 @@ export function GpsProvider({ children }: GpsProviderProps) {
     }
   };
 
-  const getFavoriteLocationFromServer = async (): Promise<UserLocation | null> => {
-    const token = localStorage.getItem('accessToken');
-    try {
-    const res = await axiosInstance.get('/api/v1/user/place', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-    console.log('[getFavoriteLocationFromServer] 응답:', res.data);
+  const getFavoriteLocationFromServer =
+    async (): Promise<UserLocation | null> => {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        console.warn(
+          '[getFavoriteLocationFromServer] 토큰 없음, API 요청 생략',
+        );
+        return null;
+      }
+      try {
+        const res = await axiosInstance.get('/api/v1/user/place', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log('[getFavoriteLocationFromServer] 응답:', res.data);
 
-    if (res.data?.isSuccess && res.data?.results?.latitude && res.data?.results?.longitude) {
-      return {
-        latitude: res.data.results.latitude,
-        longitude: res.data.results.longitude,
-      };
-    } else {
-      console.log('[getFavoriteLocationFromServer] 좌표 정보 없음');
-    }
-  } catch (e) {
-    console.error('즐겨찾는 지역 로딩 실패', e);
-  }
-  return null;
-};
-
-
+        if (
+          res.data?.isSuccess &&
+          res.data?.results?.latitude &&
+          res.data?.results?.longitude
+        ) {
+          return {
+            latitude: res.data.results.latitude,
+            longitude: res.data.results.longitude,
+          };
+        } else {
+          console.log('[getFavoriteLocationFromServer] 좌표 정보 없음');
+        }
+      } catch (e) {
+        console.error('즐겨찾는 지역 로딩 실패', e);
+      }
+      return null;
+    };
 
   const fallbackToDefaultOrFavorite = async () => {
-  console.log('[fallbackToDefaultOrFavorite] 시작');
-  const favorite = await getFavoriteLocationFromServer();
+    console.log('[fallbackToDefaultOrFavorite] 시작');
+    const favorite = await getFavoriteLocationFromServer();
 
-  if (favorite) {
-    console.log('[fallbackToDefaultOrFavorite] 즐겨찾기 위치 사용:', favorite);
-    setLocation(favorite);
-    setAddress('자주 가는 지역');
-    return;
-  }
+    if (favorite) {
+      console.log(
+        '[fallbackToDefaultOrFavorite] 즐겨찾기 위치 사용:',
+        favorite,
+      );
+      setLocation(favorite);
+      const addr = await fetchAddress(favorite.latitude, favorite.longitude);
+      setAddress(addr);
+      return;
+    }
 
-  console.log('[fallbackToDefaultOrFavorite] 즐겨찾기 없음 → 기본 위치 사용');
-  setLocation(DEFAULT_LOCATION);
-  setAddress('');
-};
+    console.log('[fallbackToDefaultOrFavorite] 즐겨찾기 없음 → 기본 위치 사용');
+    setLocation(DEFAULT_LOCATION);
+    setAddress('');
+  };
 
-
- //실제로 GPS 요청 시도
+  //실제로 GPS 요청 시도
   const requestGps = async (
     onLocated?: (lat: number, lng: number) => void,
   ): Promise<void> => {
@@ -145,7 +157,7 @@ export function GpsProvider({ children }: GpsProviderProps) {
     );
   };
 
-// 현재 위치 기준으로 가맹점 데이터 불러오는 함수
+  // 현재 위치 기준으로 가맹점 데이터 불러오는 함수
   const fetchStoresWithLocation = useCallback(
     async (
       apiPath: string,
