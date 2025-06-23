@@ -17,7 +17,6 @@ import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import { categoryMapping, sortMapping } from '@/constants/storeMapping';
 import { Store } from '@/types/store';
 
-
 // interface FetchParams {
 //   latitude?: number;
 //   longitude?: number;
@@ -77,6 +76,10 @@ const StoreSearchPage = () => {
             requestParams.longitude = coordinates.longitude;
           } else {
             requestParams.keyword = searchTerm;
+            if (gpsLocation) {
+              requestParams.latitude = gpsLocation.latitude;
+              requestParams.longitude = gpsLocation.longitude;
+            }
           }
         } else if (isLocation && coordinates) {
           requestParams.latitude = coordinates.latitude;

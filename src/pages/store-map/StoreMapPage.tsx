@@ -439,7 +439,7 @@ const StoreMapPage = () => {
 
     const { newMapCenter } = await handleSearch(
       termToSearch.trim(),
-      gpsLocation,
+      { latitude: mapCenter.lat, longitude: mapCenter.lng },
       isGpsActive,
     );
     moveMap(newMapCenter);
