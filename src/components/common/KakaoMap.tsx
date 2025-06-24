@@ -7,7 +7,6 @@ import { KakaoMapContext } from '@/contexts/KakaoMapContext';
 interface KakaoMapProps {
   center: { lat: number; lng: number }; // 지도 중심 좌표
   level: number; // 지도 확대 레벨 (선택 아님)
-  onMapChange?: (center: { lat: number; lng: number }, level: number) => void; // 통합된 지도 변경 핸들러
   onMapLoad?: (map: kakao.maps.Map) => void; // 지도 인스턴스 로드 시 콜백 추가
   children?: React.ReactNode; // 마커 및 오버레이를 자식으로 받음
 }
@@ -24,42 +23,12 @@ export const DOT_IMAGE_SIZE = { width: 12, height: 12 };
 const KakaoMap: React.FC<KakaoMapProps> = ({
   center,
   level,
-  onMapChange,
   onMapLoad,
   children, // children prop 받음
 }) => {
   const { kakao, loading, error } = useKakaoMapLoader();
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false); // mapLoaded 상태 추가
-
-  // 지도 중심 또는 줌 레벨 변경 시 호출되는 핸들러
-  const handleMapChange = () => {
-    if (mapRef.current) {
-      const currentCenter = mapRef.current.getCenter();
-      const currentLevel = mapRef.current.getLevel();
-      if (onMapChange) {
-        onMapChange(
-          { lat: currentCenter.getLat(), lng: currentCenter.getLng() },
-          currentLevel,
-        );
-      }
-    }
-  };
-
-  // 지도가 생성되었을 때 초기 줌 레벨 설정 및 영역 변경 감지 시작
-  useEffect(() => {
-    if (mapRef.current && mapLoaded) {
-      // mapLoaded 상태가 true일 때만 실행
-      const currentCenter = mapRef.current.getCenter();
-      const currentLevel = mapRef.current.getLevel();
-      if (onMapChange) {
-        onMapChange(
-          { lat: currentCenter.getLat(), lng: currentCenter.getLng() },
-          currentLevel,
-        );
-      }
-    }
-  }, [mapRef.current, onMapChange, mapLoaded]); // mapLoaded 의존성 추가
 
   if (loading) {
     return <div>지도를 불러오는 중입니다.</div>;
@@ -75,8 +44,6 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         center={center}
         level={level}
         style={{ width: '100%', height: '100%' }}
-        onCenterChanged={handleMapChange}
-        onZoomChanged={handleMapChange}
         onClick={(_map, mouseEvent) => {}}
         onCreate={(map: kakao.maps.Map) => {
           mapRef.current = map;

@@ -15,22 +15,13 @@ import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import useBottomSheet from '@/hooks/useBottomSheet';
 import { categoryMapping } from '@/constants/storeMapping';
 import { useGpsFetch } from '@/hooks/useGpsFetch';
+import SearchOnMapBtn from '@/components/StoreMap/SearchOnMapBtn';
 
 // 줌 레벨에 따른 반경 계산 함수 (컴포넌트 외부로 이동)
 const calculateRadius = (level: number): number => {
   if (level >= 3) return 1000;
   if (level >= 2) return 3000;
   return 5000;
-};
-
-// 두 좌표 간의 차이가 임계값(0.01도) 이상인지 확인
-const isSignificantChange = (
-  prev: { lat: number; lng: number },
-  current: { lat: number; lng: number },
-): boolean => {
-  const latDiff = Math.abs(prev.lat - current.lat);
-  const lngDiff = Math.abs(prev.lng - current.lng);
-  return latDiff > 0.01 || lngDiff > 0.01;
 };
 
 const StoreMapPage = () => {
@@ -59,6 +50,7 @@ const StoreMapPage = () => {
     handleTouchStart,
     handleTouchMove,
     handleTouchEnd,
+    handleMouseDown,
     isDraggingRef,
   } = useBottomSheet(headerHeight);
 
@@ -74,14 +66,18 @@ const StoreMapPage = () => {
   // StoreMap에서 지도 인스턴스 받아오기
   const [mapInstance, setMapInstance] = useState<any>(null);
 
+  const ignoreNextMapMove = useRef(false);
+
+  // 지도 범위 재설정 관련 상태 추가
+  const [shouldAutoFitBounds, setShouldAutoFitBounds] = useState(true);
+  const [lastStoresCount, setLastStoresCount] = useState(0);
+
   const moveMap = useCallback(
     (center: { lat: number; lng: number }) => {
-      console.log('moveMap 호출됨:', center);
+      ignoreNextMapMove.current = true;
       setMapCenter(center);
-
       // mapInstance가 있으면 직접 지도 이동
       if (mapInstance && window.kakao && window.kakao.maps) {
-        console.log('카카오맵 이동 시도:', center);
         const moveLatLng = new window.kakao.maps.LatLng(center.lat, center.lng);
         mapInstance.setCenter(moveLatLng);
       }
@@ -98,7 +94,6 @@ const StoreMapPage = () => {
   const selectedCategoryRef = useRef(selectedCategory);
   const searchTermRef = useRef('');
 
-  const prevMapCenterRef = useRef(mapCenter);
   const isZoomingRef = useRef(false);
 
   // GPS 위치 hook 사용
@@ -118,7 +113,6 @@ const StoreMapPage = () => {
     isLocation,
     coordinates,
     handleSearch,
-    searchAddress,
   } = useStoreSearch();
 
   // 최신 isLocation 값을 ref에 저장하여 콜백에서 사용
@@ -271,34 +265,40 @@ const StoreMapPage = () => {
   const mapDebounceTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
   // 지도 영역 및 줌 레벨 변경 시 상태 업데이트 핸들러
+  const [isMapMoved, setIsMapMoved] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+
   const handleMapChange = useCallback(
-    (center: { lat: number; lng: number }, level: number) => {
+    (center: { lat: number; lng: number }, level: number, byUser?: boolean) => {
+      console.log('[handleMapChange 호출]', {
+        center,
+        level,
+        byUser,
+        ignore: ignoreNextMapMove.current,
+      });
       const prevLevel = mapLevelRef.current;
       const prevCenter = mapCenterRef.current;
       const isZoomChanged = prevLevel !== level;
       const isCenterChanged =
         prevCenter.lat !== center.lat || prevCenter.lng !== center.lng;
 
-      // center(중심좌표)가 바뀌었고, level(줌레벨)은 그대로일 때만 mapCenter를 변경 (즉, 이동만 했을 때)
       if (isCenterChanged && !isZoomChanged) {
         setMapCenter(center);
-        // mapLevel은 그대로 두기
       }
-      // level(줌레벨)만 바뀌었을 때는 상태만 바꿈 (API 트리거 X)
       if (isZoomChanged && !isCenterChanged) {
         setMapLevel(level);
-        // 페이지네이션 상태, 데이터 등은 건드리지 않음
       }
-      // 둘 다 바뀌었을 때(드래그+줌 동시): center 우선
       if (isCenterChanged && isZoomChanged) {
         setMapCenter(center);
         setMapLevel(level);
-        // 페이지네이션 상태도 초기화
         pageRef.current = 0;
         hasNextPageRef.current = true;
       }
+      if (byUser && !isSearching && !ignoreNextMapMove.current)
+        setIsMapMoved(true);
+      ignoreNextMapMove.current = false; // 한 번만 무시
     },
-    [],
+    [isSearching],
   );
 
   // 컴포넌트 언마운트 시 모든 타임아웃 정리
@@ -319,6 +319,7 @@ const StoreMapPage = () => {
       pageRef.current = 0;
       hasNextPageRef.current = true;
       setStores([]);
+      searchTriggeredRef.current = true; // 카테고리 변경 시 검색 트리거
       fetchStores({
         latitude: mapCenterRef.current.lat,
         longitude: mapCenterRef.current.lng,
@@ -326,31 +327,6 @@ const StoreMapPage = () => {
       });
     }
   }, [selectedCategory]);
-
-  // 2. 지도 중심 변경 시 데이터 로드 (디바운스, 페이지 초기화)
-  useEffect(() => {
-    if (!mapInstance) return; // mapInstance가 준비된 이후에만 실행
-
-    if (mapDebounceTimeoutRef.current) {
-      clearTimeout(mapDebounceTimeoutRef.current);
-    }
-
-    mapDebounceTimeoutRef.current = setTimeout(() => {
-      pageRef.current = 0;
-      hasNextPageRef.current = true;
-      fetchStores({
-        latitude: mapCenter.lat,
-        longitude: mapCenter.lng,
-        keyword: isLocationRef.current ? undefined : searchTermRef.current,
-      });
-    }, 500);
-
-    return () => {
-      if (mapDebounceTimeoutRef.current) {
-        clearTimeout(mapDebounceTimeoutRef.current);
-      }
-    };
-  }, [mapCenter, mapInstance]);
 
   // useInfiniteScroll 훅 사용 (무한스크롤)
   const { loaderRef } = useInfiniteScroll({
@@ -401,17 +377,27 @@ const StoreMapPage = () => {
       const kakaoCenter = new window.kakao.maps.LatLng(lat, lng);
       mapInstance.setCenter(kakaoCenter);
     }
-    // GPS 클릭 시에는 검색어 초기화
     setSearchTerm('');
     setInputValue('');
+    setIsMapMoved(false); // GPS 이동 시 버튼 숨김
+    setShouldAutoFitBounds(true); // GPS 이동 시 자동 범위 재설정 활성화
+    searchTriggeredRef.current = true; // GPS 이동 시 검색 트리거
   }, requestGps);
 
-  // 검색 실행 시, 결과에 맞춰 지도 범위를 재설정
+  // 검색 실행 시, 결과에 맞춰 지도 범위를 재설정 (수정된 로직)
   useEffect(() => {
-    // '검색'이 실행되었고, 결과(가게)가 있으며, 지도 인스턴스가 준비되었을 때만 동작
-    if (searchTriggeredRef.current && stores.length > 0 && mapInstance) {
+    // 검색이 트리거되었고, 자동 범위 재설정이 활성화되어 있고, 결과(가게)가 있으며, 지도 인스턴스가 준비되었을 때만 동작
+    if (
+      searchTriggeredRef.current &&
+      shouldAutoFitBounds &&
+      stores.length > 0 &&
+      mapInstance
+    ) {
+      // 2개 이상의 결과가 있을 때만 모든 결과가 보이도록 지도 범위 조정
       if (stores.length > 1) {
-        // 2개 이상의 결과가 있을 때만 모든 결과가 보이도록 지도 범위 조정
+        console.log('지도 범위 재설정 실행:', stores.length, '개의 마커');
+        // 지도 범위 재설정 시 사용자 조작으로 인식하지 않도록 설정
+        ignoreNextMapMove.current = true;
         const bounds = new window.kakao.maps.LatLngBounds();
         stores.forEach((store: Store) => {
           bounds.extend(
@@ -420,22 +406,62 @@ const StoreMapPage = () => {
         });
         mapInstance.setBounds(bounds);
       }
-
+      // 범위 재설정 후 비활성화
+      setShouldAutoFitBounds(false);
       searchTriggeredRef.current = false;
     }
-  }, [stores, mapInstance]);
+  }, [stores, mapInstance, shouldAutoFitBounds]);
+
+  // 새로운 마커가 추가되었을 때 자동 범위 재설정 활성화
+  useEffect(() => {
+    if (stores.length > lastStoresCount && stores.length > 1) {
+      console.log('새로운 마커 추가됨, 자동 범위 재설정 활성화');
+      setShouldAutoFitBounds(true);
+      searchTriggeredRef.current = true; // 새로운 마커 추가 시 검색 트리거
+    }
+    setLastStoresCount(stores.length);
+  }, [stores.length, lastStoresCount]);
+
+  // 최초 1회 데이터 로드
+  useEffect(() => {
+    fetchStores({
+      latitude: mapCenter.lat,
+      longitude: mapCenter.lng,
+      // 기타 파라미터 필요시 추가
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 카테고리 변경 시 버튼 숨김
+  useEffect(() => {
+    setIsMapMoved(false);
+    setShouldAutoFitBounds(true); // 카테고리 변경 시 자동 범위 재설정 활성화
+  }, [selectedCategory]);
 
   const handleSearchAndFitBounds = async (term?: string) => {
+    setIsSearching(true);
+    setIsMapMoved(false); // 검색 시 버튼 숨김
+    setShouldAutoFitBounds(true); // 검색 시 자동 범위 재설정 활성화
+
     const termToSearch = typeof term === 'string' ? term : inputValue;
     if (!termToSearch.trim()) {
-      setSearchTerm(''); // 검색어 없는 경우, 검색 상태도 초기화
+      setSearchTerm('');
+      pageRef.current = 0;
+      hasNextPageRef.current = true;
+      setStores([]);
+      fetchStores({
+        latitude: mapCenter.lat,
+        longitude: mapCenter.lng,
+      });
+      setIsSearching(false);
+      return;
     }
 
     pageRef.current = 0;
     hasNextPageRef.current = true;
     setStores([]);
     searchTriggeredRef.current = true;
-    isHandlingSearchRef.current = true; // API 충돌 방지 플래그 설정
+    isHandlingSearchRef.current = true;
 
     const { newMapCenter } = await handleSearch(
       termToSearch.trim(),
@@ -443,6 +469,25 @@ const StoreMapPage = () => {
       isGpsActive,
     );
     moveMap(newMapCenter);
+
+    fetchStores({
+      latitude: newMapCenter.lat,
+      longitude: newMapCenter.lng,
+      ...(isLocationRef.current ? {} : { keyword: termToSearch }),
+    });
+    setIsSearching(false);
+  };
+
+  const handleSearchOnMap = (lat: number, lng: number) => {
+    pageRef.current = 0;
+    hasNextPageRef.current = true;
+    setStores([]);
+    fetchStores({
+      latitude: lat,
+      longitude: lng,
+      ...(isLocationRef.current ? {} : { keyword: searchTermRef.current }),
+    });
+    setIsMapMoved(false);
   };
 
   return (
@@ -487,7 +532,7 @@ const StoreMapPage = () => {
           onMarkerClick={handleMarkerClick}
           onMapClick={() => {
             setSelectedStore(null);
-            setSheetHeight(518);
+            //setSheetHeight(518);
           }}
           onMapLoad={setMapInstance}
         />
@@ -508,6 +553,7 @@ const StoreMapPage = () => {
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
+          onMouseDown={handleMouseDown}
         >
           <div className="w-[85px] h-[4px] rounded-md bg-[#D9D9D9]" />
         </div>
@@ -517,7 +563,7 @@ const StoreMapPage = () => {
           <MenuCategoryCarousel
             selectedCategory={selectedCategory}
             onSelectCategory={(cat) => {
-              setSheetHeight(518);
+              //setSheetHeight(518);
               setSelectedCategory(cat);
               setSelectedStore(null);
             }}
@@ -550,6 +596,17 @@ const StoreMapPage = () => {
           </div>
         )}
       </div>
+
+      {/* 지도 위에 버튼을 화면 상단에 고정해서 표시 */}
+      {isMapMoved && (
+        <div className="absolute left-1/2 top-[145px] -translate-x-1/2 z-[1000]">
+          <SearchOnMapBtn
+            lat={mapCenter.lat}
+            lng={mapCenter.lng}
+            onClick={handleSearchOnMap}
+          />
+        </div>
+      )}
     </div>
   );
 };
