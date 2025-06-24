@@ -6,10 +6,10 @@ import SearchInput from '@/components/common/SearchInput';
 import TopBar from '@/components/common/TopBar';
 import InfoShareCard from '@/components/ConvenienceStore/InfoShareCard';
 
-import ProductListSection from './ProductListSection';
+import ProductListSection from '../../components/ConvenienceStore/ProductListSection';
 import ButtonGroup from '../../components/ConvenienceStore/ButtonGroup';
-import Check from './Check';
-import CategoryFilterSelector from './CategoryFilterSelector';
+import Check from '../../components/ConvenienceStore/Check';
+import CategoryFilterSelector from '../../components/ConvenienceStore/CategoryFilterSelector';
 
 const ConvenienceStorePage = () => {
   const [products, setProducts] = useState([]); // 편의점 제품 목록 상태
