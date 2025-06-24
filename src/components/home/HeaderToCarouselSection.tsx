@@ -24,7 +24,7 @@ function HeaderToCarouselSection() {
     try {
       // 검색 시 위치 정보를 포함하도록 파라미터 구성
       const params: any = { keyword: searchTerm, size: 2 };
-      if (gpsLocation.latitude && gpsLocation.longitude) {
+      if (gpsLocation && gpsLocation.latitude && gpsLocation.longitude) {
         params.latitude = gpsLocation.latitude;
         params.longitude = gpsLocation.longitude;
         params.radius = 20000; // GPS 위치 기반 20km 반경
