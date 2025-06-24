@@ -77,6 +77,10 @@ const StoreSearchPage = () => {
           } else {
             requestParams.keyword = searchTerm;
             if (gpsLocation) {
+              console.log(
+                '[DEBUG] searchTerm 기반 fallback → gpsLocation 사용:',
+                gpsLocation,
+              );
               requestParams.latitude = gpsLocation.latitude;
               requestParams.longitude = gpsLocation.longitude;
             }
@@ -85,6 +89,7 @@ const StoreSearchPage = () => {
           requestParams.latitude = coordinates.latitude;
           requestParams.longitude = coordinates.longitude;
         } else if (gpsLocation) {
+          console.log('[DEBUG] 기본 위치로 gpsLocation 사용:', gpsLocation);
           requestParams.latitude = gpsLocation.latitude;
           requestParams.longitude = gpsLocation.longitude;
         }
