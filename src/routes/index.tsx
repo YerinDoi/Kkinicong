@@ -11,7 +11,10 @@ import StoreSearchPage from '@/pages/store-search/StoreSearchPage';
 import StoreReviewPage from '@/pages/store-review/StoreReviewPage';
 import StoreDetailPage from '@/pages/store-detail/StoreDetailPage';
 
-import ConvenienceStorePage from '@/pages/convenience-store/ConvenienceStorePage';
+import ConvenienceStorePage from '@/pages/convenience/ConveniencePage';
+import AddConveniencePage from '@/pages/convenience/AddConveniencePage';
+import ConvenienceDetailPage from '@/pages/convenience/ConvenienceDetailPage';
+import NameRecommendationPage from '@/pages/convenience/NameRecommendationPage';
 
 const Router = () => {
   return (
@@ -27,7 +30,17 @@ const Router = () => {
       <Route path="/store-review/:storeId" element={<StoreReviewPage />} />
       <Route path="/store/:storeId" element={<StoreDetailPage />} />
 
-      <Route path="/convenience-store" element={<ConvenienceStorePage />} />
+      <Route path="/convenience" element={<ConvenienceStorePage />} />
+      <Route path="/convenience/add" element={<AddConveniencePage />} />
+
+      <Route
+        path="/convenience/post/:postId"
+        element={<ConvenienceDetailPage />}
+      />
+      <Route
+        path="/convenience/name-recommendation"
+        element={<NameRecommendationPage />}
+      />
     </Routes>
   );
 };

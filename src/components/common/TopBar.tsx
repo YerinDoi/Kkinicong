@@ -40,7 +40,7 @@ export default function TopBar({
 
   return (
     <Fragment>
-      <div className="flex items-center justify-between px-[20px] py-[8px]">
+      <div className="flex items-center justify-between px-[16px] py-[8px]">
         {/* 왼쪽 영역 : 뒤로가기버튼, 제목, 부제목 */}
         <div className="flex items-center gap-[4px]">
           {showBackButton ? (
