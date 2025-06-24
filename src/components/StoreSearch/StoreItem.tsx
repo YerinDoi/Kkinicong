@@ -70,7 +70,7 @@ const StoreItem = ({ store }: StoreItemProps) => {
   return (
     <>
       <div
-        className="flex gap-[14px] cursor-pointer"
+        className="flex gap-[14px] cursor-pointer h-[115px]"
         onClick={handleStoreClick}
       >
         <div className="flex min-w-[115px] aspect-square p-[20px] justify-center items-center rounded-[12px] border border-[#DFE1E4] bg-[#F6F7F8]">

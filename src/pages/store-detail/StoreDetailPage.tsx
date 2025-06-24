@@ -19,22 +19,21 @@ const StoreDetailPage = () => {
   // 리뷰PR 커밋용 주석 열기
   // 가맹점 상세 정보 불러오기
   const fetchStoreDetail = async () => {
-  try {
-    const res = await axios.get(`/api/v1/store/${storeId}`);
-    const storeData = res.data.results;
-    console.log('대표 태그:', storeData.representativeTag);
+    try {
+      const res = await axios.get(`/api/v1/store/${storeId}`);
+      const storeData = res.data.results;
+      console.log('대표 태그:', storeData.representativeTag);
 
-
-    setStore(storeData);
-    setIsLiked(storeData.isScrapped === true);
-    setLikeCount(storeData.storeScrapCount ?? 0);
-  } catch (err) {
-    console.error('가맹점 정보를 불러오는데 실패했습니다.', err);
-    setError(true);
-  } finally {
-    setLoading(false);
-  }
-};
+      setStore(storeData);
+      setIsLiked(storeData.isScrapped === true);
+      setLikeCount(storeData.storeScrapCount ?? 0);
+    } catch (err) {
+      console.error('가맹점 정보를 불러오는데 실패했습니다.', err);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (storeId) fetchStoreDetail();
@@ -47,7 +46,7 @@ const StoreDetailPage = () => {
 
   return (
     <div className="font-pretendard mt-[11px]">
-      <TopBar rightElement />
+      <TopBar rightType="menu" />
       <StoreDetailInfo
         store={store}
         storeId={store.storeId}
@@ -65,7 +64,6 @@ const StoreDetailPage = () => {
 
       <StoreDetailMap store={store} />
       <StoreDetailReview store={store} onReviewChange={fetchStoreDetail} />
-
     </div>
   );
 };
