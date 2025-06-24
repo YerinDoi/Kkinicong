@@ -99,7 +99,7 @@ const useStoreSearch = () => {
   const handleSearch = useCallback(
     async (
       searchInput: string,
-      gpsLocation: { latitude: number; longitude: number },
+      gpsLocation: { latitude: number; longitude: number } | null,
       isGpsActive: boolean,
     ): Promise<HandleSearchResult> => {
       setInputValue(searchInput);
@@ -111,6 +111,13 @@ const useStoreSearch = () => {
       if (isLoc && coords) {
         return {
           newMapCenter: { lat: coords.latitude, lng: coords.longitude },
+        };
+      }
+
+      // GPS 위치가 없으면 null 반환 (백엔드가 처리)
+      if (!gpsLocation) {
+        return {
+          newMapCenter: { lat: 0, lng: 0 }, // 의미 없는 값, 실제로는 사용되지 않음
         };
       }
 
