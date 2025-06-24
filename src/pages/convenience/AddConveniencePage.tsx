@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 import { createConveniencePost } from '@/api/convenience';
 import { toServerCategory, toServerBrand } from '@/types/convenienceMapper';
 
-import ButtonGroup from '@/pages/convenience/ButtonGroup';
+import ButtonGroup from '@/components/ConvenienceStore/ButtonGroup';
 import TopBar from '@/components/common/TopBar';
 import SelectableButton from '@/pages/convenience/SelectableButton';
 

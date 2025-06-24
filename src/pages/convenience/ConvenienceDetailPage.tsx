@@ -7,9 +7,9 @@ import {
 } from '@/api/convenience';
 
 import TopBar from '@/components/common/TopBar';
-import DeleteConvenience from '@/pages/convenience/DeleteConvenience';
+import DeleteConvenience from '@/components/ConvenienceStore/DeleteConvenience';
 
-import ShareIcon from '@/assets/svgs/convenience/share.svg';
+// import ShareIcon from '@/assets/svgs/convenience/share.svg';
 import ProfileIcon from '@/assets/svgs/convenience/profile.svg';
 import DeleteIcon from '@/assets/svgs/convenience/delete.svg';
 
@@ -93,7 +93,7 @@ export default function ConvenienceDetailPage() {
   return (
     <>
       {/* 상단바 */}
-      <TopBar rightElement={<img src={ShareIcon} alt="공유" />} />
+      <TopBar />
 
       <div className="min-h-screen px-4">
         {/* 작성 정보, 삭제버튼 */}

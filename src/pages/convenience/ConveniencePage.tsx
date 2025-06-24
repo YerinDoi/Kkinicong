@@ -7,7 +7,7 @@ import TopBar from '@/components/common/TopBar';
 import InfoShareCard from '@/components/ConvenienceStore/InfoShareCard';
 
 import ProductListSection from './ProductListSection';
-import ButtonGroup from './ButtonGroup';
+import ButtonGroup from '../../components/ConvenienceStore/ButtonGroup';
 import Check from './Check';
 import CategoryFilterSelector from './CategoryFilterSelector';
 
