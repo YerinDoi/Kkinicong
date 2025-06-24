@@ -9,7 +9,7 @@ import ButtonGroup from '@/components/ConvenienceStore/ButtonGroup';
 import TopBar from '@/components/common/TopBar';
 import SelectableButton from '@/components/ConvenienceStore/SelectableButton';
 
-import vectorIcon from '@/assets/svgs/convenience/vector.svg';
+import SparkleIcon from '@/assets/svgs/convenience/sparkle.svg';
 
 export default function AddConveniencePage() {
   const navigate = useNavigate();
@@ -78,8 +78,8 @@ export default function AddConveniencePage() {
             onClick={() => navigate('/convenience/name-recommendation')}
           >
             <img
-              src={vectorIcon}
-              alt="Vector Icon"
+              src={SparkleIcon}
+              alt="sparkle icon"
               className="w-[18px] h-[18px] inline mr-1"
             />
             정확한 제품명 추천받기
