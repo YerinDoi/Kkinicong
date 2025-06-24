@@ -47,7 +47,7 @@ const Dropdown = ({ onSelect }: DropdownProps) => {
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-[4px] text-[#616161] text-[14px] not-italic font-medium leading-[18px]"
+        className="flex items-center gap-[4px] text-[#616161] text-[14px] not-italic font-normal leading-[18px]"
       >
         <span>{selected}</span>
         <Icon name={isOpen ? 'dropup' : 'dropdown'} />
@@ -63,7 +63,7 @@ const Dropdown = ({ onSelect }: DropdownProps) => {
               <li
                 key={option}
                 onClick={() => handleSelect(option)}
-                className="px-[12px] py-[4px] text-center text-[#616161] text-[14px] font-medium leading-[18px] cursor-pointer"
+                className="px-[12px] py-[4px] text-center text-[#616161] text-[14px] font-normal leading-[18px] cursor-pointer"
               >
                 {option}
               </li>

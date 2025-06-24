@@ -13,7 +13,10 @@ interface StoreDetailReviewProps {
   onReviewChange?: () => void;
 }
 
-const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store , onReviewChange }) => {
+const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({
+  store,
+  onReviewChange,
+}) => {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(1);
@@ -102,12 +105,12 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store , onReviewC
       <div className="flex flex-col gap-[20px]">
         {reviewCount == 0 ? (
           <div className="flex flex-col gap-[12px] mt-[34px] mb-[61px] text-center">
-            <p className="text-sm font-medium leading-[18px]">
+            <p className="text-sm font-normal leading-[18px]">
               아직은 작성된 리뷰가 없어요
             </p>
             <button
               onClick={handleReviewClick}
-              className="text-xs font-medium text-[#919191] underline"
+              className="text-xs font-normal text-[#919191] underline"
             >
               첫번째 리뷰를 작성하시겠어요?
             </button>
@@ -128,7 +131,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({ store , onReviewC
               setReviews={setReviews}
               refreshReviews={() => {
                 fetchReviews(0);
-                onReviewChange?.(); 
+                onReviewChange?.();
               }}
             />
           ))
