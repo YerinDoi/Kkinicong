@@ -149,12 +149,16 @@ const StoreMapPage = () => {
   // 메인페이지에서 검색어 받고, 검색 실행
   useEffect(() => {
     const termFromState = location.state?.searchTerm;
+    const centerFromState = location.state?.center;
     if (termFromState) {
       setInputValue(termFromState);
-      handleSearchAndFitBounds(termFromState);
+      if (centerFromState) {
+        setMapCenter(centerFromState); // 중심 좌표를 state에서 받은 값으로 세팅
+      }
+      handleSearchAndFitBounds(termFromState, centerFromState);
 
-      // location.state에서 searchTerm을 제거하여, 새로고침 시 재검색 방지
-      const { searchTerm, ...restState } = location.state;
+      // location.state에서 searchTerm, center 제거
+      const { searchTerm, center, ...restState } = location.state;
       navigate(location.pathname, { state: restState, replace: true });
     }
   }, [location.state]);
@@ -452,6 +456,8 @@ const StoreMapPage = () => {
 
     // GPS 위치가 준비된 후에만 데이터 로드 (초기 로딩 시에만)
     if (isLocationReady && stores.length === 0) {
+      // 검색어가 state에 있으면 여기서 fetchStores 실행하지 않음
+      if (location.state?.searchTerm) return;
       if (gpsLocation) {
         // GPS 위치가 있으면 해당 위치로 API 호출
         console.log('[GPS 위치 준비] fetchStores 강제 호출:', gpsLocation);
@@ -483,7 +489,10 @@ const StoreMapPage = () => {
     }
   }, [isLocationReady, gpsLocation]); // mapCenter 제거
 
-  const handleSearchAndFitBounds = async (term?: string) => {
+  const handleSearchAndFitBounds = async (
+    term?: string,
+    centerOverride?: { lat: number; lng: number },
+  ) => {
     setIsSearching(true);
     setIsMapMoved(false); // 검색 시 버튼 숨김
     setShouldAutoFitBounds(true); // 검색 시 자동 범위 재설정 활성화
@@ -502,6 +511,9 @@ const StoreMapPage = () => {
       return;
     }
 
+    // centerOverride가 있으면 그걸, 없으면 기존 mapCenter 사용
+    const center = centerOverride || mapCenter;
+
     pageRef.current = 0;
     hasNextPageRef.current = true;
     setStores([]);
@@ -510,7 +522,7 @@ const StoreMapPage = () => {
 
     const { newMapCenter } = await handleSearch(
       termToSearch.trim(),
-      { latitude: mapCenter.lat, longitude: mapCenter.lng },
+      { latitude: center.lat, longitude: center.lng },
       isGpsActive,
     );
     moveMap(newMapCenter);

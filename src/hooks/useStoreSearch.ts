@@ -27,7 +27,7 @@ const useStoreSearch = () => {
   const [inputValue, setInputValue] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [isLocation, setIsLocation] = useState(false);
-  const [coordinates, setCoordinates] = useState<Coordinates | null>(null); // 초기값을 null로 설정
+  const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
 
   // 검색어 처리 로직을 별도 함수로 분리
   const processSearchParams = useCallback(
@@ -121,9 +121,6 @@ const useStoreSearch = () => {
         };
       }
 
-      // 일반 키워드 검색 시, 하드코딩된 위치 대신 페이지 컴포넌트로부터 전달받은 위치를 그대로 사용
-      // - 지도 페이지에서는 '지도 중심'이 전달
-      // - 찾기 페이지에서는 'GPS/즐겨찾기/기본값' 위치가 전달
       return {
         newMapCenter: { lat: gpsLocation.latitude, lng: gpsLocation.longitude },
       };
@@ -135,12 +132,12 @@ const useStoreSearch = () => {
     inputValue,
     setInputValue,
     searchTerm,
-    setSearchTerm, // 필요에 따라 외부에서 searchTerm을 직접 설정할 수 있도록 노출
+    setSearchTerm, 
     isLocation,
     coordinates,
     handleSearch,
-    searchAddress, // 필요에 따라 searchAddress 함수 자체를 노출
-    processSearchParams, // 외부에서도 사용할 수 있도록 export
+    searchAddress, 
+    processSearchParams,
   };
 };
 
