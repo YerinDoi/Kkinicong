@@ -10,8 +10,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import axiosInstance from '@/api/axiosInstance';
 
-const DEFAULT_LOCATION = { latitude: 37.495472, longitude: 126.676902 }; // 인천 서구청
-
 interface UserLocation {
   latitude: number;
   longitude: number;
@@ -20,7 +18,8 @@ interface UserLocation {
 interface GpsContextType {
   isGpsActive: boolean;
   address: string;
-  location: UserLocation;
+  location: UserLocation | null;
+  isLocationReady: boolean;
   requestGps: (onLocated?: (lat: number, lng: number) => void) => Promise<void>;
   fetchStoresWithLocation: (
     apiPath: string,
@@ -42,7 +41,8 @@ export function GpsProvider({ children }: GpsProviderProps) {
 
   const [isGpsActive, setIsGpsActive] = useState(false);
   const [address, setAddress] = useState('');
-  const [location, setLocation] = useState<UserLocation>(DEFAULT_LOCATION);
+  const [location, setLocation] = useState<UserLocation | null>(null);
+  const [isLocationReady, setIsLocationReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -117,8 +117,9 @@ export function GpsProvider({ children }: GpsProviderProps) {
     }
 
     console.log('[fallbackToDefaultOrFavorite] 즐겨찾기 없음 → 기본 위치 사용');
-    setLocation(DEFAULT_LOCATION);
+    setLocation(null);
     setAddress('');
+    setIsLocationReady(true);
   };
 
   //실제로 GPS 요청 시도
@@ -165,8 +166,7 @@ export function GpsProvider({ children }: GpsProviderProps) {
       useFallback = false,
     ) => {
       const fallbackLoc = await getFavoriteLocationFromServer();
-      const currentLoc =
-        (isGpsActive && location) || fallbackLoc || DEFAULT_LOCATION;
+      const currentLoc = (isGpsActive && location) || fallbackLoc || null;
 
       try {
         const res = await axiosInstance.get(apiPath, {
@@ -174,8 +174,9 @@ export function GpsProvider({ children }: GpsProviderProps) {
         });
 
         if (useFallback && res.data?.results?.length === 0) {
+          // 결과가 없으면 null로 재시도 (백엔드가 디폴트값 처리)
           const fallbackRes = await axiosInstance.get(apiPath, {
-            params: DEFAULT_LOCATION,
+            params: null,
           });
           setData(fallbackRes.data?.results ?? []);
         } else {
@@ -191,8 +192,40 @@ export function GpsProvider({ children }: GpsProviderProps) {
 
   //사용자가 gps요청 안해도 기본 위치 세팅
   useEffect(() => {
-    fallbackToDefaultOrFavorite();
+    const initializeLocation = async () => {
+      // GPS 권한 상태 확인
+      if (navigator.permissions && navigator.permissions.query) {
+        try {
+          const permission = await navigator.permissions.query({
+            name: 'geolocation',
+          });
+          console.log('[GPS 권한 상태]:', permission.state);
+
+          if (permission.state === 'granted') {
+            // GPS 권한이 허용되어 있으면 자동으로 GPS 위치 가져오기
+            console.log('[GPS 권한 허용됨] 자동으로 GPS 위치 가져오기');
+            await requestGps();
+            return;
+          }
+        } catch (error) {
+          console.log('[GPS 권한 확인 실패]:', error);
+        }
+      }
+
+      // GPS 권한이 없거나 확인할 수 없으면 즐겨찾기 위치 사용
+      console.log('[GPS 권한 없음] 즐겨찾기 위치 사용');
+      await fallbackToDefaultOrFavorite();
+    };
+
+    initializeLocation();
   }, []);
+
+  // location이 설정되면 isLocationReady를 true로 설정
+  useEffect(() => {
+    if (location) {
+      setIsLocationReady(true);
+    }
+  }, [location]);
 
   return (
     <GpsContext.Provider
@@ -200,6 +233,7 @@ export function GpsProvider({ children }: GpsProviderProps) {
         isGpsActive,
         address,
         location,
+        isLocationReady,
         requestGps,
         fetchStoresWithLocation,
         error,

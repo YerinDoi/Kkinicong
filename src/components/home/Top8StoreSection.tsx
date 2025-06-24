@@ -6,14 +6,13 @@ import { useGps } from '@/contexts/GpsContext';
 
 function Top8StoreSection() {
   const [stores, setStores] = useState<Store[]>([]);
-  const { fetchStoresWithLocation, location } = useGps();//  GpsContext 함수 사용
+  const { fetchStoresWithLocation, location } = useGps(); //  GpsContext 함수 사용
   const navigate = useNavigate();
 
   useEffect(() => {
-  if (location) {
+    // GPS 위치가 있으면 해당 위치로, 없으면 null 전달 (백엔드가 디폴트값 처리)
     fetchStoresWithLocation('/api/v1/store/top', setStores, true);
-  }
-}, [location]);
+  }, [fetchStoresWithLocation]);
 
   const handleStoreClick = (store: Store) => {
     navigate(`/store/${store.id}`);
