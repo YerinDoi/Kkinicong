@@ -5,6 +5,7 @@ import {
   submitPostFeedback,
   deleteConveniencePost,
 } from '@/api/convenience';
+import { fromServerBrand, fromServerCategory } from '@/types/convenienceMapper';
 
 import TopBar from '@/components/common/TopBar';
 import DeleteConvenience from '@/components/ConvenienceStore/DeleteConvenience';
@@ -131,10 +132,10 @@ export default function ConvenienceDetailPage() {
         {/* 카테고리 및 브랜드 pill */}
         <div className="flex gap-2 mt-2">
           <div className="border-[#919191] border-[1.5px] leading-[1] rounded-[12px] px-5 py-1 bg-[#F4F6F8]">
-            {post.category}
+            {fromServerCategory(post.category)}
           </div>
           <div className="border-[#919191] border-[1.5px] leading-[1] rounded-[12px] px-5 py-1 bg-[#F4F6F8]">
-            {post.brand}
+            {fromServerBrand(post.brand)}
           </div>
         </div>
 

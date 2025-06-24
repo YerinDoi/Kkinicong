@@ -7,7 +7,7 @@ import { toServerCategory, toServerBrand } from '@/types/convenienceMapper';
 
 import ButtonGroup from '@/components/ConvenienceStore/ButtonGroup';
 import TopBar from '@/components/common/TopBar';
-import SelectableButton from '@/pages/convenience/SelectableButton';
+import SelectableButton from '@/components/ConvenienceStore/SelectableButton';
 
 import vectorIcon from '@/assets/svgs/convenience/vector.svg';
 
