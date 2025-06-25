@@ -50,7 +50,7 @@ const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
                 }}
               >
                 <Icon name={item.icon} />
-                <span className="text-[#212121] text-[14px] font-medium leading-[18px]">
+                <span className="text-[#212121] text-[14px] font-normal leading-[18px]">
                   {item.text}
                 </span>
               </button>
