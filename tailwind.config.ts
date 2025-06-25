@@ -1,6 +1,7 @@
 // prettier-ignore
 import type { Config } from 'tailwindcss';
 import scrollbarHide from 'tailwind-scrollbar-hide';
+import lineClamp from '@tailwindcss/line-clamp';
 
 const config: Config = {
   content: [
@@ -35,7 +36,8 @@ const config: Config = {
       },
     },
   },
-  plugins: [scrollbarHide],
+  plugins: [scrollbarHide, lineClamp]
+
 };
 
 export default config;

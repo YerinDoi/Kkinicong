@@ -40,12 +40,12 @@ export default function HomeTopBar({ address = '' }: HomeTopBarProps) {
         {' '}
         {/* HomeTopBar의 주 내용 */}
         {/* 왼쪽 영역 : 로고, 지역구 */}
-        <div className="flex pl-[16px] items-center">
+        <div className="flex pl-[16px] items-center gap-[4px]">
           <div className="flex items-center gap-1">
             <LogoTextIcon className="w-16" />
             <LogoIcon className="w-6 h-6" />
           </div>
-          <span className="text-xs text-[#919191] font-regular">{address}</span>
+          <span className="text-xs text-[#919191] font-normal">{address}</span>
         </div>
         {/* 오른쪽 영역 : 로그인 버튼, 메뉴버튼(햄버거) */}
         <div className="flex items-center gap-[14px]">
