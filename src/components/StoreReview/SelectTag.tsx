@@ -29,7 +29,7 @@ const SelectTag: React.FC<SelectTagProps> = ({ selected, onChange }) => {
         </span>{' '}
         (최대 5개)
       </p>
-      <div className="flex flex-col gap-[12px] text-xs font-medium text-[#919191]">
+      <div className="flex flex-col gap-[12px] text-xs font-normal text-[#919191]">
         <p>메뉴가 어땠나요?</p>
 
         <TagSelector

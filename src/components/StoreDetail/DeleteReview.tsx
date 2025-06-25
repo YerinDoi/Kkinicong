@@ -22,7 +22,7 @@ const DeleteReviewModal: React.FC<DeleteReviewModalProps> = ({
             <p className="text-black text-base font-bold">
               리뷰를 정말 삭제하시겠어요?
             </p>
-            <p className="text-sm font-medium text-[#919191]">
+            <p className="text-sm font-normal text-[#919191]">
               삭제된 리뷰는 복구시킬 수 없어요
             </p>
           </div>
