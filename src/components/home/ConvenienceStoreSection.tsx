@@ -1,4 +1,4 @@
-import Card from '@/assets/svgs/convenienceStore/card.svg';
+import Card from '@/assets/svgs/convenience/card.svg';
 import { useNavigate } from 'react-router-dom';
 import StoreChipCarousel from './ChipCarousel';
 import { useState, useEffect } from 'react';

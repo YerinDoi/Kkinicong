@@ -13,7 +13,11 @@ interface StoreMapProps {
   latestBatchStores: Store[];
   center: { lat: number; lng: number }; // 지도 중심 좌표
   level: number; // 지도 확대 레벨
-  onMapChange?: (center: { lat: number; lng: number }, level: number) => void; // 통합된 지도 변경 핸들러
+  onMapChange?: (
+    center: { lat: number; lng: number },
+    level: number,
+    byUser?: boolean,
+  ) => void; // 통합된 지도 변경 핸들러
   onMarkerClick?: (marker: { lat: number; lng: number; name: string }) => void; // 마커 클릭 핸들러 추가
   onMapClick?: () => void; // 지도 빈 곳 클릭 핸들러 추가
   onMapLoad?: (map: any) => void; // 지도 인스턴스 전달
@@ -81,6 +85,55 @@ const StoreMap = ({
     }
   }, [center.lat, center.lng, mapInstance]);
 
+  useEffect(() => {
+    if (!mapInstance || !onMapChange) return;
+    if (!(window as any).kakao || !(window as any).kakao.maps) return;
+
+    // 드래그 종료(사용자 조작)
+    const handleDragEnd = function () {
+      const center = mapInstance.getCenter();
+      onMapChange(
+        { lat: center.getLat(), lng: center.getLng() },
+        mapInstance.getLevel(),
+        true, // 사용자 조작!
+      );
+    };
+    // @ts-ignore
+    window.kakao.maps.event.addListener(mapInstance, 'dragend', handleDragEnd);
+
+    // 줌 변경(사용자 조작)
+    const handleZoomChanged = function () {
+      const center = mapInstance.getCenter();
+      onMapChange(
+        { lat: center.getLat(), lng: center.getLng() },
+        mapInstance.getLevel(),
+        true, // 사용자 조작!
+      );
+    };
+    // @ts-ignore
+    window.kakao.maps.event.addListener(
+      mapInstance,
+      'zoom_changed',
+      handleZoomChanged,
+    );
+
+    // cleanup
+    return () => {
+      // @ts-ignore
+      window.kakao.maps.event.removeListener(
+        mapInstance,
+        'dragend',
+        handleDragEnd,
+      );
+      // @ts-ignore
+      window.kakao.maps.event.removeListener(
+        mapInstance,
+        'zoom_changed',
+        handleZoomChanged,
+      );
+    };
+  }, [mapInstance, onMapChange]);
+
   return (
     <div
       className="w-full h-full"
@@ -93,7 +146,6 @@ const StoreMap = ({
       <KakaoMap
         center={center}
         level={level}
-        onMapChange={onMapChange}
         onMapLoad={(map) => {
           setMapInstance(map);
           if (onMapLoad) onMapLoad(map);

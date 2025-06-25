@@ -21,7 +21,7 @@ const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
     {
       icon: 'convenience-store' as IconName,
       text: '편의점 구매가능 품목 게시판',
-      path: '/convenience-store',
+      path: '/convenience',
     },
     { icon: 'community' as IconName, text: '커뮤니티', path: '/community' },
     { icon: 'login' as IconName, text: '로그인', path: '/login' },

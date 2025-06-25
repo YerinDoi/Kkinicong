@@ -30,9 +30,9 @@ const Dropdown = ({ onSelect }: DropdownProps) => {
 
   useEffect(() => {
     if (dropdownRef.current) {
-      setDropdownWidth(Math.max(dropdownRef.current.offsetWidth, 94));
+      setDropdownWidth(Math.max(dropdownRef.current.offsetWidth, 95));
     }
-  }, [selected]); // selected가 변경될 때마다 너비 재계산 (최소 너비 94px)
+  }, [selected]); // selected가 변경될 때마다 너비 재계산 (최소 너비 95px)
 
   const handleSelect = (option: string) => {
     setSelected(option);
@@ -47,7 +47,7 @@ const Dropdown = ({ onSelect }: DropdownProps) => {
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-[4px] text-[#616161] text-[14px] not-italic font-normal leading-[18px]"
+        className="flex items-center gap-[4px] font-pretendard text-[#616161] text-[14px] not-italic font-normal leading-[18px]"
       >
         <span>{selected}</span>
         <Icon name={isOpen ? 'dropup' : 'dropdown'} />
@@ -55,15 +55,15 @@ const Dropdown = ({ onSelect }: DropdownProps) => {
 
       {isOpen && (
         <div
-          className="absolute mt-[22px] rounded-[6px] border border-[#919191] bg-[#F4F6F8] min-w-[94px]"
+          className="absolute mt-[22px] rounded-[6px] border border-[#919191] bg-[#F4F6F8] min-w-[94px] overflow-hidden"
           style={{ width: `${dropdownWidth}px` }}
         >
-          <ul className="py-[2px]">
+          <ul>
             {options.map((option) => (
               <li
                 key={option}
                 onClick={() => handleSelect(option)}
-                className="px-[12px] py-[4px] text-center text-[#616161] text-[14px] font-normal leading-[18px] cursor-pointer"
+                className="px-[12px] py-[4px] font-pretendard text-center text-[#616161] text-[14px] font-normal leading-[20px] cursor-pointer hover:text-white hover:bg-main-color"
               >
                 {option}
               </li>
