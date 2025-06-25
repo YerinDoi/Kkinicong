@@ -49,21 +49,20 @@ export const createConveniencePost = async (productData: {
   return res.data.results.convenienceId;
 };
 
-// 상품 삭제
+// 상품 삭제 API
 export const deleteConveniencePost = async (postId: number) => {
   const res = await axios.delete(`/api/v1/convenience/post/${postId}`);
   return res.data;
 };
 
-// 상품 상세 조회
+// 상품 상세 조회 API
 export const fetchConvenienceDetail = async (postId: number) => {
   const response = await axios.get(`/api/v1/convenience/post/${postId}`);
   return response.data.results;
 };
 
-// 상품 피드백 제출
+// 상품 피드백(올바른 정보 / 잘못된 정보) 제출 API
 /**
- * 피드백(올바른 정보 / 잘못된 정보) 제출 API
  * @param postId 게시글 ID
  * @param isCorrect true면 올바른 정보, false면 잘못된 정보
  */
@@ -80,4 +79,12 @@ export const submitPostFeedback = async (
   });
 
   return response.data.results;
+};
+
+// 제품명 추천 API
+export const fetchProductNameRecommendations = async (productName: string) => {
+  const response = await axios.get('/api/v1/convenience/recommendation', {
+    params: { productName },
+  });
+  return response.data.results.content; // 추천 문자열 배열
 };

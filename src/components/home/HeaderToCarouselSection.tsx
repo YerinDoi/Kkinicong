@@ -24,7 +24,7 @@ function HeaderToCarouselSection() {
     try {
       // 검색 시 위치 정보를 포함하도록 파라미터 구성
       const params: any = { keyword: searchTerm, size: 2 };
-      if (gpsLocation.latitude && gpsLocation.longitude) {
+      if (gpsLocation && gpsLocation.latitude && gpsLocation.longitude) {
         params.latitude = gpsLocation.latitude;
         params.longitude = gpsLocation.longitude;
         params.radius = 20000; // GPS 위치 기반 20km 반경
@@ -43,13 +43,38 @@ function HeaderToCarouselSection() {
       ) {
         navigate(`/store/${stores[0].id}`);
       } else {
-        // 그 외의 경우, 지도 페이지로 검색어 전달
-        navigate('/store-map', { state: { searchTerm } });
+        // 지역명(동/구/역)으로 끝나면 center 없이 검색어만 넘김
+        const isAddress = /동$|구$|역$/.test(searchTerm);
+        if (isAddress) {
+          navigate('/store-map', { state: { searchTerm } });
+        } else {
+          // 일반 키워드는 center도 같이 넘김
+          navigate('/store-map', {
+            state: {
+              searchTerm,
+              center: gpsLocation
+                ? { lat: gpsLocation.latitude, lng: gpsLocation.longitude }
+                : null,
+            },
+          });
+        }
       }
     } catch (error) {
       console.error('Search failed, navigating to map page as fallback', error);
       // 에러 발생 시에도 안전하게 지도 페이지로 이동
-      navigate('/store-map', { state: { searchTerm } });
+      const isAddress = /동$|구$|역$/.test(searchTerm);
+      if (isAddress) {
+        navigate('/store-map', { state: { searchTerm } });
+      } else {
+        navigate('/store-map', {
+          state: {
+            searchTerm,
+            center: gpsLocation
+              ? { lat: gpsLocation.latitude, lng: gpsLocation.longitude }
+              : null,
+          },
+        });
+      }
     }
   };
 
