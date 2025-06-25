@@ -24,11 +24,13 @@ export default function useBottomSheet(headerHeight: number) {
 
   // 드래그 핸들러 (터치)
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.preventDefault();
     isDraggingRef.current = true;
     initialSheetHeightRef.current = sheetHeight;
     startYRef.current = e.touches[0].clientY;
   };
   const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.preventDefault();
     if (!isDraggingRef.current) return;
     const deltaY = e.touches[0].clientY - startYRef.current;
     const newHeight = initialSheetHeightRef.current - deltaY;
@@ -38,7 +40,8 @@ export default function useBottomSheet(headerHeight: number) {
     );
     setSheetHeight(clamped);
   };
-  const handleTouchEnd = () => {
+  const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.preventDefault();
     isDraggingRef.current = false;
     const halfway = (raisedSheetHeight + LOWERED_SHEET_HEIGHT_FIXED) / 2;
     if (sheetHeight < halfway) setSheetHeight(LOWERED_SHEET_HEIGHT_FIXED);

@@ -605,7 +605,7 @@ const StoreMapPage = () => {
       >
         {/* 드래그 핸들 */}
         <div
-          className="flex justify-center items-center py-2 cursor-grab active:cursor-grabbing flex-shrink-0"
+          className="touch-none flex justify-center items-center py-2 cursor-grab active:cursor-grabbing flex-shrink-0"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
