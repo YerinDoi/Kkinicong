@@ -36,7 +36,7 @@ const TopStoreItem = ({ store }: TopStoreItemProps) => {
       <div className="flex flex-col items-start gap-[6px] font-pretendard h-full">
         <Icon
           name={categoryIconMap[store.category] || 'etc'}
-          className="max-w-[42px] max-h-[42px] w-auto h-auto object-contain"
+          className="max-w-[48px] max-h-[48px] w-auto h-auto object-contain"
         />
         <div className="flex flex-col justify-start items-start gap-[4px] w-full">
           {/* 가게 이름 */}
