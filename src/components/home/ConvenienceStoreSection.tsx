@@ -20,11 +20,7 @@ function ConvenienceStoreSection() {
   const [noResult, setNoResult] = useState(false);
 
   const handleClick = () => {
-    if (noResult) {
-      navigate('/store-post'); // 정보 공유하기 페이지로. 지금은 임시이고 수정예정
-    } else {
-      navigate('/store-search'); // 해당 편의점 페이지로, 지금은 임시이고 수정예정
-    }
+      navigate('/convenience'); // 정보 공유하기 페이지로.
   };
 
   const fetchBrandList = async (brand: string) => {
