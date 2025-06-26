@@ -1,20 +1,24 @@
 import { useEffect, useState } from 'react';
 import { fetchConvenienceProducts } from '@/api/convenience';
 import { useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import SearchInput from '@/components/common/SearchInput';
 import TopBar from '@/components/common/TopBar';
 import InfoShareCard from '@/components/ConvenienceStore/InfoShareCard';
-
+import StoreChipCarousel from '@/components/home/ChipCarousel';
 import ProductListSection from '../../components/ConvenienceStore/ProductListSection';
-import ButtonGroup from '../../components/ConvenienceStore/ButtonGroup';
+//import ButtonGroup from '../../components/ConvenienceStore/ButtonGroup';
 import Check from '../../components/ConvenienceStore/Check';
 import CategoryFilterSelector from '../../components/ConvenienceStore/CategoryFilterSelector';
 
+
 const ConvenienceStorePage = () => {
+  const location = useLocation();
+  const initialBrand = location.state?.brand || 'GS25';
   const [products, setProducts] = useState([]); // 편의점 제품 목록 상태
   const [selectedCategory, setSelectedCategory] = useState('전체'); // 상품 카테고리 선택
-  const [selectedBrand, setBrand] = useState(''); //  편의점 브랜드 선택
+  const [selectedBrand, setBrand] = useState(initialBrand); //  편의점 브랜드 선택
   const [onlyAvailable, setOnlyAvailable] = useState(false); // 결제 가능 제품만 보기 여부
   const [keyword, setKeyword] = useState(''); // 검색 키워드 상태
 
@@ -63,11 +67,7 @@ const ConvenienceStorePage = () => {
             selected={selectedCategory}
             onChange={setSelectedCategory}
           />
-          <ButtonGroup
-            options={['GS25', 'CU', '세븐일레븐', '이마트24', '미니스톱']}
-            selected={selectedBrand}
-            onChange={(value) => setBrand(value)}
-          />
+          <StoreChipCarousel selected={selectedBrand} onSelect={setBrand}/>
         </div>
 
         <Check

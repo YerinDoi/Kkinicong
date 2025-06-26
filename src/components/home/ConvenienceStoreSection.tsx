@@ -20,8 +20,8 @@ function ConvenienceStoreSection() {
   const [noResult, setNoResult] = useState(false);
 
   const handleClick = () => {
-      navigate('/convenience'); // 정보 공유하기 페이지로.
-  };
+  navigate('/convenience', { state: { brand: selectedBrand } });
+}; //정보 공유하기
 
   const fetchBrandList = async (brand: string) => {
     try {
@@ -102,7 +102,8 @@ function ConvenienceStoreSection() {
             {items.map((item: any) => (
               <li
                 key={item.id}
-                className="flex justify-between h-[18px] items-center text-body-md-title font-regular text-black"
+                onClick={() => navigate(`/convenience/post/${item.id}`)}
+                className="flex justify-between h-[18px] items-center cursor-pointer text-body-md-title font-regular text-black"
               >
                 <span>{item.name}</span>
                 <span
