@@ -45,7 +45,7 @@ export default function HomeTopBar({ address = '' }: HomeTopBarProps) {
             <LogoTextIcon className="w-16" />
             <LogoIcon className="w-6 h-6" />
           </div>
-          <span className="text-xs text-[#919191] font-normal">{address}</span>
+          <span className="text-body-md-description text-[#919191] font-regular">{address}</span>
         </div>
         {/* 오른쪽 영역 : 로그인 버튼, 메뉴버튼(햄버거) */}
         <div className="flex items-center gap-[14px]">
@@ -54,7 +54,7 @@ export default function HomeTopBar({ address = '' }: HomeTopBarProps) {
               <img src={AlarmIcon} className="w-[18px] h-[20px]" />
             </button>
           ) : (
-            <button onClick={login} className="text-sm text-[#919191]">
+            <button onClick={login} className="text-body-md-title text-[#919191]">
               로그인하기
             </button>
           )}

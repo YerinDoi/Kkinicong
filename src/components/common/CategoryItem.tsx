@@ -4,7 +4,7 @@ import type { IconName } from '@/assets/icons';
 const styleVariants = {
   main: {
     wrapper: 'h-[85px]',
-    text: 'text-xs font-normal',
+    text: 'text-body-md-description font-regular',
   },
   carousel: {
     wrapper: 'w-[60px] h-[100px] py-[8px] gap-[8px]',

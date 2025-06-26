@@ -91,14 +91,14 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
           <div className="flex items-center gap-[8px] ">
             <img src={ProfileImg} className="w-[40px]" />
             <div className="flex gap-[4px]">
-              <span className="font-meidum text-sm">{userName}</span>
-              <span className="text-xs text-[#919191] self-end">{date}</span>
+              <span className="font-meidum text-body-md-title">{userName}</span>
+              <span className="text-body-md-description text-[#919191] self-end">{date}</span>
             </div>
           </div>
           {isOwner ? (
             <button
               onClick={openDeleteModal}
-              className="text-xs font-normal text-[#919191]"
+              className="text-body-md-description font-regular text-[#919191]"
             >
               삭제
             </button>
@@ -139,7 +139,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
         </div>
       </div>
       <div className="flex gap-auto justify-between">
-        <p className="text-sm font-normal leading-[24px] text-[#616161] w-[221px]">
+        <p className="text-body-md-title font-regular leading-[24px] text-[#616161] w-[221px]">
           {content}
         </p>
         {imageUrl && (

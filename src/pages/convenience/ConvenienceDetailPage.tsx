@@ -185,7 +185,7 @@ export default function ConvenienceDetailPage() {
 
         {/* 피드백 안내 메시지 */}
         {post.isMine && (
-          <p className="mt-2 text-center text-[#B0B0B0] text-sm">
+          <p className="mt-2 text-center text-[#B0B0B0] text-body-md-title">
             본인이 작성한 글은 피드백할 수 없어요
           </p>
         )}
