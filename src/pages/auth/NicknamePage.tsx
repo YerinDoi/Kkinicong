@@ -92,7 +92,7 @@ export default function NicknamePage() {
           </p>
         </div>
 
-        <p className="text-sm text-gray-400 mt-[16px]">
+        <p className="text-body-md-title text-gray-400 mt-[16px]">
           설정한 닉네임은 마이페이지에서 수정할 수 있어요
         </p>
       </div>
@@ -105,19 +105,19 @@ export default function NicknamePage() {
             onChange={handleChange}
             type="text"
             placeholder="최대 10자 (ex. 배고픈 콩쥐)"
-            className="flex-1 outline-none text-base placeholder-gray-400"
+            className="flex-1 outline-none text-title-sb-button placeholder-gray-400"
           />
           <button
             onClick={checkDuplicate}
             disabled={!!error || isChecking}
-            className="text-sm text-gray-700 border border-gray-400 rounded-full px-3 py-1 ml-2 disabled:opacity-50"
+            className="text-body-md-title text-gray-700 border border-gray-400 rounded-full px-3 py-1 ml-2 disabled:opacity-50"
           >
             {isChecking ? '확인 중...' : '중복 확인'}
           </button>
         </div>
-        {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+        {error && <p className="text-body-md-title text-red-500 mt-1">{error}</p>}
         {!error && isDuplicate === false && (
-          <p className="text-sm text-green-600 mt-1">
+          <p className="text-body-md-title text-green-600 mt-1">
             사용 가능한 닉네임이에요
           </p>
         )}

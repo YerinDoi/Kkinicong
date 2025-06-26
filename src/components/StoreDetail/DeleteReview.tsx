@@ -19,10 +19,10 @@ const DeleteReviewModal: React.FC<DeleteReviewModalProps> = ({
           <img src={TrashIcon} className="w-[40px] h-[40px]" />
 
           <div className="text-center flex flex-col gap-[8px]">
-            <p className="text-black text-base font-bold">
+            <p className="text-black text-title-sb-button font-bold">
               리뷰를 정말 삭제하시겠어요?
             </p>
-            <p className="text-sm font-normal text-[#919191]">
+            <p className="text-body-md-title font-regular text-[#919191]">
               삭제된 리뷰는 복구시킬 수 없어요
             </p>
           </div>

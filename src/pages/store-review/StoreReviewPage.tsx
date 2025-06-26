@@ -98,7 +98,7 @@ const StoreReviewPage = () => {
           <button
             onClick={handleSubmitReview}
             disabled={!isSubmitEnabled}
-            className={`text-white font-semibold text-base px-[16px] py-[12px] rounded-[8px] mt-[24px] ${
+            className={`text-white font-semibold text-title-sb-button px-[16px] py-[12px] rounded-[8px] mt-[24px] ${
               isSubmitEnabled
                 ? 'bg-[#65CE58]'
                 : 'bg-[#E6E6E6] cursor-not-allowed'

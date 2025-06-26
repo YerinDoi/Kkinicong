@@ -22,7 +22,7 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`${widthClass} ${heightClass} leading-[20px] font-pretendard justify-center items-center border-[#C3C3C3] border-[1.5px] py-[12px] px-[20px] text-base font-semibold text-center rounded-[12px] ${bgColorClass} ${textColorClass} ${className}`}
+      className={`${widthClass} ${heightClass} leading-[20px] font-pretendard justify-center items-center border-[#C3C3C3] border-[1.5px] py-[12px] px-[20px] text-title-sb-button font-semibold text-center rounded-[12px] ${bgColorClass} ${textColorClass} ${className}`}
     >
       {text}
     </button>

@@ -42,18 +42,18 @@ const TopStoreItem = ({ store }: TopStoreItemProps) => {
           {/* 가게 이름 */}
           <div
             ref={nameRef}
-            className="leading-[1.1875] text-black text-base font-bold tracking-tight line-clamp-3"
+            className="leading-[1.1875] text-black text-title-sb-button font-bold tracking-tight line-clamp-3"
           >
             {store.name}
           </div>
 
           {/* 주소: 항상 2줄로 제한 */}
-          <div className="text-[#919191] text-xs font-normal tracking-tight line-clamp-2">
+          <div className="text-[#919191] text-body-md-description font-regular tracking-tight line-clamp-2">
             {store.address}
           </div>
 
           {/* 조회수 */}
-          <div className="mt-[4px] text-[#919191] text-xs font-normal tracking-tight">
+          <div className="mt-[4px] text-[#919191] text-body-md-description font-regular tracking-tight">
             조회 {store.viewCount}
           </div>
         </div>

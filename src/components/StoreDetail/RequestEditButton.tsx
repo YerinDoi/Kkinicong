@@ -86,7 +86,7 @@ const RequestEditButton: React.FC<Props> = ({
     <>
       <button
         onClick={handleClick}
-        className="inline-flex items-center h-[24px] bg-[#F4F6F8] text-black-500 border-[1px] border-[#919191] text-xs px-[12px] py-[6px] rounded-[23px]"
+        className="inline-flex items-center h-[24px] bg-[#F4F6F8] text-black-500 border-[1px] border-[#919191] text-body-md-description px-[12px] py-[6px] rounded-[23px]"
       >
         가게 수정 요청하기
       </button>
