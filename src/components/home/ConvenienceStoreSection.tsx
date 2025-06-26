@@ -83,7 +83,7 @@ function ConvenienceStoreSection() {
           </span>
 
           <button
-            className="text-[#919191] text-xs font-normal flex gap-[8px]"
+            className="text-[#919191] text-xs font-normal flex gap-[8px] items-center"
             onClick={handleClick}
           >
             {noResult ? '정보 공유하기' : '전체보기'}
