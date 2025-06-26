@@ -61,14 +61,14 @@ function ConvenienceStoreSection() {
   return (
     <div className="px-[20px] pb-[24px] flex flex-col gap-[20px]">
       <div className="flex flex-col gap-[16px]">
-        <div className="flex flex-col gap-[8px]">
+        <button className="flex flex-col gap-[8px] " onClick={handleClick} >
           <img src={Card} className="w-[57px] h-[40px]" />
-          <p className="text-black text-base font-semibold leading-[20px]">
+          <p className="text-black text-base font-semibold text-left leading-[20px]">
             편의점 구매 가능 리스트
             <br />
             실시간 사용자 후기로 확인해보세요!
           </p>
-        </div>
+        </button>
         <div className="py-[4px] w-full flex overflow-x-auto gap-[10px] scrollbar-hide">
           <StoreChipCarousel
             selected={selectedBrand}
