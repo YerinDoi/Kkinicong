@@ -43,7 +43,7 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
 
   return (
     <div className="flex flex-col gap-[8px] py-[16px]">
-      <h2 className="text-sm leading-[18px] text-center font-medium">
+      <h2 className="text-sm leading-[18px] text-center font-normal">
         {title}
       </h2>
       {/*가게 정보 수정 요청*/}
@@ -51,7 +51,7 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
         <div className="px-[24px] flex flex-col gap-[12px] h-[184px]">
           <div className="flex flex-col gap-[2.635px]">
             {storeInfo.category && (
-              <div className="text-xs text-gray-500 font-medium">
+              <div className="text-xs text-[#919191] font-normal">
                 {storeInfo.category}
               </div>
             )}
@@ -70,12 +70,12 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
         <div className="px-[24px] flex flex-col gap-[12px]">
           <div className="flex gap-[4px] items-center">
             <img src={ProfileImg} className="w-[36.3px] h-[36.3px] " />
-            <span className="text-sm font-medium leading-[18px]">
+            <span className="text-sm font-normal leading-[24px]">
               {reviewInfo.userName}
             </span>
           </div>
 
-          <span className="text-sm mb-[13.7px] font-medium leading-[18px] text-[#616161]">
+          <span className="text-sm mb-[13.7px] font-normal leading-[24px] text-[#616161]">
             {reviewInfo.content}
           </span>
         </div>
@@ -97,7 +97,7 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
                 value={option}
                 checked={selected === option}
                 onChange={() => setSelected(option)}
-                className="sr-only" // 실제 화면에선 안 보임. 스크린 리더 전용용
+                className="sr-only" // 실제 화면에선 안 보임. 스크린 리더 전용
               />
 
               {/* 커스텀 원 */}
@@ -111,7 +111,7 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
           ))}
 
           <textarea
-            className="mt-[12px] w-full h-[66px] font-medium border-[1px] rounded-[12px] px-[16px] py-[12px] text-xs"
+            className="mt-[12px] w-full h-[66px] font-normal border-[1px] rounded-[12px] px-[16px] py-[12px] text-xs"
             placeholder="최대 500자"
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -120,7 +120,7 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
         </div>
       </div>
 
-      <p className="text-center text-sm font-medium">
+      <p className="text-center text-sm font-normal">
         보내주신 의견은 운영팀이 검토 후 반영됩니다
       </p>
       <div className="flex justify-between mt-[8px] border-t-[2px] border-[#F4F6F8]">

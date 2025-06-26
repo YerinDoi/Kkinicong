@@ -98,7 +98,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
           {isOwner ? (
             <button
               onClick={openDeleteModal}
-              className="h-[28px] px-[12px] py-[6px] rounded-[23px] items-center justify-center border-[1px] border-[#919191] bg-[#E6E6E6] text-xs font-medium"
+              className="text-xs font-normal text-[#919191]"
             >
               삭제
             </button>
@@ -139,7 +139,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
         </div>
       </div>
       <div className="flex gap-auto justify-between">
-        <p className="text-sm font-medium leading-[18px] text-[#616161] w-[221px]">
+        <p className="text-sm font-normal leading-[24px] text-[#616161] w-[221px]">
           {content}
         </p>
         {imageUrl && (

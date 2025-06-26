@@ -22,7 +22,7 @@ type LoginType = 'KAKAO' | 'NAVER' | 'GOOGLE';
 
 export const login = async (loginType: LoginType, code: string) => {
   const response = await axios.post(`/api/v1/auth/login/${loginType}`, null, {
-    params: { code }, // 쿼리 파라미터로 전달
+    params: { code }, 
   });
 
   const accessToken = response.data.results.accessToken;

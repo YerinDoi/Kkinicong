@@ -28,7 +28,12 @@ import { Store } from '@/types/store';
 const StoreSearchPage = () => {
   const location = useLocation();
   const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
-  const { address: gpsAddress, location: gpsLocation, requestGps } = useGps();
+  const {
+    address: gpsAddress,
+    location: gpsLocation,
+    isLocationReady,
+    requestGps,
+  } = useGps();
   const [selectedCategory, setSelectedCategory] = useState(
     location.state?.selectedCategory || '전체',
   );
@@ -77,16 +82,27 @@ const StoreSearchPage = () => {
           } else {
             requestParams.keyword = searchTerm;
             if (gpsLocation) {
+              console.log(
+                '[DEBUG] searchTerm 기반 fallback → gpsLocation 사용:',
+                gpsLocation,
+              );
               requestParams.latitude = gpsLocation.latitude;
               requestParams.longitude = gpsLocation.longitude;
+            } else {
+              requestParams.latitude = null;
+              requestParams.longitude = null;
             }
           }
         } else if (isLocation && coordinates) {
           requestParams.latitude = coordinates.latitude;
           requestParams.longitude = coordinates.longitude;
         } else if (gpsLocation) {
+          console.log('[DEBUG] 기본 위치로 gpsLocation 사용:', gpsLocation);
           requestParams.latitude = gpsLocation.latitude;
           requestParams.longitude = gpsLocation.longitude;
+        } else {
+          requestParams.latitude = null;
+          requestParams.longitude = null;
         }
       } else {
         Object.assign(requestParams, params);
@@ -100,6 +116,15 @@ const StoreSearchPage = () => {
         const isLastPage =
           res.data.results?.totalPage <= res.data.results?.currentPage + 1;
 
+        console.log('[찾기페이지 fetchStores] 응답 정보:', {
+          currentPage: res.data.results?.currentPage,
+          totalPage: res.data.results?.totalPage,
+          isLastPage,
+          hasNextPage: !isLastPage,
+          storesCount: newStores.length,
+          totalStores: res.data.results?.totalElements,
+        });
+
         setStores((prev: Store[]) => {
           const merged: Store[] =
             page === 0 ? newStores : [...prev, ...newStores];
@@ -109,6 +134,10 @@ const StoreSearchPage = () => {
         });
 
         hasNextPageRef.current = !isLastPage;
+        console.log(
+          '[찾기페이지 fetchStores] hasNextPageRef 설정:',
+          hasNextPageRef.current,
+        );
       } catch (err) {
         console.error('가게 목록 불러오기 실패:', err);
         if (page === 0) setStores([]);
@@ -121,16 +150,22 @@ const StoreSearchPage = () => {
     [selectedCategory, sort, isLocation, coordinates, searchTerm, gpsLocation],
   );
 
+  // useInfiniteScroll 훅 사용
   const { loaderRef } = useInfiniteScroll({
-    onIntersect: useCallback(() => {
-      if (!isLoadingRef.current && hasNextPageRef.current) {
+    onIntersect: () => {
+      if (isLocationReady) {
         pageRef.current += 1;
+        console.log(
+          '[찾기페이지 useInfiniteScroll] 다음 페이지 로드:',
+          pageRef.current,
+        );
         fetchStores();
       }
-    }, [fetchStores]),
+    },
     isLoadingRef,
     hasNextPageRef,
-    root: scrollContainerRef.current,
+    root: null,
+    threshold: 0.1,
   });
 
   const handleGpsClick = useGpsFetch((lat, lng) => {
@@ -140,12 +175,55 @@ const StoreSearchPage = () => {
     fetchStores({ latitude: lat, longitude: lng });
   }, requestGps);
 
+  // GPS 위치가 준비된 후 fetchStores 강제 호출
   useEffect(() => {
-    pageRef.current = 0;
-    hasNextPageRef.current = true;
-    setStores([]);
-    fetchStores();
-  }, [selectedCategory, sort, isLocation, coordinates, fetchStores]);
+    console.log('[StoreSearchPage GPS 위치 준비 useEffect] 실행됨:', {
+      gpsLocation,
+      isGpsActive: !!gpsLocation,
+      isLocationReady,
+      storesLength: stores.length,
+    });
+
+    // GPS 위치가 준비된 후에만 데이터 로드
+    if (isLocationReady) {
+      if (gpsLocation) {
+        // GPS 위치가 있으면 해당 위치로 API 호출
+        console.log('[GPS 위치 준비] fetchStores 강제 호출:', gpsLocation);
+        pageRef.current = 0;
+        hasNextPageRef.current = true;
+        setStores([]);
+        fetchStores({
+          latitude: gpsLocation.latitude,
+          longitude: gpsLocation.longitude,
+        });
+      } else {
+        // GPS 위치가 없으면 기본 위치로 API 호출 (백엔드가 기본값 처리)
+        console.log('[GPS 위치 준비] 기본 위치로 fetchStores 호출');
+        pageRef.current = 0;
+        hasNextPageRef.current = true;
+        setStores([]);
+        fetchStores();
+      }
+    }
+  }, [isLocationReady, gpsLocation]);
+
+  // 카테고리나 정렬 변경 시에만 API 요청
+  useEffect(() => {
+    if (isLocationReady) {
+      // GPS 위치가 준비된 후에만 실행
+      pageRef.current = 0;
+      hasNextPageRef.current = true;
+      setStores([]);
+      fetchStores();
+    }
+  }, [
+    selectedCategory,
+    sort,
+    isLocation,
+    coordinates,
+    fetchStores,
+    isLocationReady,
+  ]);
 
   const handleSearchClick = async () => {
     await handleSearch(inputValue, gpsLocation, true);
@@ -190,7 +268,7 @@ const StoreSearchPage = () => {
             ref={scrollContainerRef}
           >
             <StoreList stores={stores} />
-            <div ref={loaderRef} />
+            <div ref={loaderRef} style={{ height: '20px' }} />
           </div>
         </div>
       )}

@@ -83,7 +83,7 @@ const BusinessHours: React.FC<Props> = ({ weekly }) => {
 
   if (isAllDaysClosed)
     return (
-      <p className="text-sm text-[#616161] font-medium h-[24.6px]">
+      <p className="text-sm text-[#616161] font-normal h-[24px]">
         영업시간 정보 없음
       </p>
     );
@@ -91,7 +91,7 @@ const BusinessHours: React.FC<Props> = ({ weekly }) => {
   return (
     <div
       ref={dropdownRef}
-      className="relative w-fit text-sm text-[#616161] font-medium"
+      className="relative w-fit text-sm text-[#616161] font-normal"
     >
       <div className="flex gap-[12px] cursor-pointer">
         <span

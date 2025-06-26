@@ -59,8 +59,8 @@ const StoreMapPage = () => {
     lat: number;
     lng: number;
   }>({
-    lat: 37.495472,
-    lng: 126.676902,
+    lat: 37.545226,
+    lng: 126.676459,
   });
 
   // StoreMap에서 지도 인스턴스 받아오기
@@ -101,6 +101,7 @@ const StoreMapPage = () => {
     isGpsActive,
     address: gpsAddress,
     location: gpsLocation,
+    isLocationReady,
     requestGps,
   } = useGps();
 
@@ -148,12 +149,16 @@ const StoreMapPage = () => {
   // 메인페이지에서 검색어 받고, 검색 실행
   useEffect(() => {
     const termFromState = location.state?.searchTerm;
+    const centerFromState = location.state?.center;
     if (termFromState) {
       setInputValue(termFromState);
-      handleSearchAndFitBounds(termFromState);
+      if (centerFromState) {
+        setMapCenter(centerFromState); // 중심 좌표를 state에서 받은 값으로 세팅
+      }
+      handleSearchAndFitBounds(termFromState, centerFromState);
 
-      // location.state에서 searchTerm을 제거하여, 새로고침 시 재검색 방지
-      const { searchTerm, ...restState } = location.state;
+      // location.state에서 searchTerm, center 제거
+      const { searchTerm, center, ...restState } = location.state;
       navigate(location.pathname, { state: restState, replace: true });
     }
   }, [location.state]);
@@ -171,6 +176,17 @@ const StoreMapPage = () => {
   useEffect(() => {
     setSelectedStore(null);
   }, [searchTerm]);
+
+  // 선택된 가맹점이 변경될 때 바텀시트 높이 조정
+  useEffect(() => {
+    if (selectedStore) {
+      // 선택된 가맹점이 있으면 바텀시트 확장 (300px)
+      setSheetHeight(300);
+    } else {
+      // 선택된 가맹점이 없으면 기본 높이로 되돌림
+      setSheetHeight(raisedSheetHeight);
+    }
+  }, [selectedStore, raisedSheetHeight]);
 
   // API 호출 함수 (fetchStores 호출 시 페이지 관리)
   const fetchStores = useCallback(
@@ -331,7 +347,7 @@ const StoreMapPage = () => {
   // useInfiniteScroll 훅 사용 (무한스크롤)
   const { loaderRef } = useInfiniteScroll({
     onIntersect: () => {
-      if (!isZoomingRef.current && !selectedStore) {
+      if (!isZoomingRef.current && !selectedStore && isLocationReady) {
         const nextPage = pageRef.current + 1;
         pageRef.current = nextPage;
         fetchStores({
@@ -343,8 +359,8 @@ const StoreMapPage = () => {
     },
     isLoadingRef,
     hasNextPageRef,
-    root: scrollContainerRef.current,
-    threshold: 0.2,
+    root: null, // viewport 기준으로 안정적
+    threshold: 0.1, // 더 민감하게 설정
   });
 
   // 헤더 및 검색 입력창을 포함하는 고정된 상단 영역의 높이를 계산
@@ -422,23 +438,61 @@ const StoreMapPage = () => {
     setLastStoresCount(stores.length);
   }, [stores.length, lastStoresCount]);
 
-  // 최초 1회 데이터 로드
-  useEffect(() => {
-    fetchStores({
-      latitude: mapCenter.lat,
-      longitude: mapCenter.lng,
-      // 기타 파라미터 필요시 추가
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // 카테고리 변경 시 버튼 숨김
   useEffect(() => {
     setIsMapMoved(false);
     setShouldAutoFitBounds(true); // 카테고리 변경 시 자동 범위 재설정 활성화
   }, [selectedCategory]);
 
-  const handleSearchAndFitBounds = async (term?: string) => {
+  // GPS 위치가 준비된 후 fetchStores 강제 호출
+  useEffect(() => {
+    console.log('[GPS 위치 준비 useEffect] 실행됨:', {
+      gpsLocation,
+      isGpsActive,
+      isLocationReady,
+      mapCenter,
+      storesLength: stores.length,
+    });
+
+    // GPS 위치가 준비된 후에만 데이터 로드 (초기 로딩 시에만)
+    if (isLocationReady && stores.length === 0) {
+      // 검색어가 state에 있으면 여기서 fetchStores 실행하지 않음
+      if (location.state?.searchTerm) return;
+      if (gpsLocation) {
+        // GPS 위치가 있으면 해당 위치로 API 호출
+        console.log('[GPS 위치 준비] fetchStores 강제 호출:', gpsLocation);
+        pageRef.current = 0;
+        hasNextPageRef.current = true;
+        setStores([]);
+        fetchStores({
+          latitude: gpsLocation.latitude,
+          longitude: gpsLocation.longitude,
+        });
+        setMapCenter({
+          lat: gpsLocation.latitude,
+          lng: gpsLocation.longitude,
+        });
+      } else {
+        // GPS 위치가 없으면 현재 지도 중심으로 API 호출
+        console.log(
+          '[GPS 위치 준비] 현재 지도 중심으로 fetchStores 호출:',
+          mapCenter,
+        );
+        pageRef.current = 0;
+        hasNextPageRef.current = true;
+        setStores([]);
+        fetchStores({
+          latitude: mapCenter.lat,
+          longitude: mapCenter.lng,
+        });
+      }
+    }
+  }, [isLocationReady, gpsLocation]); // mapCenter 제거
+
+  const handleSearchAndFitBounds = async (
+    term?: string,
+    centerOverride?: { lat: number; lng: number },
+  ) => {
     setIsSearching(true);
     setIsMapMoved(false); // 검색 시 버튼 숨김
     setShouldAutoFitBounds(true); // 검색 시 자동 범위 재설정 활성화
@@ -457,6 +511,9 @@ const StoreMapPage = () => {
       return;
     }
 
+    // centerOverride가 있으면 그걸, 없으면 기존 mapCenter 사용
+    const center = centerOverride || mapCenter;
+
     pageRef.current = 0;
     hasNextPageRef.current = true;
     setStores([]);
@@ -465,7 +522,7 @@ const StoreMapPage = () => {
 
     const { newMapCenter } = await handleSearch(
       termToSearch.trim(),
-      { latitude: mapCenter.lat, longitude: mapCenter.lng },
+      { latitude: center.lat, longitude: center.lng },
       isGpsActive,
     );
     moveMap(newMapCenter);
@@ -523,7 +580,7 @@ const StoreMapPage = () => {
             selectedStore ? [selectedStore] : stores.slice(-10)
           }
           center={
-            isGpsActive
+            isGpsActive && gpsLocation
               ? { lat: gpsLocation.latitude, lng: gpsLocation.longitude }
               : mapCenter
           }
@@ -532,7 +589,6 @@ const StoreMapPage = () => {
           onMarkerClick={handleMarkerClick}
           onMapClick={() => {
             setSelectedStore(null);
-            //setSheetHeight(518);
           }}
           onMapLoad={setMapInstance}
         />
@@ -549,7 +605,7 @@ const StoreMapPage = () => {
       >
         {/* 드래그 핸들 */}
         <div
-          className="flex justify-center items-center py-2 cursor-grab active:cursor-grabbing flex-shrink-0"
+          className="touch-none flex justify-center items-center py-2 cursor-grab active:cursor-grabbing flex-shrink-0"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
@@ -591,7 +647,7 @@ const StoreMapPage = () => {
             >
               <StoreList stores={selectedStore ? [selectedStore] : stores} />
               {/* 무한 스크롤 로더 */}
-              <div ref={loaderRef} />
+              <div ref={loaderRef} style={{ height: '20px' }} />
             </div>
           </div>
         )}

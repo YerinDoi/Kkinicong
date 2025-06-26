@@ -24,7 +24,7 @@ const StoreInfo: React.FC<StoreInfoProps> = ({
       {/* 상단 텍스트 영역 */}
       <div className="pl-[16px] pb-[16px] relative flex flex-col gap-[12px]">
         <div className="flex flex-col gap-[4px]">
-          <p className="text-xs font-medium text-[#919191] height-[14px]">
+          <p className="text-xs font-normal text-[#919191] height-[14px]">
             {storeCategory}
           </p>
           <div className="relative flex items-center gap-[12px]">
@@ -36,7 +36,7 @@ const StoreInfo: React.FC<StoreInfoProps> = ({
           </div>
         </div>
 
-        <p className="text-xs font-medium text-[#919191]">{storeAddress}</p>
+        <p className="text-xs font-normal text-[#919191]">{storeAddress}</p>
       </div>
 
       {/* 하단 지도 영역 */}

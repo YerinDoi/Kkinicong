@@ -2,6 +2,8 @@ import Icon from '@/assets/icons';
 import { useNavigate } from 'react-router-dom';
 import type { IconName } from '@/assets/icons';
 import ReactDOM from 'react-dom';
+import { useLogout } from '@/hooks/useLogout';
+import { useLoginStatus } from '@/hooks/useLoginStatus';
 
 interface MenuBarProps {
   isOpen: boolean;
@@ -10,6 +12,14 @@ interface MenuBarProps {
 
 const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
   const navigate = useNavigate();
+  const { handleLogout } = useLogout();
+  const { isLoggedIn, setIsLoggedIn } = useLoginStatus();
+
+  const handleLogoutWithClose = () => {
+    handleLogout();
+    setIsLoggedIn(false); // 상태 즉시 업데이트
+    onClose();
+  };
 
   const menuItems = [
     { icon: 'store-map' as IconName, text: '가맹점 지도', path: '/store-map' },
@@ -24,7 +34,9 @@ const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
       path: '/convenience',
     },
     { icon: 'community' as IconName, text: '커뮤니티', path: '/community' },
-    { icon: 'login' as IconName, text: '로그인', path: '/login' },
+    isLoggedIn
+      ? { icon: 'login' as IconName, text: '로그아웃' }
+      : { icon: 'login' as IconName, text: '로그인', path: '/login' },
     { icon: 'mypage' as IconName, text: '마이페이지', path: '/mypage' },
   ];
 
@@ -45,12 +57,16 @@ const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
               <button
                 className="flex items-center gap-[16px] w-full text-left"
                 onClick={() => {
-                  navigate(item.path);
-                  onClose();
+                  if (item.text === '로그아웃') {
+                    handleLogoutWithClose();
+                  } else if (item.path) {
+                    navigate(item.path);
+                    onClose();
+                  }
                 }}
               >
                 <Icon name={item.icon} />
-                <span className="text-[#212121] text-[14px] font-medium leading-[18px]">
+                <span className="text-[#212121] text-[14px] font-normal leading-[18px]">
                   {item.text}
                 </span>
               </button>
