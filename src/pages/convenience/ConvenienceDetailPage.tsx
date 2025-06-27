@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
 import {
   fetchConvenienceDetail,
   submitPostFeedback,
@@ -10,7 +11,7 @@ import { fromServerBrand, fromServerCategory } from '@/types/convenienceMapper';
 import TopBar from '@/components/common/TopBar';
 import DeleteConvenience from '@/components/ConvenienceStore/DeleteConvenience';
 
-// import ShareIcon from '@/assets/svgs/convenience/share.svg';
+import ShareIcon from '@/assets/svgs/convenience/share.svg?react';
 import ProfileIcon from '@/assets/svgs/convenience/profile.svg';
 import DeleteIcon from '@/assets/svgs/convenience/delete.svg';
 
@@ -60,6 +61,25 @@ export default function ConvenienceDetailPage() {
     }
   };
 
+  const handleShare = async () => {
+    const shareData = {
+      title: '끼니콩 추천 편의점!',
+      text: '이 제품 정말 좋아요 😋',
+      url: window.location.href,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        console.log('공유 성공');
+      } catch (err) {
+        console.error('공유 실패:', err);
+      }
+    } else {
+      alert('이 브라우저는 공유 기능을 지원하지 않아요 😢');
+    }
+  };
+
   const handleVote = async (isCorrect: boolean) => {
     if (!post || !postId) return;
 
@@ -94,7 +114,14 @@ export default function ConvenienceDetailPage() {
   return (
     <>
       {/* 상단바 */}
-      <TopBar />
+      <TopBar
+        rightType="custom"
+        customRightElement={
+          <button onClick={handleShare}>
+            <ShareIcon className="w-[18px] h-5" />
+          </button>
+        }
+      />
 
       <div className="min-h-screen px-4">
         {/* 작성 정보, 삭제버튼 */}
