@@ -76,7 +76,7 @@ const ConvenienceStorePage = () => {
           label="결제 가능만 모아보기"
           className="px-4 py-2"
         />
-        <ProductListSection products={products} />
+        <ProductListSection products={products} keyword={keyword} />
       </div>
     </div>
   );
