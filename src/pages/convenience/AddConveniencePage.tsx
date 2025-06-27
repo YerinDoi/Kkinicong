@@ -23,7 +23,7 @@ export default function AddConveniencePage() {
 
   // 로그인 안 했으면 바텀시트 띄우기
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (isLoggedIn === false) {
       setLoginSheetOpen(true);
     }
   }, [isLoggedIn]);
