@@ -25,10 +25,28 @@ const MyPage = () => {
         </div>
       </div>
 
-      <hr className="w-full my-[20px]" style={{border: 'none', borderTop: '1.5px solid #E6E6E6', height: 0, transform: 'rotate(0.153deg)', flexShrink: 0}}/>
+      <hr
+        className="w-full my-[20px]"
+        style={{
+          border: 'none',
+          borderTop: '1.5px solid #E6E6E6',
+          height: 0,
+          transform: 'rotate(0.153deg)',
+          flexShrink: 0,
+        }}
+      />
 
       <div className="flex flex-col px-[20px] w-full gap-[8px]">
-        <MenuListBtn label="약관 및 정책" variant="secondary" />
+        <MenuListBtn
+          label="약관 및 정책"
+          variant="secondary"
+          onClick={() =>
+            window.open(
+              'https://buttercup-crate-151.notion.site/20b0b19ad28b80418f3ee6db65b4c505?source=copy_link',
+              '_blank',
+            )
+          }
+        />
         <MenuListBtn label="의견 남기기" variant="secondary" />
         {isLoggedIn && <MenuListBtn label="회원 탈퇴" variant="secondary" />}
       </div>
