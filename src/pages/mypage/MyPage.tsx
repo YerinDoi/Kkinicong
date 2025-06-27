@@ -1,43 +1,37 @@
-
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import axiosInstance from '@/api/axiosInstance';
-import { clearUser } from '@/store/userSlice';
+import Header from '@/components/Header';
+import ProfileSection from '@/components/Mypage/ProfileSection';
+import { useLoginStatus } from '@/hooks/useLoginStatus';
+import FavoriteStoreCard from '@/components/Mypage/FavoriteStoreCard';
+import MenuListBtn from '@/components/Mypage/MenuListBtn';
 
 const MyPage = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const handleWithdraw = async () => {
-    const confirmed = window.confirm('정말 회원 탈퇴하시겠어요? ');
-    if (!confirmed) return;
-
-    try {
-      await axiosInstance.delete('/api/v1/user/me');
-      alert('회원 탈퇴가 완료되었습니다.');
-
-      //  클라이언트 상태 초기화
-      dispatch(clearUser());
-      localStorage.removeItem('token'); // 만약 토큰 저장 방식이라면 제거
-
-      //  홈으로 리디렉션
-      navigate('/');
-    } catch (error) {
-      console.error('회원 탈퇴 실패:', error);
-      alert('탈퇴 처리 중 오류가 발생했어요. 다시 시도해주세요.');
-    }
-  };
+  const { isLoggedIn } = useLoginStatus();
 
   return (
-    <div className="p-[24px] font-pretendard">
-      <h1 className="text-xl font-bold mb-4">마이페이지</h1>
+    <div className="flex flex-col items-center w-full pt-[11px]">
+      <Header title="마이페이지" />
 
-      <button
-        onClick={handleWithdraw}
-        className="mt-8 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
-      >
-        회원 탈퇴
-      </button>
+      <div className="px-[30px] my-[24px]">
+        <ProfileSection isLoggedIn={isLoggedIn} />
+      </div>
+
+      <div className="flex flex-col px-[20px] w-full gap-[20px]">
+        <FavoriteStoreCard count={0} />
+        <div className="flex flex-col gap-[8px]">
+          <MenuListBtn label="내가 쓴 글" variant="default" />
+          <MenuListBtn label="내가 쓴 리뷰" variant="default" />
+          <MenuListBtn label="좋아요 한 글" variant="default" />
+          <MenuListBtn label="즐겨찾는 지역" variant="default" />
+        </div>
+      </div>
+
+      <hr className="w-full my-[20px]" style={{border: 'none', borderTop: '1.5px solid #E6E6E6', height: 0, transform: 'rotate(0.153deg)', flexShrink: 0}}/>
+
+      <div className="flex flex-col px-[20px] w-full gap-[8px]">
+        <MenuListBtn label="약관 및 정책" variant="secondary" />
+        <MenuListBtn label="의견 남기기" variant="secondary" />
+        {isLoggedIn && <MenuListBtn label="회원 탈퇴" variant="secondary" />}
+      </div>
     </div>
   );
 };
