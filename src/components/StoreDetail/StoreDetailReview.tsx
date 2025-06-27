@@ -85,7 +85,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({
 
         <button
           onClick={handleReviewClick}
-          className="w-full bg-[#65CE58] text-white rounded-[12px] px-[16px] py-[10px] justify-center flex gap-[10px] text-base font-semibold items-center"
+          className="w-full bg-[#65CE58] text-white rounded-[12px] px-[16px] py-[10px] justify-center flex gap-[10px] text-title-sb-button font-semibold items-center"
         >
           <img src={AddIcon} className="w-[14px] h-[14px] " />
           리뷰쓰기
@@ -93,7 +93,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({
       </div>
 
       {/* 헤더 */}
-      <div className="flex justify-between px-[16px] py-[8px] my-[12px] items-center text-base font-semibold">
+      <div className="flex justify-between px-[16px] py-[8px] my-[12px] items-center text-title-sb-button font-semibold">
         <p>최근 리뷰 {reviewCount}개</p>
         <div className="flex gap-[8px] text-[#919191] leading-[20px]">
           <img src={Star} className="w-[24px]" />
@@ -105,12 +105,12 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({
       <div className="flex flex-col gap-[20px]">
         {reviewCount == 0 ? (
           <div className="flex flex-col gap-[12px] mt-[34px] mb-[61px] text-center">
-            <p className="text-sm font-normal leading-[18px]">
+            <p className="text-body-md-title font-regular leading-[18px]">
               아직은 작성된 리뷰가 없어요
             </p>
             <button
               onClick={handleReviewClick}
-              className="text-xs font-normal text-[#919191] underline"
+              className="text-body-md-description font-regular text-[#919191] underline"
             >
               첫번째 리뷰를 작성하시겠어요?
             </button>
@@ -142,7 +142,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({
       {page + 1 < totalPage && (
         <button
           onClick={() => fetchReviews(page + 1)}
-          className="mt-[20px] mb-[33.71px] text-center text-[#65CE58] text-sm font-semibold underline decoration-solid decoration-[1px] leading-[20px]"
+          className="mt-[20px] mb-[33.71px] text-center text-[#65CE58] text-body-md-title font-semibold underline decoration-solid decoration-[1px] leading-[20px]"
         >
           리뷰 더 보기
         </button>

@@ -71,8 +71,8 @@ const UploadImage: React.FC<UploadImageProps> = ({ onFileSelect }) => {
 
   return (
     <div className="flex flex-col gap-[12px] font-pretendard">
-      <p className="text-[#919191] text-sm">
-        <span className="text-black font-semibold leading-[20px] text-base">
+      <p className="text-[#919191] text-body-md-title">
+        <span className="text-black font-semibold leading-[20px] text-title-sb-button">
           사진을 추가해주세요
         </span>{' '}
         (선택/최대 1장)

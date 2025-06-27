@@ -13,7 +13,7 @@ function NicknamePageXXX() {
             사용할 닉네임을 정해주세요
           </p>
         </div>
-        <p className="text-sm text-[#919191]">
+        <p className="text-body-md-title text-[#919191]">
           설정한 닉네임은 마이페이지에서 수정할 수 있어요
         </p>
       </div>
