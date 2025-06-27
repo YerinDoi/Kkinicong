@@ -11,7 +11,7 @@ const MainTag: React.FC<MainTagProps> = ({ text, onClick }) => {
   return (
     <TagElement
       onClick={onClick}
-      className="inline-flex w-fit whitespace-nowrap items-center h-[24px] bg-[#F4F6F8] text-black-500 border-[1.5px] border-[#65CE58] text-xs px-[12px] py-[6px] rounded-[12px]"
+      className="inline-flex w-fit whitespace-nowrap items-center h-[24px] bg-[#F4F6F8] text-black-500 border-[1.5px] border-[#65CE58] text-body-md-description px-[12px] py-[6px] rounded-[12px]"
     >
       {text}
     </TagElement>

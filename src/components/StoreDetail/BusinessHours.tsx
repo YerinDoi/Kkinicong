@@ -83,7 +83,7 @@ const BusinessHours: React.FC<Props> = ({ weekly }) => {
 
   if (isAllDaysClosed)
     return (
-      <p className="text-sm text-[#616161] font-normal h-[24px]">
+      <p className="text-body-md-title text-[#616161] font-regular h-[24px]">
         영업시간 정보 없음
       </p>
     );
@@ -91,11 +91,11 @@ const BusinessHours: React.FC<Props> = ({ weekly }) => {
   return (
     <div
       ref={dropdownRef}
-      className="relative w-fit text-sm text-[#616161] font-normal"
+      className="relative w-fit text-body-md-title text-[#616161] font-regular"
     >
       <div className="flex gap-[12px] cursor-pointer">
         <span
-          className={`inline-flex items-center rounded-[6px] border-[1px] px-[8px] py-[4px] text-sm leading-[18px] h-[26px] 
+          className={`inline-flex items-center rounded-[6px] border-[1px] px-[8px] py-[4px] text-body-md-title leading-[18px] h-[26px] 
             ${status === '영업중' ? 'border-[#65CE58]' : 'border-[#919191]'}`}
         >
           {status}

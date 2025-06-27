@@ -24,7 +24,7 @@ const StoreInfo: React.FC<StoreInfoProps> = ({
       {/* 상단 텍스트 영역 */}
       <div className="pl-[16px] pb-[16px] relative flex flex-col gap-[12px]">
         <div className="flex flex-col gap-[4px]">
-          <p className="text-xs font-normal text-[#919191] height-[14px]">
+          <p className="text-body-md-description font-regular text-[#919191] height-[14px]">
             {storeCategory}
           </p>
           <div className="relative flex items-center gap-[12px]">
@@ -36,7 +36,7 @@ const StoreInfo: React.FC<StoreInfoProps> = ({
           </div>
         </div>
 
-        <p className="text-xs font-normal text-[#919191]">{storeAddress}</p>
+        <p className="text-body-md-description font-regular text-[#919191]">{storeAddress}</p>
       </div>
 
       {/* 하단 지도 영역 */}
@@ -44,7 +44,7 @@ const StoreInfo: React.FC<StoreInfoProps> = ({
         {latitude != null && longitude != null ? (
           <StoreDetailMap hideButtons store={store} />
         ) : (
-          <div className="text-sm text-red-500 pl-4">
+          <div className="text-body-md-title text-red-500 pl-4">
             지도를 표시할 수 없습니다 (좌표 없음)
           </div>
         )}
