@@ -305,10 +305,14 @@ const StoreMapPage = () => {
     [stores],
   ); // stores 배열이 변경될 수 있으므로 의존성 배열에 추가
 
+  const [firstLoading, setFirstLoading] = useState(false);
+
   const handleGpsClick = useGpsFetch((lat, lng) => {
+    setFirstLoading(true); // 데이터 요청 시작
     pageRef.current = 0;
     hasNextPageRef.current = true;
     setStores([]);
+    setSheetHeight(raisedSheetHeight);
     setMapCenter({ lat, lng });
     if (mapInstance && window.kakao && window.kakao.maps) {
       const kakaoCenter = new window.kakao.maps.LatLng(lat, lng);
@@ -367,37 +371,22 @@ const StoreMapPage = () => {
 
   // GPS 위치가 준비된 후 fetchStores 강제 호출
   useEffect(() => {
-    console.log('[GPS 위치 준비 useEffect] 실행됨:', {
-      gpsLocation,
-      isGpsActive,
-      isLocationReady,
-      mapCenter,
-      storesLength: stores.length,
-    });
-
-    if (isLocationReady && stores.length === 0) {
+    if (isLocationReady && gpsLocation && stores.length === 0) {
       if (location.state?.searchTerm) return;
-      if (gpsLocation) {
-        pageRef.current = 0;
-        hasNextPageRef.current = true;
-        setStores([]);
-        fetchStoresPromise({
-          latitude: gpsLocation.latitude,
-          longitude: gpsLocation.longitude,
-        }).then((newStores) => setStores(newStores));
-        setMapCenter({
-          lat: gpsLocation.latitude,
-          lng: gpsLocation.longitude,
-        });
-      } else {
-        pageRef.current = 0;
-        hasNextPageRef.current = true;
-        setStores([]);
-        fetchStoresPromise({
-          latitude: mapCenter.lat,
-          longitude: mapCenter.lng,
-        }).then((newStores) => setStores(newStores));
-      }
+      setFirstLoading(true); // 데이터 요청 시작
+      pageRef.current = 0;
+      hasNextPageRef.current = true;
+      fetchStoresPromise({
+        latitude: gpsLocation.latitude,
+        longitude: gpsLocation.longitude,
+      }).then((newStores) => {
+        setStores(newStores);
+        setFirstLoading(false); // 데이터 도착
+      });
+      setMapCenter({
+        lat: gpsLocation.latitude,
+        lng: gpsLocation.longitude,
+      });
     }
   }, [isLocationReady, gpsLocation]);
 
@@ -620,7 +609,11 @@ const StoreMapPage = () => {
         </div>
 
         {/* 캐러셀 아래 영역 전체 */}
-        {!isLoading && stores.length === 0 ? (
+        {!isLoading &&
+        !firstLoading &&
+        stores.length === 0 &&
+        isLocationReady &&
+        gpsLocation ? (
           <div
             className="mt-[32px] overflow-hidden overflow-y-auto"
             ref={scrollContainerRef}
