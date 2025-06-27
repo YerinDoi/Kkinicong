@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
@@ -8,13 +8,25 @@ import { toServerCategory, toServerBrand } from '@/types/convenienceMapper';
 import ButtonGroup from '@/components/ConvenienceStore/ButtonGroup';
 import TopBar from '@/components/common/TopBar';
 import SelectableButton from '@/components/ConvenienceStore/SelectableButton';
+import LoginRequiredBottomSheet from '@/components/common/LoginRequiredBottomSheet';
 
 import SparkleIcon from '@/assets/svgs/convenience/sparkle.svg';
+import { useLoginStatus } from '@/hooks/useLoginStatus';
 
 export default function AddConveniencePage() {
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as { selectedProductName?: string };
+
+  const { isLoggedIn } = useLoginStatus();
+  const [isLoginSheetOpen, setLoginSheetOpen] = useState(false);
+
+  // 로그인 안 했으면 바텀시트 띄우기
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setLoginSheetOpen(true);
+    }
+  }, [isLoggedIn]);
 
   // const [productName, setProductName] = useState(''); // 제품명
   const [productName, setProductName] = useState(
@@ -141,7 +153,7 @@ export default function AddConveniencePage() {
       </div>
 
       <button
-        className={`mx-4 my-7 py-3 rounded-lg font-semibold text-white ${
+        className={`mx-4 my-7 py-3 rounded-lg font-semibold text-[#919191] ${
           isFormValid
             ? 'bg-[#65CE58] text-[#FFFFFF]'
             : 'bg-[#E6E6E6] text-[#919191]'
@@ -151,6 +163,15 @@ export default function AddConveniencePage() {
       >
         공유하기
       </button>
+
+      {/* 로그인 필요 바텀시트 */}
+      <LoginRequiredBottomSheet
+        isOpen={isLoginSheetOpen}
+        onClose={() => {
+          setLoginSheetOpen(false);
+          navigate(-1); // 뒤로가기 또는 navigate('/login') 가능
+        }}
+      />
     </div>
   );
 }
