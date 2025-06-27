@@ -241,6 +241,7 @@ const StoreMapPage = () => {
   // 1. 카테고리 변경 시 데이터 로드
   useEffect(() => {
     if (mapInstance) {
+      setFirstLoading(true);
       pageRef.current = 0;
       hasNextPageRef.current = true;
       setStores([]);
@@ -249,7 +250,10 @@ const StoreMapPage = () => {
         latitude: mapCenterRef.current.lat,
         longitude: mapCenterRef.current.lng,
         keyword: isLocationRef.current ? undefined : searchTermRef.current,
-      }).then((newStores) => setStores(newStores));
+      }).then((newStores) => {
+        setStores(newStores);
+        setFirstLoading(false);
+      });
     }
   }, [selectedCategory]);
 
@@ -297,7 +301,7 @@ const StoreMapPage = () => {
       );
       if (foundStore) {
         setSelectedStore(foundStore); // 선택된 가맹점 상태 업데이트
-        setSheetHeight(300); // 마커 클릭 시 바텀 시트 전체 높이로 확장
+        setSheetHeight(300);
       } else {
         setSelectedStore(null); // 찾지 못하면 초기화
       }
@@ -307,22 +311,27 @@ const StoreMapPage = () => {
 
   const [firstLoading, setFirstLoading] = useState(false);
 
-  const handleGpsClick = useGpsFetch((lat, lng) => {
-    setFirstLoading(true); // 데이터 요청 시작
-    pageRef.current = 0;
-    hasNextPageRef.current = true;
+  const handleGpsClick = useGpsFetch(async (lat, lng) => {
+    setFirstLoading(true);
     setStores([]);
-    setSheetHeight(raisedSheetHeight);
     setMapCenter({ lat, lng });
+    setSheetHeight(raisedSheetHeight);
     if (mapInstance && window.kakao && window.kakao.maps) {
       const kakaoCenter = new window.kakao.maps.LatLng(lat, lng);
       mapInstance.setCenter(kakaoCenter);
     }
     setSearchTerm('');
     setInputValue('');
-    setIsMapMoved(false); // GPS 이동 시 버튼 숨김
-    setShouldAutoFitBounds(true); // GPS 이동 시 자동 범위 재설정 활성화
-    searchTriggeredRef.current = true; // GPS 이동 시 검색 트리거
+    setIsMapMoved(false);
+    setShouldAutoFitBounds(true);
+    searchTriggeredRef.current = true;
+
+    const newStores = await fetchStoresPromise({
+      latitude: lat,
+      longitude: lng,
+    });
+    setStores(newStores);
+    setFirstLoading(false);
   }, requestGps);
 
   // 검색 실행 시, 결과에 맞춰 지도 범위를 재설정 (수정된 로직)
@@ -609,11 +618,7 @@ const StoreMapPage = () => {
         </div>
 
         {/* 캐러셀 아래 영역 전체 */}
-        {!isLoading &&
-        !firstLoading &&
-        stores.length === 0 &&
-        isLocationReady &&
-        gpsLocation ? (
+        {!isLoading && !firstLoading && stores.length === 0 ? (
           <div
             className="mt-[32px] overflow-hidden overflow-y-auto"
             ref={scrollContainerRef}
