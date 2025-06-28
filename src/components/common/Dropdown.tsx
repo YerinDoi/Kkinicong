@@ -2,13 +2,14 @@ import Icon from '../../assets/icons';
 import { useState, useRef, useEffect } from 'react';
 
 interface DropdownProps {
+  options: string[];
   onSelect?: (value: string) => void;
 }
 
-const Dropdown = ({ onSelect }: DropdownProps) => {
+const Dropdown = ({ onSelect ,options}: DropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState<string>('가까운 순');
-  const options = ['가까운 순', '리뷰 많은 순', '별점 높은 순', '조회수 순'];
+  const [selected, setSelected] = useState<string>(options[0]);
+
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [dropdownWidth, setDropdownWidth] = useState<number>(0);
 
@@ -43,11 +44,11 @@ const Dropdown = ({ onSelect }: DropdownProps) => {
   return (
     <div
       ref={dropdownRef}
-      className="flex justify-center rounded-[6px] border border-[#919191] bg-[#F4F6F8] min-w-[94px] h-[28px] px-[12px] py-[4px] z-10"
+      className="relative flex justify-center rounded-[6px] border border-[#919191] bg-[#F4F6F8] min-w-[94px] h-[28px] px-[12px] py-[4px] z-10"
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-[4px] font-pretendard text-[#616161] text-[14px] not-italic font-normal leading-[18px]"
+        className="flex items-center gap-[4px] font-pretendard text-[#616161] text-[14px] not-italic font-regular leading-[18px]"
       >
         <span>{selected}</span>
         <Icon name={isOpen ? 'dropup' : 'dropdown'} />
@@ -55,7 +56,7 @@ const Dropdown = ({ onSelect }: DropdownProps) => {
 
       {isOpen && (
         <div
-          className="absolute mt-[22px] rounded-[6px] border border-[#919191] bg-[#F4F6F8] min-w-[94px] overflow-hidden"
+          className="absolute mt-[33px] rounded-[6px] border border-[#919191] bg-[#F4F6F8] min-w-[94px] overflow-hidden"
           style={{ width: `${dropdownWidth}px` }}
         >
           <ul>
@@ -63,7 +64,7 @@ const Dropdown = ({ onSelect }: DropdownProps) => {
               <li
                 key={option}
                 onClick={() => handleSelect(option)}
-                className="px-[12px] py-[4px] font-pretendard text-center text-[#616161] text-[14px] font-normal leading-[20px] cursor-pointer hover:text-white hover:bg-main-color"
+                className="px-[12px] py-[4px] font-pretendard text-center text-[#616161] text-[14px] font-regular leading-[20px] cursor-pointer hover:text-white hover:bg-main-color"
               >
                 {option}
               </li>

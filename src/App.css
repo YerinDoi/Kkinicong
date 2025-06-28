@@ -5,6 +5,17 @@
   text-align: center;
 }
 
+/* App.css 또는 index.css에 추가 */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  position: static;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
