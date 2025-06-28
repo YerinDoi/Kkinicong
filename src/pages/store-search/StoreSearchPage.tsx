@@ -261,7 +261,7 @@ const StoreSearchPage = () => {
       ) : (
         <div className="pt-[20px] px-[16px]">
           <div className="flex justify-end pb-[20px]">
-            <Dropdown onSelect={setSort} />
+            <Dropdown  options={['가까운 순', '리뷰 많은 순', '별점 높은 순', '조회수 순']} onSelect={setSort} />
           </div>
           <div
             className="h-[calc(100vh-310px)] overflow-y-auto scrollbar-hide"
