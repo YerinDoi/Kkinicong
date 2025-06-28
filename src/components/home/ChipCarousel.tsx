@@ -10,7 +10,7 @@ const StoreChipCarousel = ({
   onSelect: (label: string) => void;
 }) => {
   return (
-    <div className="flex w-max gap-[8px] overflow-x-auto scrollbar-hide ">
+    <div className="flex w-max gap-[8px] overflow-x-auto scrollbar-hide mb-[3px] ">
       {convenienceStores.map((label) => (
         <Tag
           key={label}
