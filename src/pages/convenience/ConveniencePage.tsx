@@ -22,7 +22,7 @@ const ConvenienceStorePage = () => {
   const [onlyAvailable, setOnlyAvailable] = useState(false); // 결제 가능 제품만 보기 여부
   const [keyword, setKeyword] = useState(''); // 검색 키워드 상태
 
-  const brands = ['GS25', 'CU', '세븐일레븐', '이마트24'];
+  const brands = ['GS25', 'CU', '세븐일레븐', '이마트24', '미니스톱'];
 
   // pagination 기본값
   const page = 0;
