@@ -41,7 +41,9 @@ export default function NicknamePage() {
 
     setIsChecking(true);
     try {
-      const exists = await checkNicknameDuplicate(nickname); // 👈 boolean 값 반환
+      const exists = await checkNicknameDuplicate(nickname);
+      console.log('✅ 닉네임 중복 여부:', exists);
+
       if (exists) {
         setIsDuplicate(true);
         setError('이미 사용 중인 닉네임이에요');
@@ -49,7 +51,8 @@ export default function NicknamePage() {
         setIsDuplicate(false);
         setError('');
       }
-    } catch {
+    } catch (err) {
+      console.error('❌ 중복 확인 중 오류:', err);
       setError('중복 확인 중 오류가 발생했어요');
     } finally {
       setIsChecking(false);
@@ -69,7 +72,7 @@ export default function NicknamePage() {
       // localStorage.setItem('nickname', result.nickname);
       // localStorage.setItem('email', result.email);
 
-      navigate('/my-neighborhood'); 
+      navigate('/my-neighborhood');
     } catch (error) {
       console.error('닉네임 등록 에러:', error);
       setError('닉네임 등록 중 오류가 발생했어요');
@@ -115,7 +118,9 @@ export default function NicknamePage() {
             {isChecking ? '확인 중...' : '중복 확인'}
           </button>
         </div>
-        {error && <p className="text-body-md-title text-red-500 mt-1">{error}</p>}
+        {error && (
+          <p className="text-body-md-title text-red-500 mt-1">{error}</p>
+        )}
         {!error && isDuplicate === false && (
           <p className="text-body-md-title text-green-600 mt-1">
             사용 가능한 닉네임이에요
@@ -128,8 +133,8 @@ export default function NicknamePage() {
         <GreenButton
           onClick={handleRegister}
           disabled={!!error || isDuplicate !== false || isSubmitting}
-          text={'다음'}/>
-        
+          text={'다음'}
+        />
       </div>
     </div>
   );
