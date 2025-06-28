@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface FeedbackButtonsProps {
   isMine: boolean;
   correctCount: number;
