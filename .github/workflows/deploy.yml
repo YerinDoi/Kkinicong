@@ -54,7 +54,7 @@ jobs:
       - name: Clone forked repo
         if: github.repository == 'Heroineeee/FE'
         run: |
-          git clone https://x-access-token:${{ secrets.ACCESS_TOKEN }}@github.com/YerinDoi/forked-repo-name.git out-repo
+          git clone https://x-access-token:${{ secrets.YERIN_PTA }}@github.com/YerinDoi/forked-repo-name.git out-repo
           rsync -av --exclude='.git' ./ out-repo/
 
       - name: Commit & push
