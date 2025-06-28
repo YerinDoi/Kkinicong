@@ -170,7 +170,6 @@ export default function AddConveniencePage() {
         isOpen={isLoginSheetOpen}
         onClose={() => {
           setLoginSheetOpen(false);
-          navigate(-1); // 뒤로가기 또는 navigate('/login') 가능
         }}
       />
     </div>
