@@ -4,12 +4,12 @@ import { useCallback } from 'react';
 
 import SearchInput from '@/components/common/SearchInput';
 import TopBar from '@/components/common/TopBar';
-import InfoShareCard from '@/components/ConvenienceStore/InfoShareCard';
+import InfoShareCard from '@/components/convenience/InfoShareCard';
 
-import ProductListSection from '../../components/ConvenienceStore/ProductListSection';
-import ButtonGroup from '../../components/ConvenienceStore/ButtonGroup';
-import Check from '../../components/ConvenienceStore/Check';
-import CategoryFilterSelector from '../../components/ConvenienceStore/CategoryFilterSelector';
+import ProductListSection from '../../components/convenience/ProductListSection';
+import ButtonGroup from '../../components/convenience/ButtonGroup';
+import Check from '../../components/convenience/Check';
+import CategoryFilterSelector from '../../components/convenience/CategoryFilterSelector';
 
 const ConvenienceStorePage = () => {
   const [products, setProducts] = useState([]); // 편의점 제품 목록 상태

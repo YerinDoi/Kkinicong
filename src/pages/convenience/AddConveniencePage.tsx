@@ -5,9 +5,9 @@ import { useLocation } from 'react-router-dom';
 import { createConveniencePost } from '@/api/convenience';
 import { toServerCategory, toServerBrand } from '@/types/convenienceMapper';
 
-import ButtonGroup from '@/components/ConvenienceStore/ButtonGroup';
+import ButtonGroup from '@/components/convenience/ButtonGroup';
 import TopBar from '@/components/common/TopBar';
-import SelectableButton from '@/components/ConvenienceStore/SelectableButton';
+import SelectableButton from '@/components/convenience/SelectableButton';
 import LoginRequiredBottomSheet from '@/components/common/LoginRequiredBottomSheet';
 
 import SparkleIcon from '@/assets/svgs/convenience/sparkle.svg';
