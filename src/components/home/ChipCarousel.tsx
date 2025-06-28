@@ -17,7 +17,7 @@ const StoreChipCarousel = ({
           label={label}
           selected={selected === label}
           onClick={() => onSelect(label)}
-          className="h-[35px] flex-shrink-0"
+          className="h-[35px] flex-shrink-0 text-body-md-title"
         />
       ))}
     </div>

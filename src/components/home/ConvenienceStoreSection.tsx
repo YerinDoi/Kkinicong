@@ -20,12 +20,8 @@ function ConvenienceStoreSection() {
   const [noResult, setNoResult] = useState(false);
 
   const handleClick = () => {
-    if (noResult) {
-      navigate('/store-post'); // 정보 공유하기 페이지로. 지금은 임시이고 수정예정
-    } else {
-      navigate('/store-search'); // 해당 편의점 페이지로, 지금은 임시이고 수정예정
-    }
-  };
+  navigate('/convenience', { state: { brand: selectedBrand } });
+}; //정보 공유하기
 
   const fetchBrandList = async (brand: string) => {
     try {
@@ -61,29 +57,31 @@ function ConvenienceStoreSection() {
   return (
     <div className="px-[20px] pb-[24px] flex flex-col gap-[20px]">
       <div className="flex flex-col gap-[16px]">
-        <div className="flex flex-col gap-[8px]">
+        <button className="flex flex-col gap-[8px] " onClick={handleClick} >
           <img src={Card} className="w-[57px] h-[40px]" />
-          <p className="text-black text-base font-semibold leading-[20px]">
-            편의점 구매 가능 리스트
-            <br />
-            실시간 사용자 후기로 확인해보세요!
+          <p className="text-black text-title-sb-button h-[44px] flex flex-col justify-between font-semibold text-left">
+            <span>편의점 구매 가능 리스트</span>
+            <span>실시간 사용자 후기로 확인해보세요!</span>
           </p>
-        </div>
-        <div className="py-[4px] w-full flex overflow-x-auto gap-[10px] scrollbar-hide">
+
+        </button>
+        <div className="-mx-[20px] overflow-x-auto scrollbar-hide">
+        <div className="flex gap-[10px] px-[20px] pr-[20px] w-max">
           <StoreChipCarousel
             selected={selectedBrand}
             onSelect={setSelectedBrand}
           />
         </div>
       </div>
+      </div>
       <div className="py-[16px] pl-[20px] pr-[19px] rounded-[10px] flex flex-col gap-[20px] shadow-custom min-h-[160px]">
         <div className="flex justify-between">
-          <span className="text-base font-semibold leading-[20px] text-[#212121]">
+          <span className="text-title-sb-button font-semibold leading-[20px] text-[#212121]">
             {selectedBrand}
           </span>
 
           <button
-            className="text-[#919191] text-xs font-normal flex gap-[8px]"
+            className="text-[#919191] text-body-md-description font-regular flex gap-[8px] items-center"
             onClick={handleClick}
           >
             {noResult ? '정보 공유하기' : '전체보기'}
@@ -91,11 +89,11 @@ function ConvenienceStoreSection() {
           </button>
         </div>
         {noResult ? (
-          <div className="mt-[16px] justify-center items-center font-normal flex flex-col gap-[8px]">
-            <p className="text-[#919191] text-sm leading-[18px]">
+          <div className="mt-[16px] justify-center items-center font-regular flex flex-col gap-[8px]">
+            <p className="text-[#919191] text-body-md-title leading-[18px]">
               아직은 공유된 제품 정보가 없어요
             </p>
-            <p className="text-[#C3C3C3] text-xs">
+            <p className="text-[#C3C3C3] text-body-md-description">
               여러분의 결제 경험을 공유해주세요
             </p>
           </div>
@@ -104,7 +102,8 @@ function ConvenienceStoreSection() {
             {items.map((item: any) => (
               <li
                 key={item.id}
-                className="flex justify-between h-[18px] items-center text-sm font-normal text-black"
+                onClick={() => navigate(`/convenience/post/${item.id}`)}
+                className="flex justify-between h-[18px] items-center cursor-pointer text-body-md-title font-regular text-black"
               >
                 <span>{item.name}</span>
                 <span

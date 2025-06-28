@@ -10,7 +10,7 @@ const slides = [
   {
     content: (
       <div className="flex justify-between px-[20px] ">
-        <div className="h-full text-base py-[14px] font-semibold leading-[20px] flex flex-col gap-[4px] justify-center">
+        <div className="h-full text-title-sb-button py-[14px] font-semibold leading-[20px] flex flex-col gap-[4px] justify-center">
           <p className="text-[#029F64]">아동급식카드</p>
           <p className="text-black">사용 가맹점을 검색하고,</p>
           <p className="text-black">리뷰를 남겨보세요!</p>
@@ -22,12 +22,17 @@ const slides = [
   {
 
     content: (
-      <div className=' px-[16px] font-semibold text-base '>
-        <p className='text-[#616161]'>
-          현재는 <span className="text-[#029F64] ">인천 지역</span>만 제공되며,<br />
-          다른 지역은 요청이 많은 순으로 추가될 예정이에요.
-        </p>
-        <button className="mt-[12px] px-[16px] h-[28px] bg-[#65CE58] text-white rounded-[12px] text-sm font-normal items-center flex gap-[8px]">
+      <div className=' px-[16px] font-semibold text-title-sb-button '>
+        <div className='text-[#616161] flex flex-col h-[44px] justify-between'>
+          <span >
+          현재는 <span className="text-[#029F64] ">인천 지역</span>만 제공되며,        </span>
+          <span >다른 지역은 요청이 많은 순으로 추가될 예정이에요.</span> 
+
+        </div>
+        
+          
+
+        <button className="mt-[12px] px-[16px] h-[28px] bg-[#65CE58] text-white rounded-[12px] text-body-md-title font-regular items-center flex gap-[8px]">
           <img src={AddIcon} className='w-[12px] h-[12px]'/>
           지역 요청하기
         </button>

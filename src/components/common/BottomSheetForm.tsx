@@ -43,7 +43,7 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
 
   return (
     <div className="flex flex-col gap-[8px] py-[16px]">
-      <h2 className="text-sm leading-[18px] text-center font-normal">
+      <h2 className="text-body-md-title leading-[18px] text-center font-regular">
         {title}
       </h2>
       {/*가게 정보 수정 요청*/}
@@ -51,11 +51,11 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
         <div className="px-[24px] flex flex-col gap-[12px] h-[184px]">
           <div className="flex flex-col gap-[2.635px]">
             {storeInfo.category && (
-              <div className="text-xs text-[#919191] font-normal">
+              <div className="text-body-md-description text-[#919191] font-regular">
                 {storeInfo.category}
               </div>
             )}
-            <div className="text-base font-bold">{storeInfo.name}</div>
+            <div className="text-title-sb-button font-bold">{storeInfo.name}</div>
           </div>
 
           {storeInfo.mapComponent && (
@@ -70,12 +70,12 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
         <div className="px-[24px] flex flex-col gap-[12px]">
           <div className="flex gap-[4px] items-center">
             <img src={ProfileImg} className="w-[36.3px] h-[36.3px] " />
-            <span className="text-sm font-normal leading-[24px]">
+            <span className="text-body-md-title font-regular leading-[24px]">
               {reviewInfo.userName}
             </span>
           </div>
 
-          <span className="text-sm mb-[13.7px] font-normal leading-[24px] text-[#616161]">
+          <span className="text-body-md-title mb-[13.7px] font-regular leading-[24px] text-[#616161]">
             {reviewInfo.content}
           </span>
         </div>
@@ -83,7 +83,7 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
 
       {/*공통*/}
       <div className="flex flex-col pt-[12px] gap-[8px] px-[39px] border-t-[2px] border-[#F4F6F8]">
-        <p className="text-base font-semibold leading-[20px]">{question}</p>
+        <p className="text-title-sb-button font-semibold leading-[20px]">{question}</p>
         <div className="py-[8px] flex flex-col gap-[4px]">
           {radioOptions.map((option) => (
             <label
@@ -111,7 +111,7 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
           ))}
 
           <textarea
-            className="mt-[12px] w-full h-[66px] font-normal border-[1px] rounded-[12px] px-[16px] py-[12px] text-xs"
+            className="mt-[12px] w-full h-[66px] font-regular border-[1px] rounded-[12px] px-[16px] py-[12px] text-body-md-description"
             placeholder="최대 500자"
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -120,13 +120,13 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
         </div>
       </div>
 
-      <p className="text-center text-sm font-normal">
+      <p className="text-center text-body-md-title font-regular">
         보내주신 의견은 운영팀이 검토 후 반영됩니다
       </p>
       <div className="flex justify-between mt-[8px] border-t-[2px] border-[#F4F6F8]">
         <button
           onClick={onCancel}
-          className="w-1/2 text-center text-base font-bold py-[12px]"
+          className="w-1/2 text-center text-title-sb-button font-bold py-[12px]"
         >
           취소
         </button>
@@ -140,7 +140,7 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
             }
           }}
           disabled={isDisabled}
-          className={`w-1/2 text-center text-base font-bold py-[12px] ${
+          className={`w-1/2 text-center text-title-sb-button font-bold py-[12px] ${
             isDisabled ? 'cursor-not-allowed' : ''
           }`}
         >

@@ -21,7 +21,7 @@ const CategoryFilterSelector: React.FC<Props> = ({ selected, onChange }) => {
         <img
           src={settingIcon}
           alt="카테고리 설정 아이콘"
-          className="w-[16px] h-[16px] mr-1"
+          className="w-[16px] h-[16px] mr-2"
         />
         <span>{selected}</span>
       </button>

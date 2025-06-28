@@ -39,7 +39,7 @@ export const WithRightIcon: Story = {
   args: {
     title: '가맹점',
     rightType: 'custom',
-    customRightElement: <button className="text-sm text-gray-600">메뉴</button>,
+    customRightElement: <button className="text-body-md-title text-gray-600">메뉴</button>,
   },
 };
 
@@ -49,7 +49,7 @@ export const WithoutBackButton: Story = {
     showBackButton: false,
     rightType: 'custom',
     customRightElement: (
-      <button className="text-sm text-gray-600">햄버거</button>
+      <button className="text-body-md-title text-gray-600">햄버거</button>
     ),
   },
 };

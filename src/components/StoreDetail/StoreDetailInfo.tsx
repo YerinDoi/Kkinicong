@@ -79,7 +79,7 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
       <div className="flex flex-col gap-[12px] w-full">
         {/* 카테고리, 이름, 태그 */}
         <div className="flex flex-col gap-[4px]">
-          <p className="text-xs font-normal text-[#919191]">{category}</p>
+          <p className="text-body-md-description font-regular text-[#919191]">{category}</p>
           <div className="relative flex items-center gap-[8px]">
             <h1 className="text-[20px] font-semibold text-black leading-[32px]">
               {name}
@@ -89,7 +89,7 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
         </div>
 
         {/* 주소 */}
-        <p className="text-xs font-normal text-[#919191]">{address}</p>
+        <p className="text-body-md-description font-regular text-[#919191]">{address}</p>
 
         {/* 영업시간 + 찜 아이콘 */}
         <div className="flex justify-between items-start w-full">
@@ -111,7 +111,7 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
                 }}
               />
             )}
-            <p className="text-xs font-normal text-[#C3C3C3]">
+            <p className="text-body-md-description font-regular text-[#C3C3C3]">
               업데이트 {dayjs(updatedDate).format('YYYY.MM.DD')}
             </p>
           </div>
@@ -121,7 +121,7 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
               <Icon name={isLiked ? 'heart-filled' : 'heart'} />
             </button>
             <span
-              className={`text-base font-semibold tracking-[0.012px] leading-tight ${
+              className={`text-title-sb-button font-semibold tracking-[0.012px] leading-tight ${
                 isLiked ? 'text-main-color' : 'text-[#C3C3C3]'
               }`}
             >

@@ -188,95 +188,6 @@ const StoreMapPage = () => {
     }
   }, [selectedStore, raisedSheetHeight]);
 
-  // API 호출 함수 (fetchStores 호출 시 페이지 관리)
-  const fetchStores = useCallback(
-    async (params: {
-      latitude: number;
-      longitude: number;
-      keyword?: string;
-      radius?: number;
-    }) => {
-      if (isLoadingRef.current) return;
-      isLoadingRef.current = true;
-      setIsLoading(true);
-      const page = pageRef.current;
-      const isInitialLoadOrReset = page === 0;
-      try {
-        // 일반 키워드 검색인지 판별 (키워드가 있고, 지역명 검색이 아닐 때)
-        const isGeneralKeywordSearch =
-          !!params.keyword && !isLocationRef.current;
-
-        const requestParams = {
-          page: page,
-          size: 10,
-          latitude: params.latitude,
-          longitude: params.longitude,
-          keyword: params.keyword,
-          radius:
-            params.radius !== undefined
-              ? params.radius
-              : isGeneralKeywordSearch
-                ? 20000 // 일반 키워드 검색: 20km
-                : calculateRadius(mapLevelRef.current), // 그 외: 지도 레벨 기준
-          category:
-            selectedCategoryRef.current !== '전체'
-              ? categoryMapping[selectedCategoryRef.current]
-              : undefined,
-        };
-
-        console.log('fetchStores - API 요청 파라미터:', requestParams);
-
-        const response = await axiosInstance.get('/api/v1/store/map', {
-          params: requestParams,
-        });
-
-        const results = response.data.results;
-        const newStores =
-          results && Array.isArray(results.content) ? results.content : [];
-        const isLastPage =
-          results &&
-          results.totalPage !== undefined &&
-          results.currentPage !== undefined
-            ? results.totalPage <= results.currentPage + 1
-            : true;
-
-        // 중복 제거를 위해 Map 사용
-        if (isInitialLoadOrReset) {
-          setStores(newStores);
-        } else {
-          setStores((prev) => {
-            const storeMap = new Map(
-              prev.map((store: Store) => [store.id, store]),
-            );
-            newStores.forEach((store: Store) => {
-              if (!storeMap.has(store.id)) {
-                storeMap.set(store.id, store);
-              }
-            });
-            return Array.from(storeMap.values());
-          });
-        }
-
-        hasNextPageRef.current = !isLastPage;
-        console.log(
-          `fetchStores - 응답 성공. 현재 페이지: ${results.currentPage}, 마지막 페이지 여부: ${isLastPage}, hasNextPageRef.current: ${hasNextPageRef.current}`,
-        );
-      } catch (error) {
-        console.error(
-          'fetchStores - 가게 목록을 불러오는데 실패했습니다:',
-          error,
-        );
-        // 오류 발생 시 다음 페이지 로드를 막기 위해 hasNextPageRef를 false로 설정
-        hasNextPageRef.current = false;
-      } finally {
-        isLoadingRef.current = false;
-        setIsLoading(false);
-        console.log('fetchStores - API 요청 완료. isLoadingRef.current: false');
-      }
-    },
-    [setStores, setIsLoading],
-  );
-
   // 지도 이동/줌 디바운스 관리를 위한 useRef
   const mapDebounceTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
@@ -329,17 +240,19 @@ const StoreMapPage = () => {
 
   // 1. 카테고리 변경 시 데이터 로드
   useEffect(() => {
-    // 1. 카테고리 변경 시 데이터 로드
     if (mapInstance) {
-      // mapInstance가 준비된 이후에만 실행
+      setFirstLoading(true);
       pageRef.current = 0;
       hasNextPageRef.current = true;
       setStores([]);
-      searchTriggeredRef.current = true; // 카테고리 변경 시 검색 트리거
-      fetchStores({
+      searchTriggeredRef.current = true;
+      fetchStoresPromise({
         latitude: mapCenterRef.current.lat,
         longitude: mapCenterRef.current.lng,
         keyword: isLocationRef.current ? undefined : searchTermRef.current,
+      }).then((newStores) => {
+        setStores(newStores);
+        setFirstLoading(false);
       });
     }
   }, [selectedCategory]);
@@ -350,17 +263,29 @@ const StoreMapPage = () => {
       if (!isZoomingRef.current && !selectedStore && isLocationReady) {
         const nextPage = pageRef.current + 1;
         pageRef.current = nextPage;
-        fetchStores({
+        fetchStoresPromise({
           latitude: mapCenterRef.current.lat,
           longitude: mapCenterRef.current.lng,
           keyword: isLocationRef.current ? undefined : searchTermRef.current,
-        });
+        }).then((newStores) =>
+          setStores((prev) => {
+            const storeMap = new Map(
+              prev.map((store: Store) => [store.id, store]),
+            );
+            newStores.forEach((store: Store) => {
+              if (!storeMap.has(store.id)) {
+                storeMap.set(store.id, store);
+              }
+            });
+            return Array.from(storeMap.values());
+          }),
+        );
       }
     },
     isLoadingRef,
     hasNextPageRef,
-    root: null, // viewport 기준으로 안정적
-    threshold: 0.1, // 더 민감하게 설정
+    root: null,
+    threshold: 0.1,
   });
 
   // 헤더 및 검색 입력창을 포함하는 고정된 상단 영역의 높이를 계산
@@ -376,7 +301,7 @@ const StoreMapPage = () => {
       );
       if (foundStore) {
         setSelectedStore(foundStore); // 선택된 가맹점 상태 업데이트
-        setSheetHeight(300); // 마커 클릭 시 바텀 시트 전체 높이로 확장
+        setSheetHeight(300);
       } else {
         setSelectedStore(null); // 찾지 못하면 초기화
       }
@@ -384,20 +309,29 @@ const StoreMapPage = () => {
     [stores],
   ); // stores 배열이 변경될 수 있으므로 의존성 배열에 추가
 
-  const handleGpsClick = useGpsFetch((lat, lng) => {
-    pageRef.current = 0;
-    hasNextPageRef.current = true;
+  const [firstLoading, setFirstLoading] = useState(false);
+
+  const handleGpsClick = useGpsFetch(async (lat, lng) => {
+    setFirstLoading(true);
     setStores([]);
     setMapCenter({ lat, lng });
+    setSheetHeight(raisedSheetHeight);
     if (mapInstance && window.kakao && window.kakao.maps) {
       const kakaoCenter = new window.kakao.maps.LatLng(lat, lng);
       mapInstance.setCenter(kakaoCenter);
     }
     setSearchTerm('');
     setInputValue('');
-    setIsMapMoved(false); // GPS 이동 시 버튼 숨김
-    setShouldAutoFitBounds(true); // GPS 이동 시 자동 범위 재설정 활성화
-    searchTriggeredRef.current = true; // GPS 이동 시 검색 트리거
+    setIsMapMoved(false);
+    setShouldAutoFitBounds(true);
+    searchTriggeredRef.current = true;
+
+    const newStores = await fetchStoresPromise({
+      latitude: lat,
+      longitude: lng,
+    });
+    setStores(newStores);
+    setFirstLoading(false);
   }, requestGps);
 
   // 검색 실행 시, 결과에 맞춰 지도 범위를 재설정 (수정된 로직)
@@ -446,56 +380,32 @@ const StoreMapPage = () => {
 
   // GPS 위치가 준비된 후 fetchStores 강제 호출
   useEffect(() => {
-    console.log('[GPS 위치 준비 useEffect] 실행됨:', {
-      gpsLocation,
-      isGpsActive,
-      isLocationReady,
-      mapCenter,
-      storesLength: stores.length,
-    });
-
-    // GPS 위치가 준비된 후에만 데이터 로드 (초기 로딩 시에만)
-    if (isLocationReady && stores.length === 0) {
-      // 검색어가 state에 있으면 여기서 fetchStores 실행하지 않음
+    if (isLocationReady && gpsLocation && stores.length === 0) {
       if (location.state?.searchTerm) return;
-      if (gpsLocation) {
-        // GPS 위치가 있으면 해당 위치로 API 호출
-        console.log('[GPS 위치 준비] fetchStores 강제 호출:', gpsLocation);
-        pageRef.current = 0;
-        hasNextPageRef.current = true;
-        setStores([]);
-        fetchStores({
-          latitude: gpsLocation.latitude,
-          longitude: gpsLocation.longitude,
-        });
-        setMapCenter({
-          lat: gpsLocation.latitude,
-          lng: gpsLocation.longitude,
-        });
-      } else {
-        // GPS 위치가 없으면 현재 지도 중심으로 API 호출
-        console.log(
-          '[GPS 위치 준비] 현재 지도 중심으로 fetchStores 호출:',
-          mapCenter,
-        );
-        pageRef.current = 0;
-        hasNextPageRef.current = true;
-        setStores([]);
-        fetchStores({
-          latitude: mapCenter.lat,
-          longitude: mapCenter.lng,
-        });
-      }
+      setFirstLoading(true); // 데이터 요청 시작
+      pageRef.current = 0;
+      hasNextPageRef.current = true;
+      fetchStoresPromise({
+        latitude: gpsLocation.latitude,
+        longitude: gpsLocation.longitude,
+      }).then((newStores) => {
+        setStores(newStores);
+        setFirstLoading(false); // 데이터 도착
+      });
+      setMapCenter({
+        lat: gpsLocation.latitude,
+        lng: gpsLocation.longitude,
+      });
     }
-  }, [isLocationReady, gpsLocation]); // mapCenter 제거
+  }, [isLocationReady, gpsLocation]);
 
   const handleSearchAndFitBounds = async (
     term?: string,
     centerOverride?: { lat: number; lng: number },
   ) => {
     setIsSearching(true);
-    setIsMapMoved(false); // 검색 시 버튼 숨김
-    setShouldAutoFitBounds(true); // 검색 시 자동 범위 재설정 활성화
+    setIsMapMoved(false);
+    setShouldAutoFitBounds(true);
 
     const termToSearch = typeof term === 'string' ? term : inputValue;
     if (!termToSearch.trim()) {
@@ -503,15 +413,14 @@ const StoreMapPage = () => {
       pageRef.current = 0;
       hasNextPageRef.current = true;
       setStores([]);
-      fetchStores({
+      fetchStoresPromise({
         latitude: mapCenter.lat,
         longitude: mapCenter.lng,
-      });
+      }).then((newStores) => setStores(newStores));
       setIsSearching(false);
       return;
     }
 
-    // centerOverride가 있으면 그걸, 없으면 기존 mapCenter 사용
     const center = centerOverride || mapCenter;
 
     pageRef.current = 0;
@@ -527,23 +436,105 @@ const StoreMapPage = () => {
     );
     moveMap(newMapCenter);
 
-    fetchStores({
+    fetchStoresPromise({
       latitude: newMapCenter.lat,
       longitude: newMapCenter.lng,
       ...(isLocationRef.current ? {} : { keyword: termToSearch }),
-    });
+    }).then((newStores) => setStores(newStores));
     setIsSearching(false);
   };
 
-  const handleSearchOnMap = (lat: number, lng: number) => {
+  const [prevMapCenter, setPrevMapCenter] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+
+  // fetchStores를 Promise로 래핑
+  const fetchStoresPromise = useCallback(
+    async (params: {
+      latitude: number;
+      longitude: number;
+      keyword?: string;
+      radius?: number;
+    }) => {
+      if (isLoadingRef.current) return [];
+      isLoadingRef.current = true;
+      setIsLoading(true);
+      const page = pageRef.current;
+      const isInitialLoadOrReset = page === 0;
+      try {
+        const isGeneralKeywordSearch =
+          !!params.keyword && !isLocationRef.current;
+        const requestParams = {
+          page: page,
+          size: 10,
+          latitude: params.latitude,
+          longitude: params.longitude,
+          keyword: params.keyword,
+          radius:
+            params.radius !== undefined
+              ? params.radius
+              : isGeneralKeywordSearch
+                ? 20000
+                : calculateRadius(mapLevelRef.current),
+          category:
+            selectedCategoryRef.current !== '전체'
+              ? categoryMapping[selectedCategoryRef.current]
+              : undefined,
+        };
+        const response = await axiosInstance.get('/api/v1/store/map', {
+          params: requestParams,
+        });
+        const results = response.data.results;
+        const newStores =
+          results && Array.isArray(results.content) ? results.content : [];
+        return newStores;
+      } catch (error) {
+        console.error(
+          'fetchStores - 가게 목록을 불러오는데 실패했습니다:',
+          error,
+        );
+        return [];
+      } finally {
+        isLoadingRef.current = false;
+        setIsLoading(false);
+      }
+    },
+    [setIsLoading],
+  );
+
+  const handleSearchOnMap = async (lat: number, lng: number) => {
+    let shouldAccumulate = false;
+    if (prevMapCenter) {
+      const latDiff = Math.abs(lat - prevMapCenter.lat);
+      const lngDiff = Math.abs(lng - prevMapCenter.lng);
+      shouldAccumulate = latDiff <= 0.01 && lngDiff <= 0.01;
+    }
+
     pageRef.current = 0;
     hasNextPageRef.current = true;
-    setStores([]);
-    fetchStores({
+
+    const newStores = await fetchStoresPromise({
       latitude: lat,
       longitude: lng,
       ...(isLocationRef.current ? {} : { keyword: searchTermRef.current }),
     });
+
+    if (shouldAccumulate) {
+      setStores((prev) => {
+        const storeMap = new Map(prev.map((store: Store) => [store.id, store]));
+        newStores.forEach((store: Store) => {
+          if (!storeMap.has(store.id)) {
+            storeMap.set(store.id, store);
+          }
+        });
+        return Array.from(storeMap.values());
+      });
+    } else {
+      setStores(newStores);
+    }
+
+    setPrevMapCenter({ lat, lng });
     setIsMapMoved(false);
   };
 
@@ -627,7 +618,7 @@ const StoreMapPage = () => {
         </div>
 
         {/* 캐러셀 아래 영역 전체 */}
-        {!isLoading && stores.length === 0 ? (
+        {!isLoading && !firstLoading && stores.length === 0 ? (
           <div
             className="mt-[32px] overflow-hidden overflow-y-auto"
             ref={scrollContainerRef}

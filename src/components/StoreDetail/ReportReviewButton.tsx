@@ -94,7 +94,7 @@ const ReportReviewButton: React.FC<Props> = ({ onClick, review, reviewId }) => {
     <>
       <button
         onClick={handleClick}
-        className="text-xs font-normal text-[#919191] flex gap-[4px]"
+        className="text-body-md-description font-regular text-[#919191] flex gap-[4px]"
       >
         <img src={AlarmIcon} className="h-[14px]" />
         <p>신고하기</p>

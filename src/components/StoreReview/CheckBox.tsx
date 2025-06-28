@@ -16,7 +16,7 @@ const CheckBox: React.FC<CheckBoxProps> = ({onCheckChange }) => {
   
   return (
     <div className="flex flex-col gap-[12px] ">
-      <p className="text-black font-semibold leading-[20px] text-base">
+      <p className="text-black font-semibold leading-[20px] text-title-sb-button">
         직접 이용 후 작성하시는 리뷰인가요?
       </p>
       <label className="flex items-center gap-[8px] cursor-pointer select-none">
@@ -30,7 +30,7 @@ const CheckBox: React.FC<CheckBoxProps> = ({onCheckChange }) => {
         </div>
 
 
-        <span className={checked ? "text-base text-black font-semibold " : "text-[#919191]"}> 
+        <span className={checked ? "text-title-sb-button text-black font-semibold " : "text-[#919191]"}> 
           네, 실제로 방문해 급식카드로 이용했어요.
         </span>
       </label>
