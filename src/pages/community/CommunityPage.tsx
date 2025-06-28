@@ -4,17 +4,21 @@ import AlarmIcon from '@/assets/icons/system/alarm.svg';
 import SearchIcon from '@/assets/icons/system/search-black.svg';
 import PopularPosts from "@/components/Community/PopularPosts";
 import Dropdown from "@/components/common/Dropdown";
-import { useState,useEffect } from "react";
+import { useState,useEffect , useRef, useCallback} from "react";
 import axiosInstance from "@/api/axiosInstance";
 import PostItem,{Post} from "@/components/Community/PostItem";
+import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 
 const CommunityPage = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
   const [size] = useState(10); // 고정 사이즈
-  const [totalPages, setTotalPages] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState('전체');
+
+  const pageRef = useRef(0);
+  const hasNextPageRef = useRef(true);
+  const isLoadingRef = useRef(false);
 
   const categoryMap: Record<string, string> = {
   '전체': '',
@@ -28,12 +32,13 @@ const CommunityPage = () => {
 };
 
 
-  useEffect(() => {
-  fetchPosts(selectedCategory, page, size);
-}, [selectedCategory, page]);
 
 
-  const fetchPosts = async (categoryText: string, page: number, size: number) => {
+  const fetchPosts = async (categoryText: string, page: number, size: number) =>
+     {
+  if (isLoadingRef.current) return;
+    isLoadingRef.current = true;
+
   try {
     const categoryEnum = categoryMap[categoryText];
     const params: any = { page, size };
@@ -44,12 +49,38 @@ const CommunityPage = () => {
     const res = await axiosInstance.get('/api/v1/community/post', { params });
 
     const data = res.data.results.results;
-    setPosts(data.content);
-    setTotalPages(data.totalPages);
+    setPosts(prev => (page === 0 ? data.content : [...prev, ...data.content]));
+
+    hasNextPageRef.current = page + 1 < data.totalPages;
   } catch (err) {
     console.error('게시글 가져오기 실패', err);
   }
+  finally {
+      isLoadingRef.current = false;
+    }
 };
+
+
+  useEffect(() => {
+    fetchPosts(selectedCategory, page, size);
+  }, [selectedCategory, page]);
+
+  const { loaderRef } = useInfiniteScroll({
+    onIntersect: () => {
+      if (hasNextPageRef.current) {
+        pageRef.current += 1;
+        console.log(
+          '[찾기페이지 useInfiniteScroll] 다음 페이지 로드:',
+          pageRef.current,
+        );
+        setPage(pageRef.current);
+      }
+    },
+    isLoadingRef,
+    hasNextPageRef,
+    root: null,
+    threshold: 0.2,
+  });
 
   const PostList = ({ posts }: { posts: Post[] }) => {
         return (
@@ -89,6 +120,7 @@ const CommunityPage = () => {
 
       </div>
       <PostList posts={posts} />
+      <div ref={loaderRef} style={{ height: 20 }} />
       
       
 
