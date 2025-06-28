@@ -5,13 +5,12 @@ import { useLocation } from 'react-router-dom';
 
 import SearchInput from '@/components/common/SearchInput';
 import TopBar from '@/components/common/TopBar';
-import InfoShareCard from '@/components/ConvenienceStore/InfoShareCard';
+import InfoShareCard from '@/components/convenience/InfoShareCard';
 import StoreChipCarousel from '@/components/home/ChipCarousel';
-import ProductListSection from '../../components/ConvenienceStore/ProductListSection';
-//import ButtonGroup from '../../components/ConvenienceStore/ButtonGroup';
-import Check from '../../components/ConvenienceStore/Check';
-import CategoryFilterSelector from '../../components/ConvenienceStore/CategoryFilterSelector';
-
+import ProductListSection from '../../components/convenience/ProductListSection';
+//import ButtonGroup from '../../components/convenience/ButtonGroup';
+import Check from '../../components/convenience/Check';
+import CategoryFilterSelector from '../../components/convenience/CategoryFilterSelector';
 
 const ConvenienceStorePage = () => {
   const location = useLocation();
@@ -67,7 +66,7 @@ const ConvenienceStorePage = () => {
             selected={selectedCategory}
             onChange={setSelectedCategory}
           />
-          <StoreChipCarousel selected={selectedBrand} onSelect={setBrand}/>
+          <StoreChipCarousel selected={selectedBrand} onSelect={setBrand} />
         </div>
 
         <Check
