@@ -28,6 +28,8 @@ import StoreSearch from './menubar/store-search.svg?react';
 import Community from './menubar/community.svg?react';
 import ConvenienceStore from './menubar/convenience-store.svg?react';
 import CloseBtn from './menubar/close-btn.svg?react';
+import Like from '@/assets/svgs/community/like.svg?react';
+import LikeFilled from '@/assets/svgs/community/like-filled.svg?react';
 
 export type IconName =
   | 'backward'
@@ -58,7 +60,9 @@ export type IconName =
   | 'store-search'
   | 'community'
   | 'convenience-store'
-  | 'close-btn';
+  | 'close-btn'
+  | 'like'
+  | 'like-filled';
 
 interface IconProps {
   name: IconName;
@@ -180,6 +184,14 @@ const Icon = ({ name, className }: IconProps) => {
 
   if (name === 'close-btn') {
     return <CloseBtn className={className} />;
+  }
+
+  if (name === 'like') {
+    return <Like className={className} />;
+  }
+
+  if (name === 'like-filled') {
+    return <LikeFilled className={className} />;
   }
 };
 

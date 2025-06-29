@@ -1,25 +1,32 @@
 // components/PostItem.tsx
-import MainTag from "../StoreReview/MainTag";
-import CommentIcon from "@/assets/svgs/common/comment.svg"
+import MainTag from '../StoreReview/MainTag';
+import CommentIcon from '@/assets/svgs/common/comment.svg';
+import { useNavigate } from 'react-router-dom';
 
 export interface Post {
   communityPostId: number;
   category: string;
   titlePreview: string;
   contentPreview: string;
-  thumbnailUrl?:string;
-  imageCount?:number;
+  thumbnailUrl?: string;
+  imageCount?: number;
   createdAt: string;
   commentCount: number;
   likeCount: number;
   viewCount: number;
-  nickname?:string;
+  nickname?: string;
 }
 
 const PostItem = ({ post }: { post: Post }) => {
+  const navigate = useNavigate();
   const hasThumbnail = !!post.thumbnailUrl; //썸네일 유무에 따라 레이아웃 달라짐
+  const handleClick = () => {
+    console.log(' Navigating to post:', post.communityPostId);
+    navigate(`/community/post/${post.communityPostId}`);
+  };
+
   return (
-    <div className="flex flex-col px-[20px] gap-[12px] py-[12px] border-b border-[#C3C3C3]">
+    <div className="flex flex-col px-[20px] gap-[12px] py-[12px] border-b border-[#C3C3C3] cursor-pointer" onClick = {handleClick}>
     
       <div className={`flex ${hasThumbnail ? 'flex-row justify-between ' : 'flex-col gap-[12px]'} `}> 
         <div
@@ -58,20 +65,16 @@ const PostItem = ({ post }: { post: Post }) => {
           </div>
         )}
       </div>
-      
 
-      
       <div className="flex justify-between text-body-md-title text-[#C3C3C3]">
         <div className="flex gap-[2px]">
-          <span> 좋아요 {post.likeCount}</span> ·
-          <span>{post.createdAt}</span> · 
+          <span> 좋아요 {post.likeCount}</span> ·<span>{post.createdAt}</span> ·
           <span> 조회 {post.viewCount}</span>
-
         </div>
-        
+
         <div className="flex gap-[4px] items-center text-title-sb-button">
-           <img src ={CommentIcon} className="w-[15px] h-[14px]"/>
-           {post.commentCount}
+          <img src={CommentIcon} className="w-[15px] h-[14px]" />
+          {post.commentCount}
         </div>
       </div>
     </div>
