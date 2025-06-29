@@ -15,7 +15,7 @@ const slides = [
           <p className="text-black">사용 가맹점을 검색하고,</p>
           <p className="text-black">리뷰를 남겨보세요!</p>
         </div>
-        <img src={CongG} className="w-[122px]" />
+        <object data={CongG} className="w-[122px]" />
       </div>
     ),
   },
