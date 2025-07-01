@@ -18,6 +18,7 @@ import AddConveniencePage from '@/pages/convenience/AddConveniencePage';
 import ConvenienceDetailPage from '@/pages/convenience/ConvenienceDetailPage';
 import NameRecommendationPage from '@/pages/convenience/NameRecommendationPage';
 import CommunityPage from '@/pages/community/CommunityPage';
+import CommunityWritePage from '@/pages/community/CommunityWritePage';
 
 const Router = () => {
   return (
@@ -57,7 +58,7 @@ const Router = () => {
       />
       <Route path="/store-review/:storeId" element={<StoreReviewPage />} />
       <Route path="/store/:storeId" element={<StoreDetailPage />} />
-{/*편의점*/}
+      {/*편의점*/}
       <Route path="/convenience" element={<ConvenienceStorePage />} />
       <Route path="/convenience/add" element={<AddConveniencePage />} />
 
@@ -69,11 +70,9 @@ const Router = () => {
         path="/convenience/name-recommendation"
         element={<NameRecommendationPage />}
       />
-{/*커뮤니티*/}
-      <Route
-        path="/community"
-        element={<CommunityPage/>}
-      />
+      {/*커뮤니티*/}
+      <Route path="/community" element={<CommunityPage />} />
+      <Route path="/community/write" element={<CommunityWritePage />} />
     </Routes>
   );
 };
