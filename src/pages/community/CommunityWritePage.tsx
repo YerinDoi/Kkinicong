@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import CategorySelector from '@/components/Community/CategorySelector';
-// import ImageUploader from '@/components/Community/ImageUploader';
+import ImageUploader from '@/components/Community/ImageUploader';
 import { useNavigate } from 'react-router-dom';
 
 export default function CommunityWritePage() {
@@ -9,7 +9,7 @@ export default function CommunityWritePage() {
   const [category, setCategory] = useState('');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  // const [images, setImages] = useState<File[]>([]);
+  const [images, setImages] = useState<File[]>([]);
 
   const isValid =
     category && title.trim().length >= 5 && content.trim().length >= 10;
@@ -17,10 +17,10 @@ export default function CommunityWritePage() {
   const handleSubmit = async () => {
     try {
       const formData = new FormData();
-      // formData.append('category', category);
+      formData.append('category', category);
       formData.append('title', title);
       formData.append('content', content);
-      // images.forEach((img) => formData.append('images', img));
+      images.forEach((img) => formData.append('images', img));
 
       // TODO: API 연결
       // await postCommunity(formData);
@@ -56,7 +56,7 @@ export default function CommunityWritePage() {
         />
       </div>
 
-      {/* <ImageUploader images={images} setImages={setImages} /> */}
+      <ImageUploader images={images} setImages={setImages} />
 
       <button
         disabled={!isValid}
