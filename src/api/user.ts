@@ -22,5 +22,6 @@ export const checkNicknameDuplicate = async (
  */
 export const registerNickname = async (nickname: string) => {
   const res = await axios.post('/api/v1/user/nickname', { nickname });
+  console.log('👉 nickname:', res.data.results.nickname); // 핵심 확인
   return res.data.results;
 };
