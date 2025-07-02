@@ -23,3 +23,11 @@ export const registerNickname = async (nickname: string) => {
   const res = await axios.post('/api/v1/user/nickname', { nickname });
   return res.data.results; // 👈 CallbackPage나 Redux에서 쓰이는 유저 정보 반환
 };
+
+/**
+ * 닉네임 수정 API (마이페이지에서 닉네임 변경)
+ * @param nickname 변경할 닉네임
+ */
+export const updateNickname = async (nickname: string) => {
+  await axios.patch('/api/v1/user/nickname', { nickname });
+};
