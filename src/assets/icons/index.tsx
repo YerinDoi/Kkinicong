@@ -32,6 +32,9 @@ import Like from '@/assets/svgs/community/like.svg?react';
 import LikeFilled from '@/assets/svgs/community/like-filled.svg?react';
 import Edit from '@/assets/icons/system/edit.svg?react';
 import Delete from '@/assets/icons/system/delete.svg?react';
+import Report from '@/assets/svgs/common/report.svg?react';
+import Comment from '@/assets/svgs/common/comment.svg?react';
+import Send from '@/assets/svgs/community/send.svg?react';
 
 export type IconName =
   | 'backward'
@@ -66,7 +69,10 @@ export type IconName =
   | 'like'
   | 'like-filled'
   | 'edit'
-  | 'delete';
+  | 'delete'
+  | 'report'
+  | 'comment'
+  | 'send';
 
 interface IconProps {
   name: IconName;
@@ -204,6 +210,18 @@ const Icon = ({ name, className }: IconProps) => {
 
   if (name === 'delete') {
     return <Delete className={className} />;
+  }
+
+  if (name === 'report') {
+    return <Report className={className} />;
+  }
+
+  if (name === 'comment') {
+    return <Comment className={className} />;
+  }
+
+  if (name === 'send') {
+    return <Send className={className} />;
   }
 };
 
