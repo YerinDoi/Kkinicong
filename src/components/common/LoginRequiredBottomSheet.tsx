@@ -6,17 +6,19 @@ import Icon from '@/assets/icons';
 interface LoginRequiredBottomSheetProps {
   isOpen: boolean;
   onClose: () => void;
+  pendingPath?: string | null;
 }
 
 const LoginRequiredBottomSheet: React.FC<LoginRequiredBottomSheetProps> = ({
   isOpen,
   onClose,
+  pendingPath,
 }) => {
   const navigate = useNavigate();
 
   const handleLoginClick = () => {
     onClose();
-    navigate('/login');
+    navigate('/login', { state: { redirectTo: pendingPath } });
   };
 
   return (

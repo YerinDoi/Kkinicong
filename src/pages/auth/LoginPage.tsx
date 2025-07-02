@@ -3,6 +3,7 @@ import LogoTextIcon from '@/assets/svgs/logo/logo-text.svg?react';
 import kakaoIcon from '@/assets/svgs//login/kakao-icon.svg';
 import naverIcon from '@/assets/svgs/login/naver-icon.svg';
 import googleIcon from '@/assets/svgs/login/google-icon.svg';
+import { useLocation } from 'react-router-dom';
 
 const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_REST_API_KEY;
 const KAKAO_REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI;
@@ -13,24 +14,33 @@ const NAVER_REDIRECT_URI = import.meta.env.VITE_NAVER_REDIRECT_URI;
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const GOOGLE_REDIRECT_URI = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
 
-const loginWithKakao = () => {
-  console.log('🔁 카카오 로그인 시도'); //test
-  const url = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${KAKAO_REDIRECT_URI}&response_type=code`;
-  window.location.href = url;
-};
-
-const loginWithNaver = () => {
-  const state = crypto.randomUUID(); // CSRF 방지용(네이버 필수)
-  const url = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&redirect_uri=${NAVER_REDIRECT_URI}&state=${state}`;
-  window.location.href = url;
-};
-
-const loginWithGoogle = () => {
-  const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_REDIRECT_URI}&response_type=code&scope=email profile`;
-  window.location.href = url;
-};
-
 export default function LoginPage() {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const redirectTo = 
+    searchParams.get('redirectTo') || 
+    (location.state && location.state.redirectTo) ||
+    '/';
+
+  const loginWithKakao = () => {
+    console.log('🔁 카카오 로그인 시도'); //test
+    const state = encodeURIComponent(redirectTo); // state에 redirectTo 저장
+    const url = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${KAKAO_REDIRECT_URI}&response_type=code&state=${state}`;
+    window.location.href = url;
+  };
+
+  const loginWithNaver = () => {
+    const state = encodeURIComponent(redirectTo);
+    const url = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${NAVER_CLIENT_ID}&redirect_uri=${NAVER_REDIRECT_URI}&state=${state}`;
+    window.location.href = url;
+  };
+
+  const loginWithGoogle = () => {
+    const state = encodeURIComponent(redirectTo);
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_REDIRECT_URI}&response_type=code&scope=emailprofile&state=${state}`;
+    window.location.href = url;
+  };
+
   return (
     <>
       <div className="h-screen flex flex-col justify-center px-12">
