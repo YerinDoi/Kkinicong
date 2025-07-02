@@ -22,7 +22,7 @@ const AccountDeletePage = () => {
   };
 
   return (
-    <div className="flex flex-col w-full h-full pt-[11px] pb-[68px]">
+    <div className="flex flex-col w-full h-full pt-[11px]">
       <TopBar
         title="회원 탈퇴"
         rightType="none"
@@ -91,7 +91,7 @@ const AccountDeletePage = () => {
           </label>
         </div>
 
-        <div className="flex mt-auto justify-center">
+        <div className="flex mt-auto mb-[68px] justify-center">
           <GreenButton
             text="끼니콩 탈퇴하기"
             onClick={() => setOpenModal(true)}
@@ -119,7 +119,7 @@ const AccountDeletePage = () => {
 
       {/* 탈퇴 완료 토스트 */}
       {showToast && (
-        <div className="fixed bottom-[60px] left-1/2 top-1/2 -translate-x-1/2 z-[9999]">
+        <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-[9999]">
           <ConfirmToast text="회원 탈퇴가 완료되었어요" />
         </div>
       )}
