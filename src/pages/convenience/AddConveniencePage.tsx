@@ -5,9 +5,9 @@ import { useLocation } from 'react-router-dom';
 import { createConveniencePost } from '@/api/convenience';
 import { toServerCategory, toServerBrand } from '@/types/convenienceMapper';
 
-import ButtonGroup from '@/components/ConvenienceStore/ButtonGroup';
+import ButtonGroup from '@/components/convenience/ButtonGroup';
 import TopBar from '@/components/common/TopBar';
-import SelectableButton from '@/components/ConvenienceStore/SelectableButton';
+import SelectableButton from '@/components/convenience/SelectableButton';
 import LoginRequiredBottomSheet from '@/components/common/LoginRequiredBottomSheet';
 
 import SparkleIcon from '@/assets/svgs/convenience/sparkle.svg';
@@ -23,7 +23,8 @@ export default function AddConveniencePage() {
 
   // 로그인 안 했으면 바텀시트 띄우기
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (isLoggedIn === null) return; // 아직 판단 중
+    if (isLoggedIn === false) {
       setLoginSheetOpen(true);
     }
   }, [isLoggedIn]);
@@ -169,7 +170,6 @@ export default function AddConveniencePage() {
         isOpen={isLoginSheetOpen}
         onClose={() => {
           setLoginSheetOpen(false);
-          navigate(-1); // 뒤로가기 또는 navigate('/login') 가능
         }}
       />
     </div>

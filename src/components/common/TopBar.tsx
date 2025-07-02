@@ -46,7 +46,7 @@ export default function TopBar({
     <Fragment>
       <div className={`flex items-center justify-between ${paddingX} py-[8px]`}>
         {/* 왼쪽 영역 : 뒤로가기버튼, 제목, 부제목 */}
-        <div className="flex items-center gap-[4px]">
+        <div className="flex items-center ">
           {showBackButton ? (
             <button onClick={handleBack} className="py-[8px] pr-[12px]">
               <Icon name="backward" />
@@ -64,7 +64,7 @@ export default function TopBar({
                 {title}
               </span>
               {subTitle && (
-                <span className="ml-2 text-sm font-medium text-[#919191]">
+                <span className="ml-2 text-body-md-title font-medium text-[#919191]">
                   {subTitle}
                 </span>
               )}

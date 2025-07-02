@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
 import {
   fetchConvenienceDetail,
   submitPostFeedback,
@@ -8,9 +9,10 @@ import {
 import { fromServerBrand, fromServerCategory } from '@/types/convenienceMapper';
 
 import TopBar from '@/components/common/TopBar';
-import DeleteConvenience from '@/components/ConvenienceStore/DeleteConvenience';
+import DeleteConvenience from '@/components/convenience/DeleteConvenience';
+import FeedbackButtons from '@/components/convenience/FeedbackButtons';
 
-// import ShareIcon from '@/assets/svgs/convenience/share.svg';
+import ShareIcon from '@/assets/svgs/convenience/share.svg?react';
 import ProfileIcon from '@/assets/svgs/convenience/profile.svg';
 import DeleteIcon from '@/assets/svgs/convenience/delete.svg';
 
@@ -60,6 +62,25 @@ export default function ConvenienceDetailPage() {
     }
   };
 
+  const handleShare = async () => {
+    const shareData = {
+      title: '끼니콩 추천 편의점!',
+      text: '이 제품 정말 좋아요 😋',
+      url: window.location.href,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        console.log('공유 성공');
+      } catch (err) {
+        console.error('공유 실패:', err);
+      }
+    } else {
+      alert('이 브라우저는 공유 기능을 지원하지 않아요 😢');
+    }
+  };
+
   const handleVote = async (isCorrect: boolean) => {
     if (!post || !postId) return;
 
@@ -94,7 +115,14 @@ export default function ConvenienceDetailPage() {
   return (
     <>
       {/* 상단바 */}
-      <TopBar />
+      <TopBar
+        rightType="custom"
+        customRightElement={
+          <button onClick={handleShare}>
+            <ShareIcon className="w-[18px] h-5" />
+          </button>
+        }
+      />
 
       <div className="min-h-screen px-4">
         {/* 작성 정보, 삭제버튼 */}
@@ -154,41 +182,12 @@ export default function ConvenienceDetailPage() {
         <div className="my-7 h-[1.5px] bg-[#E6E6E6]" />
 
         {/* 피드백 버튼 */}
-        <div className="flex gap-3 mt-6">
-          <button
-            onClick={() => handleVote(true)}
-            disabled={post.isMine}
-            className={`flex-1 border-[1.5px] rounded-[12px] py-3 text-title-sb-button font-semibold ${
-              post.isMine
-                ? 'border-[#E0E0E0] text-[#C0C0C0] bg-[#F8F8F8] cursor-not-allowed'
-                : 'border-[#C3C3C3] text-[#616161]'
-            }`}
-          >
-            올바른 정보예요
-            <span className="ml-2 font-semibold">{post.CorrectCount}</span>
-          </button>
-          <button
-            onClick={() => handleVote(false)}
-            disabled={post.isMine}
-            className={`flex-1 border-[1.5px] rounded-[12px] py-3 text-title-sb-button font-semibold ${
-              post.isMine
-                ? 'border-[#E0E0E0] text-[#C0C0C0] bg-[#F8F8F8] cursor-not-allowed'
-                : 'border-[#C3C3C3] text-[#616161]'
-            }`}
-          >
-            잘못된 정보예요
-            <span className="ml-2 text-title-sb-button font-semibold">
-              {post.IncorrectCount}
-            </span>
-          </button>
-        </div>
-
-        {/* 피드백 안내 메시지 */}
-        {post.isMine && (
-          <p className="mt-2 text-center text-[#B0B0B0] text-body-md-title">
-            본인이 작성한 글은 피드백할 수 없어요
-          </p>
-        )}
+        <FeedbackButtons
+          isMine={post.isMine}
+          correctCount={post.CorrectCount}
+          incorrectCount={post.IncorrectCount}
+          onVote={handleVote}
+        />
       </div>
 
       {/* 삭제 확인 모달 */}

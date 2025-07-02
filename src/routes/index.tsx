@@ -19,6 +19,7 @@ import ConvenienceDetailPage from '@/pages/convenience/ConvenienceDetailPage';
 import NameRecommendationPage from '@/pages/convenience/NameRecommendationPage';
 import AccountDeletePage from '@/pages/mypage/AccountDeletePage';
 import NicknameEditPage from '@/pages/mypage/NicknameEditPage';
+import CommunityPage from '@/pages/community/CommunityPage';
 
 const Router = () => {
   return (
@@ -31,6 +32,7 @@ const Router = () => {
           </GpsProvider>
         }
       />
+      {/*로그인,닉네임,마이페이지,자주가는지역*/}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/oauth/:provider/callback" element={<CallbackPage />} />
       <Route path="/nickname" element={<NicknamePage />} />
@@ -39,6 +41,8 @@ const Router = () => {
       <Route path="/mypage" element={<MyPage />} />
       <Route path="/account-delete" element={<AccountDeletePage />} />
       <Route path="/nickname-edit" element={<NicknameEditPage />} />
+
+      {/*가맹점 페이지*/}
       <Route
         path="/store-map"
         element={
@@ -57,7 +61,7 @@ const Router = () => {
       />
       <Route path="/store-review/:storeId" element={<StoreReviewPage />} />
       <Route path="/store/:storeId" element={<StoreDetailPage />} />
-
+{/*편의점*/}
       <Route path="/convenience" element={<ConvenienceStorePage />} />
       <Route path="/convenience/add" element={<AddConveniencePage />} />
 
@@ -68,6 +72,11 @@ const Router = () => {
       <Route
         path="/convenience/name-recommendation"
         element={<NameRecommendationPage />}
+      />
+{/*커뮤니티*/}
+      <Route
+        path="/community"
+        element={<CommunityPage/>}
       />
     </Routes>
   );
