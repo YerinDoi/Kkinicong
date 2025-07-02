@@ -7,7 +7,7 @@ import 'swiper/css/autoplay';
 import { Autoplay } from 'swiper/modules';
 
 interface Post {
-  id: number;
+  communityPostId: number;
   title: string;
 }
 
@@ -26,8 +26,8 @@ const PopularPosts = () => {
       });
   }, []);
 
-  const handleClick = (postId: number) => {
-    navigate(`/community/${postId}`);
+  const handleClick = (communityPostId: number) => {
+    navigate(`/community/post/${communityPostId}`);
   };
 
   return (
@@ -47,10 +47,10 @@ const PopularPosts = () => {
             style={{ height: '39px' }} // 반드시 추가
           >
             {posts.map((post, idx) => (
-              <SwiperSlide key={`${post.id}-${idx}`}>
+              <SwiperSlide key={`${post.communityPostId}-${idx}`}>
                 <div className="h-[39px] w-full flex  px-[12px]">
                   <button
-                    onClick={() => handleClick(post.id)}
+                    onClick={() => handleClick(post.communityPostId)}
                     className="text-caption-m text-left truncate w-full flex items-center gap-[8px]"
                   >
                     <span className="text-[#029F64] font-semibold">
