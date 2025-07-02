@@ -17,6 +17,8 @@ import ConvenienceStorePage from '@/pages/convenience/ConveniencePage';
 import AddConveniencePage from '@/pages/convenience/AddConveniencePage';
 import ConvenienceDetailPage from '@/pages/convenience/ConvenienceDetailPage';
 import NameRecommendationPage from '@/pages/convenience/NameRecommendationPage';
+import AccountDeletePage from '@/pages/mypage/AccountDeletePage';
+import NicknameEditPage from '@/pages/mypage/NicknameEditPage';
 import CommunityPage from '@/pages/community/CommunityPage';
 
 const Router = () => {
@@ -37,6 +39,8 @@ const Router = () => {
       <Route path="/nicknameXXX" element={<NicknamePageXXX />} />
       <Route path="/my-neighborhood" element={<MyNeighborhoodPage />} />
       <Route path="/mypage" element={<MyPage />} />
+      <Route path="/account-delete" element={<AccountDeletePage />} />
+      <Route path="/nickname-edit" element={<NicknameEditPage />} />
 
       {/*가맹점 페이지*/}
       <Route
