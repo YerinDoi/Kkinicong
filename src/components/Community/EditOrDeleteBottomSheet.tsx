@@ -34,7 +34,10 @@ const EditOrDeleteBottomSheet: React.FC<Props> = ({
             수정하기
           </div>
         </div>
-        <div className="flex justify-center border-t-[2px] border-[#F4F6F8] py-[12px]">
+        <div
+          className="flex justify-center border-t-[2px] border-[#F4F6F8] py-[12px] cursor-pointer"
+          onClick={onClose}
+        >
           취소
         </div>
       </div>
