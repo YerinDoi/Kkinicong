@@ -30,6 +30,8 @@ import ConvenienceStore from './menubar/convenience-store.svg?react';
 import CloseBtn from './menubar/close-btn.svg?react';
 import Like from '@/assets/svgs/community/like.svg?react';
 import LikeFilled from '@/assets/svgs/community/like-filled.svg?react';
+import Edit from '@/assets/icons/system/edit.svg?react';
+import Delete from '@/assets/icons/system/delete.svg?react';
 
 export type IconName =
   | 'backward'
@@ -62,7 +64,9 @@ export type IconName =
   | 'convenience-store'
   | 'close-btn'
   | 'like'
-  | 'like-filled';
+  | 'like-filled'
+  | 'edit'
+  | 'delete';
 
 interface IconProps {
   name: IconName;
@@ -192,6 +196,14 @@ const Icon = ({ name, className }: IconProps) => {
 
   if (name === 'like-filled') {
     return <LikeFilled className={className} />;
+  }
+
+  if (name === 'edit') {
+    return <Edit className={className} />;
+  }
+
+  if (name === 'delete') {
+    return <Delete className={className} />;
   }
 };
 
