@@ -20,6 +20,7 @@ import NameRecommendationPage from '@/pages/convenience/NameRecommendationPage';
 import AccountDeletePage from '@/pages/mypage/AccountDeletePage';
 import NicknameEditPage from '@/pages/mypage/NicknameEditPage';
 import CommunityPage from '@/pages/community/CommunityPage';
+import FeedbackPage from '@/pages/mypage/FeedbackPage';
 
 const Router = () => {
   return (
@@ -41,6 +42,7 @@ const Router = () => {
       <Route path="/mypage" element={<MyPage />} />
       <Route path="/account-delete" element={<AccountDeletePage />} />
       <Route path="/nickname-edit" element={<NicknameEditPage />} />
+      <Route path="/feedback" element={<FeedbackPage />} />
 
       {/*가맹점 페이지*/}
       <Route

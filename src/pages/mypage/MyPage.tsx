@@ -102,7 +102,12 @@ const MyPage = () => {
             )
           }
         />
-        <MenuListBtn label="의견 남기기" variant="secondary" />
+        <MenuListBtn 
+          label="의견 남기기" 
+          variant="secondary" 
+          onClick={() => navigate('/feedback')}
+        />
+
         {isLoggedIn && (
           <MenuListBtn
             label="회원 탈퇴"
