@@ -139,7 +139,7 @@ const NicknameEditPage = () => {
 
       {/* 변경 완료 토스트 */}
       {showToast && (
-        <div className="fixed bottom-[60px] left-1/2 top-1/2 -translate-x-1/2 z-[9999]">
+        <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-[9999]">
             <ConfirmToast text="닉네임 변경이 완료되었어요" />
         </div>
         )}
