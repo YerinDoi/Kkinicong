@@ -43,7 +43,7 @@ const MyPage = () => {
 
       <div className="px-[30px] my-[24px]">
         <ProfileSection
-          isLoggedIn={isLoggedIn}
+          isLoggedIn={isLoggedIn ?? false}
           nickname={nickname}
           canEditNickname={!isNicknameModified}
           onLogin={handleLogin}
