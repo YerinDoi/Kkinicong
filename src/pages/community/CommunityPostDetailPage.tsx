@@ -8,6 +8,7 @@ import ShareIcon from '@/assets/icons/system/share.svg';
 import MainTag from '@/components/StoreReview/MainTag';
 import LoginRequiredBottomSheet from '@/components/common/LoginRequiredBottomSheet';
 import Icon from '@/assets/icons';
+import { useShare } from '@/hooks/useShare';
 
 interface Comment {
   commentId: number;
@@ -26,8 +27,8 @@ interface PostDetail {
   isModified: boolean;
   category: string;
   content: string;
-  likeCount:number;
-  commentCount:number;
+  likeCount: number;
+  commentCount: number;
   isLiked: boolean | null;
   isMyCommunityPost: boolean | null;
   commentListResponse: Comment[];
@@ -39,6 +40,7 @@ const CommunityPostDetail = () => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const { share } = useShare();
 
   const handleLikeClick = async () => {
     const token = localStorage.getItem('accessToken');
@@ -77,11 +79,11 @@ const CommunityPostDetail = () => {
     const fetchPost = async () => {
       try {
         const res = await axiosInstance.get(`/api/v1/community/post/${postId}`);
-    
+
         const result = res.data.results;
         setPost(result);
-        setIsLiked(result.isLiked);         
-        setLikeCount(result.likeCount);     
+        setIsLiked(result.isLiked);
+        setLikeCount(result.likeCount);
       } catch (err) {
         console.error('게시글 조회 실패:', err);
       }
@@ -93,41 +95,55 @@ const CommunityPostDetail = () => {
   if (!post) return <p>로딩 중...</p>;
 
   return (
-
-    <div >
-      <TopBar/>
-      <div className='pb-[16px] px-[20px] flex flex-col gap-[40px] border-b border-[#E6E6E6]'>
+    <div>
+      <TopBar />
+      <div className="pb-[16px] px-[20px] flex flex-col gap-[40px] border-b border-[#E6E6E6]">
         <div>
-          <div className='flex flex-col gap-[16px]'>
-            <div className="flex items-center text-headline-sb-sub font-semibold justify-between">{post.title}<img src={MoreIcon} alt="더보기 버튼" className='w-[3px] h-[14.25px]'/></div>
+          <div className="flex flex-col gap-[16px]">
+            <div className="flex items-center text-headline-sb-sub font-semibold justify-between">
+              {post.title}
+              <img
+                src={MoreIcon}
+                alt="더보기 버튼"
+                className="w-[3px] h-[14.25px]"
+              />
+            </div>
             <div className="flex justify-between items-center">
-              <div className='flex gap-[8px] items-center'>
-                <img src={ProfileImg} alt="프로필사진" className='w-[40px] h-[40px]'/>
-                <div className='flex flex-col gap-[4px]'>
-                
-                  <span className='text-body-md-title font-regular'>{post.nickname ?? '익명'}</span>
+              <div className="flex gap-[8px] items-center">
+                <img
+                  src={ProfileImg}
+                  alt="프로필사진"
+                  className="w-[40px] h-[40px]"
+                />
+                <div className="flex flex-col gap-[4px]">
+                  <span className="text-body-md-title font-regular">
+                    {post.nickname ?? '익명'}
+                  </span>
                   <span className="flex gap-[2px] text-body-md-description text-[#C3C3C3]">
-                    {post.createdAt} · 조회 {post.viewCount}</span>
+                    {post.createdAt} · 조회 {post.viewCount}
+                  </span>
                 </div>
               </div>
-            <img src={ShareIcon} className='w-[18px] h-[18px]'/>
+              <img
+                src={ShareIcon}
+                onClick={share}
+                className="w-[18px] h-[18px] cursor-pointer"
+              />
+            </div>
+          </div>
+
+          <div className="mt-[20px] flex flex-col gap-[16px]">
+            <MainTag rounded="rounded-[8px]" text={post.category} />
+            <p className="text-body-md-title font-regular">{post.content}</p>
           </div>
         </div>
-      
-        <div className='mt-[20px] flex flex-col gap-[16px]'>
-          <MainTag rounded="rounded-[8px]" text={post.category} />
-          <p className='text-body-md-title font-regular'>{post.content}</p>
+        <div className="flex gap-[8px] text-[#C3C3C3] text-title-sb-button items-center font-bold ">
+          <button onClick={handleLikeClick} className="cursor-pointer">
+            <Icon name={isLiked ? 'like-filled' : 'like'} />
+          </button>
+          {likeCount}
         </div>
-
       </div>
-      <div className='flex gap-[8px] text-[#C3C3C3] text-title-sb-button items-center font-bold ' >
-        <button onClick={handleLikeClick} className="cursor-pointer">
-          <Icon name={isLiked ? 'like-filled' : 'like'} />
-        </button>
-        {likeCount}
-      </div>
-    </div>
-
 
       <h3 className="text-lg font-semibold">댓글</h3>
       <ul className="mt-2 space-y-2">
