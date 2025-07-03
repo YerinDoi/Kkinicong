@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import axiosInstance from '@/api/axiosInstance';
 import TopBar from '@/components/common/TopBar';
 import MoreIcon from '@/assets/svgs/common/more-icon.svg';
@@ -53,6 +53,27 @@ const CommunityPostDetailPage = () => {
   const { isLoggedIn } = useLoginStatus();
   const navigate = useNavigate();
   const token = localStorage.getItem('accessToken');
+
+  //게시글 조회
+  const fetchPost = useCallback(async () => {
+    try {
+      const res = await axiosInstance.get(`/api/v1/community/post/${postId}`);
+      const result = res.data.results;
+      setPost(result);
+      setIsLiked(result.isLiked);
+      setLikeCount(result.likeCount);
+    } catch (err) {
+      console.error('게시글 조회 실패:', err);
+    }
+  }, [postId]);
+
+  useEffect(() => {
+    fetchPost();
+  }, [fetchPost]);
+
+  useEffect(() => {
+    fetchPost();
+  }, [postId]);
 
   //좋아요
 
@@ -116,7 +137,6 @@ const CommunityPostDetailPage = () => {
   //댓글 전송
   const handleCommentSubmit = async (postId: number, content: string) => {
     if (!content.trim()) {
-      alert('댓글 내용을 입력해주세요.');
       return;
     }
 
@@ -130,29 +150,13 @@ const CommunityPostDetailPage = () => {
           },
         },
       );
-      alert('댓글이 등록되었습니다!');
+
+      await fetchPost();
     } catch (error) {
       console.error('댓글 작성 실패:', error);
       alert('댓글 등록 중 오류가 발생했습니다.');
     }
   };
-
-  useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        const res = await axiosInstance.get(`/api/v1/community/post/${postId}`);
-
-        const result = res.data.results;
-        setPost(result);
-        setIsLiked(result.isLiked);
-        setLikeCount(result.likeCount);
-      } catch (err) {
-        console.error('게시글 조회 실패:', err);
-      }
-    };
-
-    fetchPost();
-  }, [postId]);
 
   if (!post) return <p>로딩 중...</p>;
 
@@ -204,7 +208,9 @@ const CommunityPostDetailPage = () => {
           </div>
         </div>
         <div className="flex justify-between text-[#C3C3C3]">
-          <div className="flex gap-[8px]  text-title-sb-button items-center font-bold ">
+          <div
+            className={`flex gap-[8px]  text-title-sb-button items-center font-bold ${isLiked ? 'text-main-color' : 'text-[#c3c3c3]'}`}
+          >
             <button onClick={handleLikeClick} className="cursor-pointer">
               <Icon name={isLiked ? 'like-filled' : 'like'} />
             </button>
@@ -238,9 +244,14 @@ const CommunityPostDetailPage = () => {
 
       {/* 댓글 목록 렌더링 */}
       {post.commentListResponse.length > 0 ? (
-        <div className="px-[20px] pt-[20px] pb-[80px] flex flex-col gap-[16px]">
-          {post.commentListResponse.map((comment) => (
-            <CommentItem data={comment} />
+        <div className="flex flex-col">
+          {post.commentListResponse.map((comment, index) => (
+            <div
+              key={comment.commentId}
+              className={`${index === 0 ? '' : 'pt-[12px] '}`}
+            >
+              <CommentItem data={comment} />
+            </div>
           ))}
         </div>
       ) : (

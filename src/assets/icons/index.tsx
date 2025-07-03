@@ -35,6 +35,7 @@ import Delete from '@/assets/icons/system/delete.svg?react';
 import Report from '@/assets/svgs/common/report.svg?react';
 import Comment from '@/assets/svgs/common/comment.svg?react';
 import Send from '@/assets/svgs/community/send.svg?react';
+import EditOrDelete from '@/assets/svgs/common/more-icon.svg?react';
 
 export type IconName =
   | 'backward'
@@ -72,7 +73,8 @@ export type IconName =
   | 'delete'
   | 'report'
   | 'comment'
-  | 'send';
+  | 'send'
+  | 'edit-or-delete';
 
 interface IconProps {
   name: IconName;
@@ -222,6 +224,10 @@ const Icon = ({ name, className }: IconProps) => {
 
   if (name === 'send') {
     return <Send className={className} />;
+  }
+
+  if (name === 'edit-or-delete') {
+    return <EditOrDelete className={className} />;
   }
 };
 
