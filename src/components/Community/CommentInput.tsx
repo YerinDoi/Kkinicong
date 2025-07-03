@@ -1,29 +1,33 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Icon from '@/assets/icons';
 import { useLoginStatus } from '@/hooks/useLoginStatus';
 import LoginRequiredBottomSheet from '@/components/common/LoginRequiredBottomSheet';
 
 interface CommentInputProps {
-  onSubmit: (comment: string) => void;
+  onSubmit: (content: string) => void;
+  placeholder?: string;
 }
 
 const MAX_LENGTH = 4000;
 
-const CommentInput: React.FC<CommentInputProps> = ({ onSubmit }) => {
+const CommentInput: React.FC<CommentInputProps> = ({
+  onSubmit,
+  placeholder,
+}) => {
   const { isLoggedIn } = useLoginStatus(); // 로그인 상태
-  const [comment, setComment] = useState('');
+  const [content, setContent] = useState('');
   const [isLoginBottomSheetOpen, setIsLoginBottomSheetOpen] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (e.target.value.length <= MAX_LENGTH) {
-      setComment(e.target.value);
+      setContent(e.target.value);
     }
   };
 
   const handleSubmit = () => {
-    if (comment.trim()) {
-      onSubmit(comment);
-      setComment('');
+    if (content.trim()) {
+      onSubmit(content);
+      setContent('');
     }
   };
 
@@ -35,10 +39,11 @@ const CommentInput: React.FC<CommentInputProps> = ({ onSubmit }) => {
   return (
     <div className="relative flex h-[50px] items-center border border-[#C3C3C3] rounded-[12px] p-[16px] text-[#919191] font-regular text-[12px]">
       <textarea
-        value={comment}
+        value={content}
         onChange={handleInputChange}
         placeholder={
-          isLoggedIn ? '댓글을 남겨보세요' : '로그인하고 댓글을 남겨보세요'
+          placeholder ??
+          (isLoggedIn ? '댓글을 남겨보세요' : '로그인하고 댓글을 남겨보세요')
         }
         spellCheck={false}
         rows={1}
@@ -55,7 +60,7 @@ const CommentInput: React.FC<CommentInputProps> = ({ onSubmit }) => {
       <button
         type="button"
         onClick={handleSubmit}
-        disabled={!isLoggedIn || !comment.trim()}
+        disabled={!isLoggedIn || !content.trim()}
         className="ml-[10px] disabled:opacity-50 z-20"
       >
         <Icon name="send" />

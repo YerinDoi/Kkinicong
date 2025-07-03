@@ -51,6 +51,8 @@ const CommunityPostDetailPage = () => {
   const [isEDBottomSheetOpen, setIsEDBottomSheetOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const [isReplying, setIsReplying] = useState(false);
+
   const { share } = useShare();
   const { isLoggedIn } = useLoginStatus();
   const navigate = useNavigate();
@@ -68,10 +70,6 @@ const CommunityPostDetailPage = () => {
       console.error('게시글 조회 실패:', err);
     }
   }, [postId]);
-
-  useEffect(() => {
-    fetchPost();
-  }, [fetchPost]);
 
   useEffect(() => {
     fetchPost();
@@ -265,7 +263,12 @@ const CommunityPostDetailPage = () => {
               key={comment.commentId}
               className={`${index === 0 ? '' : 'pt-[12px] '}`}
             >
-              <CommentItem data={comment} />
+              <CommentItem
+                data={comment}
+                postId={Number(postId)}
+                onReload={fetchPost}
+                setIsReplying={setIsReplying}
+              />
             </div>
           ))}
         </div>
@@ -275,11 +278,13 @@ const CommunityPostDetailPage = () => {
           남겨보세요
         </div>
       )}
-      <div className="px-[20px] mt-[20px] mb-[35px]">
-        <CommentInput
-          onSubmit={(comment) => handleCommentSubmit(Number(postId), comment)}
-        />
-      </div>
+      {!isReplying && (
+        <div className="px-[20px] mt-[20px] mb-[39px]">
+          <CommentInput
+            onSubmit={(comment) => handleCommentSubmit(Number(postId), comment)}
+          />
+        </div>
+      )}
     </div>
   );
 };
