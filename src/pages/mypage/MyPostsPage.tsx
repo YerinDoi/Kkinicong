@@ -6,6 +6,7 @@ import ChipGroup from '@/components/Mypage/ChipGroup';
 import PostItem from '@/components/Community/PostItem';
 import MyConveniencePostItem from '@/components/Mypage/MyConveniencePostItem';
 import { getMyCommunityPosts, getMyConveniencePosts } from '@/api/mypage';
+import EmptyView from '@/components/Mypage/EmptyView';
 
 const MyPostsPage = () => {
   const navigate = useNavigate();
@@ -64,12 +65,17 @@ const MyPostsPage = () => {
 
       {/* 게시글 탭 - 커뮤니티 */}
       {tab === '게시글' && chip === '커뮤니티' && (
-        <div>
+        <div className="">
           {communityPosts.map((post, idx) => (
             <PostItem key={post.communityPostId ?? idx} post={post} />
           ))}
           {communityPosts.length === 0 && !loading && (
-            <div>작성한 글이 없습니다.</div>
+            <EmptyView
+              title={'아직 작성한 글이 없어요\n당신의 첫 이야기를 들려주세요'}
+              actionText="커뮤니티로 이동해볼까요?"
+              onActionClick={() => navigate('/community')}
+              actionType="link"
+            />
           )}
         </div>
       )}
@@ -78,6 +84,9 @@ const MyPostsPage = () => {
       {tab === '게시글' && chip === '편의점 게시판' && (
         <MyConveniencePostItem products={conveniencePosts} />
       )}
+
+      {/* 댓글 탭 */}
+      {tab === '댓글'}
     </div>
   );
 };
