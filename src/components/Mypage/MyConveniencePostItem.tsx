@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import EmptyView from './EmptyView';
 
 interface Product {
   id: number;
@@ -17,9 +18,14 @@ export default function ProductListSection({
 
   // 내가 쓴 편의점 게시판 글 X 경우 => 엠티뷰
   if (products.length === 0) {
-
     return (
-      <div>
+      <div className="flex flex-1 w-full h-full items-center justify-center bg-[#F4F6F8]">
+        <EmptyView
+            title={"아직 작성한 글이 없어요\n당신의 결제 경험을 공유해주세요"}
+            actionText="편의점 게시판으로 이동해볼까요?"
+            onActionClick={() => navigate('/convenience')}
+            actionType="link"
+        />
       </div>
     );
   }
