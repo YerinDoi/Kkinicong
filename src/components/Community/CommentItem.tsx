@@ -13,6 +13,7 @@ export interface CommentData {
   isModified: boolean;
   isMyComment: boolean;
   isAuthor: boolean;
+  isLiked: boolean;
   likeCount: number;
   replyListResponse: CommentData[];
 }
@@ -31,12 +32,13 @@ const CommentItem: React.FC<CommentItemProps> = ({ data, isReply = false }) => {
     isAuthor,
     likeCount,
     replyListResponse,
+    isLiked: initialIsLiked,
     isModified,
     isMyComment,
   } = data;
   const { isLoggedIn } = useLoginStatus();
   const [isLoginBottomSheetOpen, setIsLoginBottomSheetOpen] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [localLikeCount, setLocalLikeCount] = useState(likeCount);
   const token = localStorage.getItem('accessToken');
   //좋아요

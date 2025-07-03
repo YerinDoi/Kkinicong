@@ -21,6 +21,7 @@ interface Comment {
   createdAt: string;
   isModified: boolean;
   isMyComment: boolean;
+  isLiked: boolean;
   isAuthor: boolean;
   likeCount: number;
   replyListResponse: Comment[];
