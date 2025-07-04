@@ -54,9 +54,6 @@ const MyReviewItem: React.FC<MyReviewItemProps> = ({
 
       if (response.data.isSuccess) {
         setOpenModal(false);
-        setReviews((prev) =>
-          prev.filter((review) => review.reviewId !== reviewId),
-        );
         refreshReviews();
       } else {
         alert('리뷰 삭제 실패: ' + response.data.message);
@@ -74,15 +71,15 @@ const MyReviewItem: React.FC<MyReviewItemProps> = ({
       <div className="flex flex-col gap-[12px]">
         {/* 가맹점 이름 + 작성 날짜 + 삭제 버튼 */}
         <div className="flex justify-between items-center grow shrink-0 basis-0">
-          <div className="font-pretendard flex gap-[8px]">
+          <div className="flex items-center gap-[8px]">
             <span
-              className="font-meidum text-title-sb-button cursor-pointer"
+              className="font-pretendard font-medium text-title-sb-button cursor-pointer"
               onClick={() => navigate(`/store/${storeId}`)}
             >
               {storeName}
             </span>
             <img src={chevronIcon} />
-            <span className="font-normal text-[12px] leading-[18px] tracking-[0.012px] text-[#919191]">
+            <span className="font-pretendard font-normal text-[12px] leading-[18px] tracking-[0.012px] text-[#919191]">
               {date}
             </span>
           </div>
@@ -127,7 +124,9 @@ const MyReviewItem: React.FC<MyReviewItemProps> = ({
         {/* 리뷰 텍스트 + 이미지 */}
         {(content || imageUrl) && (
           <div className="flex gap-auto justify-between">
-            <p className={`font-pretendard text-body-md-title font-normal text-[#616161] ${imageUrl ? 'w-[221px]' : ''}`}>
+            <p
+              className={`font-pretendard text-body-md-title font-normal text-[#616161] ${imageUrl ? 'w-[221px]' : ''}`}
+            >
               {content || ''}
             </p>
             {imageUrl && (
@@ -150,8 +149,6 @@ const MyReviewItem: React.FC<MyReviewItemProps> = ({
         onConfirm={async () => {
           handleDelete();
           setOpenModal(false);
-          setTimeout(() => {
-          }, 1500);
         }}
         onCancel={() => setOpenModal(false)}
       />
