@@ -1,8 +1,7 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useEffect, useState, useCallback } from 'react';
 import axiosInstance from '@/api/axiosInstance';
 import TopBar from '@/components/common/TopBar';
-import MoreIcon from '@/assets/svgs/common/more-icon.svg';
 import ProfileImg from '@/assets/svgs/common/profile-img.svg';
 import ShareIcon from '@/assets/icons/system/share.svg';
 import MainTag from '@/components/StoreReview/MainTag';
@@ -13,6 +12,8 @@ import EditOrDeleteBottomSheet from '@/components/Community/EditOrDeleteBottomSh
 import { useLoginStatus } from '@/hooks/useLoginStatus';
 import CommentItem from '@/components/Community/CommentItem';
 import CommentInput from '@/components/Community/CommentInput';
+import ReportButton from '@/components/Community/ReportButton';
+import EditOrDeleteButton from '@/components/Community/EditOrDeleteButton';
 
 interface Comment {
   commentId: number;
@@ -48,14 +49,13 @@ const CommunityPostDetailPage = () => {
   const { postId } = useParams();
   const [post, setPost] = useState<PostDetail | null>(null);
   const [isLoginBottomSheetOpen, setIsLoginBottomSheetOpen] = useState(false);
-  const [isEDBottomSheetOpen, setIsEDBottomSheetOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [isReplying, setIsReplying] = useState(false);
+  const [recentCommentId, setRecentCommentId] = useState<number | null>(null);
 
   const { share } = useShare();
   const { isLoggedIn } = useLoginStatus();
-  const navigate = useNavigate();
   const token = localStorage.getItem('accessToken');
 
   //게시글 조회
@@ -110,30 +110,6 @@ const CommunityPostDetailPage = () => {
 
   //더보기 바텀시트
 
-  const handleEDClick = () => {
-    setIsEDBottomSheetOpen(true);
-  };
-
-  //게시글 수정하기
-  const handleEdit = () => {
-    // 실제 API 명세서나오면 수정예정
-    console.log('수정 페이지로 이동!');
-    // navigate(`/community/post/${postId}/edit`);
-  };
-
-  //게시글 삭제하기
-  const handleDelete = async () => {
-    if (!postId) return;
-    try {
-      await axiosInstance.delete(`/api/v1/community/post/${postId}`); //실제 API 명세서 나오면 수정 예정
-      alert('삭제되었습니다!');
-      navigate('/community');
-    } catch (err) {
-      console.error('삭제 실패:', err);
-      alert('삭제에 실패했습니다.');
-    }
-  };
-
   //댓글 전송
   const handleCommentSubmit = async (postId: number, content: string) => {
     if (!content.trim()) {
@@ -141,7 +117,7 @@ const CommunityPostDetailPage = () => {
     }
 
     try {
-      await axiosInstance.post(
+      const response = await axiosInstance.post(
         `/api/v1/community/post/${postId}/comment`,
         { content },
         {
@@ -151,7 +127,13 @@ const CommunityPostDetailPage = () => {
         },
       );
 
+      const newCommentId = response.data.results?.id;
+      console.log('✅ 댓글 등록 응답:', response.data);
+
+      console.log('✅ 새 댓글 ID:', newCommentId);
+      setRecentCommentId(newCommentId);
       await fetchPost();
+      return newCommentId;
     } catch (error) {
       console.error('댓글 작성 실패:', error);
       alert('댓글 등록 중 오류가 발생했습니다.');
@@ -171,12 +153,7 @@ const CommunityPostDetailPage = () => {
               {/*{post.isMyCommunityPost && (
                 작성 부분도 구현 완료되면 더보기버튼 코드 여기에 넣을 예정
               )}*/}
-              <img
-                src={MoreIcon}
-                alt="더보기 버튼"
-                className="w-[3px] h-[14.25px] cursor-pointer"
-                onClick={handleEDClick}
-              />
+              <EditOrDeleteButton />
             </div>
             <div className="flex justify-between items-center">
               <div className="flex gap-[8px] items-center">
@@ -230,10 +207,14 @@ const CommunityPostDetailPage = () => {
             {likeCount}
           </div>
           {!post.isMyCommunityPost && (
-            <div className="flex gap-[4px] items-center text-body-md-description font-regular">
-              <Icon name="report" className="w-[16px] h-[14px]" />
-              신고하기
-            </div> //추후 서버 연동 예정
+            <ReportButton
+              type="post"
+              id={postId ? Number(postId) : 0}
+              info={{
+                nickname: post.nickname ?? '익명',
+                content: post.content,
+              }}
+            />
           )}
         </div>
       </div>
@@ -241,12 +222,6 @@ const CommunityPostDetailPage = () => {
       <LoginRequiredBottomSheet
         isOpen={isLoginBottomSheetOpen}
         onClose={() => setIsLoginBottomSheetOpen(false)}
-      />
-      <EditOrDeleteBottomSheet
-        isOpen={isEDBottomSheetOpen}
-        onClose={() => setIsEDBottomSheetOpen(false)}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
       />
 
       {/*댓글*/}
@@ -259,15 +234,15 @@ const CommunityPostDetailPage = () => {
       {post.commentListResponse.length > 0 ? (
         <div className="flex flex-col">
           {post.commentListResponse.map((comment, index) => (
-            <div
-              key={comment.commentId}
-              className={`${index === 0 ? '' : 'pt-[12px] '}`}
-            >
+            <div key={comment.commentId}>
               <CommentItem
                 data={comment}
                 postId={Number(postId)}
                 onReload={fetchPost}
                 setIsReplying={setIsReplying}
+                setRecentCommentId={setRecentCommentId}
+                recentCommentId={recentCommentId}
+                isFirst={index === 0}
               />
             </div>
           ))}

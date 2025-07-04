@@ -6,6 +6,7 @@ import LoginRequiredBottomSheet from '@/components/common/LoginRequiredBottomShe
 interface CommentInputProps {
   onSubmit: (content: string) => void;
   placeholder?: string;
+  setRecentCommentId?: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
 const MAX_LENGTH = 4000;
@@ -13,6 +14,7 @@ const MAX_LENGTH = 4000;
 const CommentInput: React.FC<CommentInputProps> = ({
   onSubmit,
   placeholder,
+  setRecentCommentId,
 }) => {
   const { isLoggedIn } = useLoginStatus(); // 로그인 상태
   const [content, setContent] = useState('');
@@ -24,10 +26,21 @@ const CommentInput: React.FC<CommentInputProps> = ({
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (content.trim()) {
-      onSubmit(content);
-      setContent('');
+      try {
+        const newCommentId = await onSubmit(content); // ✅ 상위에서 댓글 등록 처리하고 commentId 반환
+        console.log('✅ onSubmit 결과 commentId:', newCommentId);
+
+        if (setRecentCommentId && typeof newCommentId === 'number') {
+          console.log('✅ setRecentCommentId 호출 전:', newCommentId);
+          setRecentCommentId(newCommentId); // ✅ 댓글 ID 저장
+        }
+
+        setContent('');
+      } catch (err) {
+        console.error('댓글 등록 중 오류:', err);
+      }
     }
   };
 

@@ -7,6 +7,8 @@ import axiosInstance from '@/api/axiosInstance';
 import CommentInput from '@/components/Community/CommentInput';
 import ReplyItem from '@/components/Community/ReplyItem';
 import { createPortal } from 'react-dom';
+import CommunityReportButton from '@/components/Community/ReportButton';
+import EditOrDeleteButton from '@/components/Community/EditOrDeleteButton';
 
 export interface CommentData {
   commentId: number;
@@ -27,6 +29,9 @@ interface CommentItemProps {
   isReply?: boolean;
   onReload?: () => void;
   setIsReplying?: (value: boolean) => void; //답글 작성 중에는 댓글창 없애려고
+  setRecentCommentId?: React.Dispatch<React.SetStateAction<number | null>>;
+  recentCommentId?: number | null;
+  isFirst?: boolean;
 }
 
 const CommentItem: React.FC<CommentItemProps> = ({
@@ -35,6 +40,9 @@ const CommentItem: React.FC<CommentItemProps> = ({
   onReload,
   postId,
   setIsReplying,
+  recentCommentId,
+  setRecentCommentId,
+  isFirst,
 }) => {
   const {
     commentId,
@@ -58,6 +66,9 @@ const CommentItem: React.FC<CommentItemProps> = ({
   const [replyTargetNickname, setReplyTargetNickname] = useState<string | null>(
     null,
   );
+
+  const isNew = recentCommentId === commentId;
+
   //좋아요
   const handleLikeClick = async () => {
     if (!isLoggedIn) {
@@ -145,9 +156,13 @@ const CommentItem: React.FC<CommentItemProps> = ({
       );
 
       if (response.data.isSuccess) {
+        const newCommentId = response.data.results.id;
+        console.log('답글Id', newCommentId);
+        setRecentCommentId?.(newCommentId);
         setIsReplyInputOpen(false);
 
         onReload?.(); // 상위에서 댓글 다시 불러오게 하기
+        return newCommentId; // 이걸로 newCommentId 지정
       } else {
         console.error('대댓글 등록 실패:', response.data.message);
       }
@@ -159,7 +174,11 @@ const CommentItem: React.FC<CommentItemProps> = ({
   return (
     <div>
       <div
-        className={`${isReply ? 'pl-0 pr-[20px] border-none' : 'px-[20px]'} pb-[12px] border-b-[1.5px] border-[#E6E6E6]`}
+        className={`
+    ${isReply ? 'pl-0 pr-[20px] border-none' : `px-[20px] ${isFirst ? 'pt-0' : 'pt-[12px]'}`}
+    pb-[12px] border-b-[1.5px] border-[#E6E6E6]
+    ${isNew ? 'bg-[#F4F6F8]' : ''}
+  `}
       >
         {/* 상단: 프로필 + 닉네임/작성자/시간 + more 아이콘 */}
         <div className="flex justify-between items-center">
@@ -188,14 +207,13 @@ const CommentItem: React.FC<CommentItemProps> = ({
           {/* 오른쪽: 더보기/신고하기 아이콘 */}
 
           {isMyComment ? (
-            <div className="cursor-pointer">
-              <Icon name="edit-or-delete" />
-            </div>
+            <EditOrDeleteButton />
           ) : (
-            <div className="flex gap-[4px] font-regular text-body-md-description cursor-pointer text-[#919191]">
-              <Icon name="report" className="w-[16px] h-[14px]" />
-              신고하기
-            </div>
+            <CommunityReportButton
+              type="comment"
+              id={commentId}
+              info={{ nickname: nickname ?? '익명', content }}
+            />
           )}
         </div>
         <div className="text-[#616161] font-regular text-body-md-title pl-[48px]">
@@ -234,13 +252,14 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
       {/* 대댓글 렌더링 */}
       {!isReply && replyListResponse?.length > 0 && (
-        <div className="mt-[12px] flex flex-col gap-[12px] ">
+        <div className="flex flex-col gap-[12px] ">
           {replyListResponse.map((reply) => (
             <ReplyItem
               key={reply.commentId}
               data={reply}
               postId={postId}
               onReload={onReload}
+              isNew={recentCommentId === reply.commentId}
             />
           ))}
         </div>
@@ -266,6 +285,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
               <CommentInput
                 onSubmit={handleReplySubmit}
                 placeholder="답글을 남겨보세요"
+                setRecentCommentId={setRecentCommentId}
               />
             </div>
           </div>,
