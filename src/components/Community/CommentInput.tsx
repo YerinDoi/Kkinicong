@@ -37,7 +37,7 @@ const CommentInput: React.FC<CommentInputProps> = ({
   };
 
   return (
-    <div className="relative flex h-[50px] items-center border border-[#C3C3C3] rounded-[12px] p-[16px] text-[#919191] font-regular text-[12px]">
+    <div className="relative flex items-center mb-[12px] px-[16px] py-[10px] border border-[#C3C3C3] rounded-[12px] text-[#919191] text-[12px]">
       <textarea
         value={content}
         onChange={handleInputChange}
@@ -47,7 +47,7 @@ const CommentInput: React.FC<CommentInputProps> = ({
         }
         spellCheck={false}
         rows={1}
-        className="flex-1 h-full resize-none scrollbar-hide border-none outline-none bg-transparent text-black placeholder:text-[#C3C3C3]"
+        className="flex-1 resize-none max-h-[80px] border-none outline-none bg-transparent text-black placeholder:text-[#C3C3C3]"
       />
 
       {!isLoggedIn && (

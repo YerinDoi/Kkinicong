@@ -6,6 +6,7 @@ import LoginRequiredBottomSheet from '@/components/common/LoginRequiredBottomShe
 import axiosInstance from '@/api/axiosInstance';
 import CommentInput from '@/components/Community/CommentInput';
 import ReplyItem from '@/components/Community/ReplyItem';
+import { createPortal } from 'react-dom';
 
 export interface CommentData {
   commentId: number;
@@ -54,7 +55,9 @@ const CommentItem: React.FC<CommentItemProps> = ({
   const token = localStorage.getItem('accessToken');
   const [isReplyInputOpen, setIsReplyInputOpen] = useState(false);
   const replyInputRef = useRef<HTMLInputElement>(null);
-
+  const [replyTargetNickname, setReplyTargetNickname] = useState<string | null>(
+    null,
+  );
   //좋아요
   const handleLikeClick = async () => {
     if (!isLoggedIn) {
@@ -87,6 +90,18 @@ const CommentItem: React.FC<CommentItemProps> = ({
     }
   };
 
+  //답글시 키보드가 올라올 때 스크롤해 보이게하기
+  useEffect(() => {
+    const input = document.querySelector('input');
+    const onFocus = () => {
+      setTimeout(() => {
+        window.scrollTo(0, document.body.scrollHeight); // 키보드 위로 보이게
+      }, 100);
+    };
+    input?.addEventListener('focus', onFocus);
+    return () => input?.removeEventListener('focus', onFocus);
+  }, []);
+
   //답글달기 버튼 클릭
 
   const handleReplyClick = () => {
@@ -94,8 +109,17 @@ const CommentItem: React.FC<CommentItemProps> = ({
       setIsLoginBottomSheetOpen(true);
       return;
     }
+    const fallback = nickname?.trim() ? nickname : '익명';
+
+    setReplyTargetNickname(fallback);
     setIsReplying?.(true);
     setIsReplyInputOpen(true);
+  };
+
+  const handlecloseReplyInput = () => {
+    setIsReplying?.(false);
+    setIsReplyInputOpen(false);
+    setReplyTargetNickname(null);
   };
 
   useEffect(() => {
@@ -135,7 +159,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
   return (
     <div>
       <div
-        className={`${isReply ? 'pl-0 pr-[20px]' : 'px-[20px]'} pb-[12px] border-b-[1.5px] border-[#E6E6E6]`}
+        className={`${isReply ? 'pl-0 pr-[20px] border-none' : 'px-[20px]'} pb-[12px] border-b-[1.5px] border-[#E6E6E6]`}
       >
         {/* 상단: 프로필 + 닉네임/작성자/시간 + more 아이콘 */}
         <div className="flex justify-between items-center">
@@ -179,12 +203,14 @@ const CommentItem: React.FC<CommentItemProps> = ({
         </div>
 
         {/* 하단: 답글쓰기 + 좋아요 */}
-        <div className="flex items-center mt-[12px] pl-[48px] justify-between">
+        <div
+          className={`${isReply ? 'justify-end' : 'justify-between'} flex items-center mt-[12px] pl-[48px]`}
+        >
           <div
             onClick={handleReplyClick}
             className={
               isReply
-                ? 'hidden'
+                ? 'hidden '
                 : 'cursor-pointer text-black font-regular text-body-md-title '
             }
           >
@@ -220,12 +246,31 @@ const CommentItem: React.FC<CommentItemProps> = ({
         </div>
       )}
 
-      {isReplyInputOpen && (
-        <CommentInput
-          onSubmit={handleReplySubmit}
-          placeholder="답글을 남겨보세요"
-        />
-      )}
+      {/*답글*/}
+      {isReplyInputOpen &&
+        createPortal(
+          <div className="fixed bottom-0 w-full z-50 bg-white border-t shadow-lg">
+            <div className="pl-[20px] pr-[22px] py-[9px] bg-[#F4F6F8] font-regular text-body-md-description text-[#919191]">
+              <span className="text-[#616161]">
+                {replyTargetNickname || '[없음]'}
+              </span>
+              님에게 답글 남기는 중
+              <button
+                onClick={handlecloseReplyInput}
+                className="float-right text-[#616161]"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="px-[20px] mt-[12px]">
+              <CommentInput
+                onSubmit={handleReplySubmit}
+                placeholder="답글을 남겨보세요"
+              />
+            </div>
+          </div>,
+          document.body, // Portal로 body에 직접 렌더링
+        )}
 
       <LoginRequiredBottomSheet
         isOpen={isLoginBottomSheetOpen}
