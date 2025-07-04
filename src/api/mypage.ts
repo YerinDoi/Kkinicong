@@ -20,3 +20,12 @@ export const getMyReviews = (page: number, size: number) =>
       Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
     },
   });
+
+// 좋아요 한 글 조회
+export const getMyLikes = (page: number, size: number) =>
+  axiosInstance.get('/api/v1/mypage/like', {
+    params: { page, size },
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+    },
+  });
