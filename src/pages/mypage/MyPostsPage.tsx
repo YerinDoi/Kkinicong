@@ -1,12 +1,20 @@
 import TopBar from '@/components/common/TopBar';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import TabBar from '@/components/Mypage/TabBar';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import ChipGroup from '@/components/Mypage/ChipGroup';
 import PostItem from '@/components/Community/PostItem';
 import MyConveniencePostItem from '@/components/Mypage/MyConveniencePostItem';
-import { getMyCommunityPosts, getMyConveniencePosts } from '@/api/mypage';
+import {
+  getMyCommunityPosts,
+  getMyConveniencePosts,
+  getMyComments,
+} from '@/api/mypage';
 import EmptyView from '@/components/Mypage/EmptyView';
+import useInfiniteScroll from '@/hooks/useInfiniteScroll';
+import MyCommentPostList from '@/components/Mypage/MyCommentPostList';
+
+const PAGE_SIZE = 10;
 
 const MyPostsPage = () => {
   const navigate = useNavigate();
@@ -18,6 +26,14 @@ const MyPostsPage = () => {
   const [communityPosts, setCommunityPosts] = useState<any[]>([]);
   const [conveniencePosts, setConveniencePosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // 내가 쓴 댓글 상태
+  const [commentPosts, setCommentPosts] = useState<any[]>([]);
+  const [commentPage, setCommentPage] = useState(0);
+  const [hasNextCommentPage, setHasNextCommentPage] = useState(true);
+  const [commentLoading, setCommentLoading] = useState(false);
+  const isLoadingCommentRef = useRef(false);
+  const hasNextCommentPageRef = useRef(true);
 
   // 탭/칩 변경 핸들러
   const handleTabChange = (newTab: string) => {
@@ -41,19 +57,73 @@ const MyPostsPage = () => {
     }
   }, [tab, chip]);
 
-  return (
-    <div className="flex flex-col w-full h-full pt-[11px] gap-[16px]">
-      <TopBar
-        title="내가 쓴 글"
-        rightType="none"
-        onBack={() => navigate('/mypage')}
-      />
+  // 내가 쓴 댓글 무한스크롤 데이터 패칭
+  const fetchComments = useCallback(async () => {
+    if (isLoadingCommentRef.current || !hasNextCommentPageRef.current) return;
+    setCommentLoading(true);
+    isLoadingCommentRef.current = true;
+    try {
+      const res = await getMyComments(commentPage, PAGE_SIZE);
+      const newPosts = res.data.results.content;
+      setCommentPosts((prev) => {
+        const all = [...prev, ...newPosts];
+        return all.filter(
+          (post, idx, arr) =>
+            arr.findIndex((p) => p.postId === post.postId) === idx,
+        );
+      });
+      const isLast =
+        res.data.results.currentPage + 1 >= res.data.results.totalPage;
+      setHasNextCommentPage(!isLast);
+      hasNextCommentPageRef.current = !isLast;
+      setCommentPage((prev) => prev + 1);
+    } finally {
+      setCommentLoading(false);
+      isLoadingCommentRef.current = false;
+    }
+  }, [commentPage]);
 
-      <TabBar
-        value={tab}
-        onChange={handleTabChange}
-        tabs={['게시글', '댓글']}
-      />
+  // 댓글 탭 첫 로딩
+  useEffect(() => {
+    if (tab !== '댓글') return;
+    setCommentPosts([]);
+    setCommentPage(0);
+    setHasNextCommentPage(true);
+    hasNextCommentPageRef.current = true;
+    isLoadingCommentRef.current = false;
+    setCommentLoading(true);
+    getMyComments(0, PAGE_SIZE).then((res) => {
+      setCommentPosts(res.data.results.content);
+      setCommentPage(1);
+      const isLast = 1 >= res.data.results.totalPage;
+      setHasNextCommentPage(!isLast);
+      hasNextCommentPageRef.current = !isLast;
+      setCommentLoading(false);
+    });
+  }, [tab]);
+
+  // 무한스크롤 훅 (댓글)
+  const { loaderRef: commentLoaderRef } = useInfiniteScroll({
+    onIntersect: fetchComments,
+    isLoadingRef: isLoadingCommentRef,
+    hasNextPageRef: hasNextCommentPageRef,
+  });
+
+  return (
+    <div className="flex flex-col w-full h-full pt-[11px]">
+      <div className="flex flex-col gap-[16px]">
+        <TopBar
+          title="내가 쓴 글"
+          rightType="none"
+          onBack={() => navigate('/mypage')}
+        />
+
+        <TabBar
+          value={tab}
+          onChange={handleTabChange}
+          tabs={['게시글', '댓글']}
+        />
+      </div>
 
       {tab === '게시글' && (
         <ChipGroup
@@ -86,7 +156,15 @@ const MyPostsPage = () => {
       )}
 
       {/* 댓글 탭 */}
-      {tab === '댓글'}
+      {tab === '댓글' && (
+        <MyCommentPostList
+          commentPosts={commentPosts}
+          hasNextPage={hasNextCommentPage}
+          loaderRef={commentLoaderRef}
+          navigate={navigate}
+          loading={commentLoading}
+        />
+      )}
     </div>
   );
 };
