@@ -20,3 +20,11 @@ export const getMyReviews = (page: number, size: number) =>
       Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
     },
   });
+
+// 찜한 가게 조회
+export const getMyScrapStores = () =>
+  axiosInstance.get('/api/v1/mypage/scrap', {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+    },
+  });
