@@ -42,10 +42,10 @@ const EmptyView = ({
     )}
     {actionText && actionType === 'button' && (
       <button
-        className="px-[20px] py-[12px] gap-[8px] bg-[#65CE58] font-pretendard text-white rounded-[24px] text-[16px] font-medium leading-normal tracking-[0.016px]"
+        className="flex items-center justify-center mt-[12px] px-[20px] py-[12px] gap-[8px] bg-[#65CE58] font-pretendard text-white rounded-[24px] text-[16px] font-medium leading-normal tracking-[0.016px]"
         onClick={onActionClick}
       >
-        <img src={plusIcon} className="w-[14px] h-[14px]" />
+        <img src={plusIcon} />
         {actionText}
       </button>
     )}
