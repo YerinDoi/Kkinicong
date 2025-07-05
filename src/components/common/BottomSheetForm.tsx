@@ -15,6 +15,14 @@ interface BottomSheetFormProps {
     userName: string;
     content: string;
   };
+  commentInfo?: {
+    nickname: string;
+    content: string;
+  };
+  postInfo?: {
+    nickname: string;
+    content: string;
+  };
 
   onSubmit: (reason: string, description: string) => void;
   onCancel: () => void;
@@ -29,6 +37,8 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
   onCancel,
   storeInfo,
   reviewInfo,
+  commentInfo,
+  postInfo,
 }) => {
   const [selected, setSelected] = useState<string | null>(null);
   const [text, setText] = useState('');
@@ -55,7 +65,9 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
                 {storeInfo.category}
               </div>
             )}
-            <div className="text-title-sb-button font-bold">{storeInfo.name}</div>
+            <div className="text-title-sb-button font-bold">
+              {storeInfo.name}
+            </div>
           </div>
 
           {storeInfo.mapComponent && (
@@ -81,9 +93,47 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
         </div>
       )}
 
+      {/*댓글,답글 신고*/}
+      {commentInfo && (
+        <div className="px-[24px] flex flex-col gap-[12px]">
+          <div className="flex gap-[4px] items-center">
+            <img src={ProfileImg} className="w-[36.3px] h-[36.3px] " />
+            <span className="text-body-md-title font-regular leading-[24px]">
+              {commentInfo.nickname}
+            </span>
+          </div>
+
+          <span className="text-body-md-title mb-[13.7px] font-regular leading-[24px] text-[#616161]">
+            {commentInfo.content.length > 30
+              ? commentInfo.content.slice(0, 30) + '...'
+              : commentInfo.content}
+          </span>
+        </div>
+      )}
+
+      {/*게시글 신고*/}
+      {postInfo && (
+        <div className="px-[24px] flex flex-col gap-[12px]">
+          <div className="flex gap-[4px] items-center">
+            <img src={ProfileImg} className="w-[36.3px] h-[36.3px] " />
+            <span className="text-body-md-title font-regular leading-[24px]">
+              {postInfo.nickname}
+            </span>
+          </div>
+
+          <span className="text-body-md-title mb-[13.7px] font-regular leading-[24px] text-[#616161]">
+            {postInfo.content.length > 30
+              ? postInfo.content.slice(0, 30) + '...'
+              : postInfo.content}
+          </span>
+        </div>
+      )}
+
       {/*공통*/}
       <div className="flex flex-col pt-[12px] gap-[8px] px-[39px] border-t-[2px] border-[#F4F6F8]">
-        <p className="text-title-sb-button font-semibold leading-[20px]">{question}</p>
+        <p className="text-title-sb-button font-semibold leading-[20px]">
+          {question}
+        </p>
         <div className="py-[8px] flex flex-col gap-[4px]">
           {radioOptions.map((option) => (
             <label

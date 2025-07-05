@@ -24,6 +24,7 @@ import FeedbackPage from '@/pages/mypage/FeedbackPage';
 import MyPostsPage from '@/pages/mypage/MyPostsPage';
 import MyReviewsPage from '@/pages/mypage/MyReviewsPage';
 import MyScrapPage from '@/pages/mypage/MyScrapPage';
+import PostDetailPage from '@/pages/community/CommunityPostDetailPage';
 
 const Router = () => {
   return (
@@ -69,6 +70,7 @@ const Router = () => {
       />
       <Route path="/store-review/:storeId" element={<StoreReviewPage />} />
       <Route path="/store/:storeId" element={<StoreDetailPage />} />
+
 {/*편의점*/}
       <Route path="/convenience" element={<ConvenienceStorePage />} />
       <Route path="/convenience/add" element={<AddConveniencePage />} />
@@ -81,10 +83,15 @@ const Router = () => {
         path="/convenience/name-recommendation"
         element={<NameRecommendationPage />}
       />
+      
 {/*커뮤니티*/}
       <Route
         path="/community"
         element={<CommunityPage/>}
+      />
+      <Route
+        path="/community/post/:postId"
+        element={<PostDetailPage/>}
       />
     </Routes>
   );
