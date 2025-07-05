@@ -24,6 +24,9 @@ import FeedbackPage from '@/pages/mypage/FeedbackPage';
 import MyPostsPage from '@/pages/mypage/MyPostsPage';
 import MyReviewsPage from '@/pages/mypage/MyReviewsPage';
 import MyLikesPage from '@/pages/mypage/MyLikesPage';
+import MyScrapPage from '@/pages/mypage/MyScrapPage';
+import PostDetailPage from '@/pages/community/CommunityPostDetailPage';
+
 const Router = () => {
   return (
     <Routes>
@@ -48,6 +51,7 @@ const Router = () => {
       <Route path="/my-posts" element={<MyPostsPage />} />
       <Route path="/my-reviews" element={<MyReviewsPage />} />
       <Route path="/my-likes" element={<MyLikesPage />} />
+      <Route path="/my-scrap" element={<MyScrapPage />} />
 
       {/*가맹점 페이지*/}
       <Route
@@ -68,6 +72,7 @@ const Router = () => {
       />
       <Route path="/store-review/:storeId" element={<StoreReviewPage />} />
       <Route path="/store/:storeId" element={<StoreDetailPage />} />
+
 {/*편의점*/}
       <Route path="/convenience" element={<ConvenienceStorePage />} />
       <Route path="/convenience/add" element={<AddConveniencePage />} />
@@ -80,10 +85,15 @@ const Router = () => {
         path="/convenience/name-recommendation"
         element={<NameRecommendationPage />}
       />
+      
 {/*커뮤니티*/}
       <Route
         path="/community"
         element={<CommunityPage/>}
+      />
+      <Route
+        path="/community/post/:postId"
+        element={<PostDetailPage/>}
       />
     </Routes>
   );

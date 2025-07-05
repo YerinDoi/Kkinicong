@@ -54,7 +54,7 @@ const MyPage = () => {
       <div className="flex flex-col px-[20px] w-full gap-[20px]">
         <FavoriteStoreCard
           count={0}
-          onClick={() => handleProtectedRoute('/my-favorite-stores')}
+          onClick={() => handleProtectedRoute('/my-scrap')}
         />
         <div className="flex flex-col gap-[8px]">
           <MenuListBtn
