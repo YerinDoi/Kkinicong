@@ -23,6 +23,7 @@ import CommunityPage from '@/pages/community/CommunityPage';
 import FeedbackPage from '@/pages/mypage/FeedbackPage';
 import MyPostsPage from '@/pages/mypage/MyPostsPage';
 import MyReviewsPage from '@/pages/mypage/MyReviewsPage';
+import MyScrapPage from '@/pages/mypage/MyScrapPage';
 
 const Router = () => {
   return (
@@ -47,6 +48,7 @@ const Router = () => {
       <Route path="/feedback" element={<FeedbackPage />} />
       <Route path="/my-posts" element={<MyPostsPage />} />
       <Route path="/my-reviews" element={<MyReviewsPage />} />
+      <Route path="/my-scrap" element={<MyScrapPage />} />
 
       {/*가맹점 페이지*/}
       <Route
