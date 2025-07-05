@@ -31,7 +31,7 @@ interface CommentItemProps {
   setIsReplying?: (value: boolean) => void; //답글 작성 중에는 댓글창 없애려고
   setRecentCommentId?: React.Dispatch<React.SetStateAction<number | null>>;
   recentCommentId?: number | null;
-  isFirst?: boolean;
+  
 }
 
 const CommentItem: React.FC<CommentItemProps> = ({
@@ -42,7 +42,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
   setIsReplying,
   recentCommentId,
   setRecentCommentId,
-  isFirst,
+
 }) => {
   const {
     commentId,
@@ -175,8 +175,8 @@ const CommentItem: React.FC<CommentItemProps> = ({
     <div>
       <div
         className={`
-    ${isReply ? 'pl-0 pr-[20px] border-none' : `px-[20px] ${isFirst ? 'pt-0' : 'pt-[12px]'}`}
-    pb-[12px] border-b-[1.5px] border-[#E6E6E6]
+    ${isReply ? 'pl-0 pr-[20px] border-none' : `px-[20px]`}
+    py-[12px] border-b-[1.5px] border-[#E6E6E6]
     ${isNew ? 'bg-[#F4F6F8]' : ''}
   `}
       >
@@ -252,7 +252,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
       {/* 대댓글 렌더링 */}
       {!isReply && replyListResponse?.length > 0 && (
-        <div className="flex flex-col gap-[12px] ">
+        <div className="flex flex-col">
           {replyListResponse.map((reply) => (
             <ReplyItem
               key={reply.commentId}

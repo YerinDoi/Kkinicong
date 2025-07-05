@@ -128,9 +128,6 @@ const CommunityPostDetailPage = () => {
       );
 
       const newCommentId = response.data.results?.id;
-      console.log('✅ 댓글 등록 응답:', response.data);
-
-      console.log('✅ 새 댓글 ID:', newCommentId);
       setRecentCommentId(newCommentId);
       await fetchPost();
       return newCommentId;
@@ -182,7 +179,7 @@ const CommunityPostDetailPage = () => {
           <div className="mt-[20px] flex flex-col gap-[16px]">
             <MainTag rounded="rounded-[8px]" text={post.category} />
             {Array.isArray(post.imageUrls) && post.imageUrls.length > 0 && (
-              <div className="flex flex-col gap-[12px]">
+              <div className="flex flex-col ">
                 {post.imageUrls.map((url, idx) => (
                   <img
                     key={idx}
@@ -242,7 +239,7 @@ const CommunityPostDetailPage = () => {
                 setIsReplying={setIsReplying}
                 setRecentCommentId={setRecentCommentId}
                 recentCommentId={recentCommentId}
-                isFirst={index === 0}
+           
               />
             </div>
           ))}
