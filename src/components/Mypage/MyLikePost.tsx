@@ -17,13 +17,17 @@ interface LikePost {
 
 interface MyLikePostProps {
   like: LikePost;
+  noBorder?: boolean;
 }
 
-const MyLikePost: React.FC<MyLikePostProps> = ({ like }) => {
+const MyLikePost: React.FC<MyLikePostProps> = ({ like, noBorder }) => {
   const navigate = useNavigate();
   return (
     <div
-      className="flex flex-col gap-[12px] px-[20px] py-[19px] self-stretch border-b-[1.5px] border-[#E6E6E6] cursor-pointer"
+      className={
+        'flex flex-col gap-[12px] px-[20px] py-[19px] self-stretch cursor-pointer' +
+        (noBorder ? '' : ' border-b-[1.5px] border-[#E6E6E6]')
+      }
       onClick={() => navigate(`/community/post/${like.communityPostId}`)}
     >
       <div className="flex flex-col gap-[8px]">

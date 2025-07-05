@@ -14,7 +14,7 @@ const MyReviewsPage = () => {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [hasNextPage, setHasNextPage] = useState(true);
-
+  const [totalCount, setTotalCount] = useState(0);
   // ref로도 관리 (useInfiniteScroll 훅 요구)
   const isLoadingRef = useRef(false);
   const hasNextPageRef = useRef(true);
@@ -50,6 +50,7 @@ const MyReviewsPage = () => {
     // 첫 페이지 불러오기
     getMyReviews(0, PAGE_SIZE).then((res) => {
       setReviews(res.data.results.content);
+      setTotalCount(res.data.results.totalCount);
       setPage(1);
       const isLast = 1 >= res.data.results.totalPage;
       setHasNextPage(!isLast);
@@ -87,19 +88,19 @@ const MyReviewsPage = () => {
         rightType="none"
         onBack={() => navigate('/mypage')}
       />
-      {reviews.length === 0 ? ( // 필드 추가 확인 후 totalCount로 변경
+      {totalCount === 0 ? (
         <div className="flex flex-1 w-full h-full items-center justify-center bg-[#F4F6F8]">
           <EmptyView title={'아직 작성한 리뷰가 없어요'} />
         </div>
       ) : (
         <div className="flex flex-col gap-[12px]">
           <div className="bg-[#F3F5ED] font-pretendard text-title-sb-button text-[#616161] px-[34px] py-[8px] font-medium mt-[8px]">
-            내가 쓴 리뷰 수 {reviews.length}개
+            내가 쓴 리뷰 수 {totalCount}개
           </div>
-          <div className="flex flex-col gap-[20px]">
-            {reviews.map((review) => (
+          <div className="flex flex-col gap-[12px]">
+            {reviews.map((review, idx) => (
               <MyReviewItem
-                key={review.reviewId}
+                key={`${review.reviewId}-${idx}`}
                 storeName={review.storeName}
                 date={review.createdAt}
                 rating={review.rating}

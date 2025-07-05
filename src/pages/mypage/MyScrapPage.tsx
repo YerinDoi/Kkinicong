@@ -24,7 +24,7 @@ const MyScrapPage = () => {
   useEffect(() => {
     getMyScrapStores()
       .then((res) => {
-        const stores = res.data.results.content.map((store: any) => ({
+        const stores = (res.data?.results ?? []).map((store: any) => ({
           ...store,
           isScrapped: true,
         }));
