@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
 import { useEffect, useState, useCallback } from 'react';
 import axiosInstance from '@/api/axiosInstance';
 import TopBar from '@/components/common/TopBar';
@@ -8,7 +8,6 @@ import MainTag from '@/components/StoreReview/MainTag';
 import LoginRequiredBottomSheet from '@/components/common/LoginRequiredBottomSheet';
 import Icon from '@/assets/icons';
 import { useShare } from '@/hooks/useShare';
-import EditOrDeleteBottomSheet from '@/components/Community/EditOrDeleteBottomSheet';
 import { useLoginStatus } from '@/hooks/useLoginStatus';
 import CommentItem from '@/components/Community/CommentItem';
 import CommentInput from '@/components/Community/CommentInput';
@@ -53,6 +52,7 @@ const CommunityPostDetailPage = () => {
   const [likeCount, setLikeCount] = useState(0);
   const [isReplying, setIsReplying] = useState(false);
   const [recentCommentId, setRecentCommentId] = useState<number | null>(null);
+  const navigate = useNavigate();
 
   const { share } = useShare();
   const { isLoggedIn } = useLoginStatus();
@@ -108,7 +108,23 @@ const CommunityPostDetailPage = () => {
     }
   };
 
-  //더보기 바텀시트
+  //게시글 수정
+  const handleEdit = () => {
+    navigate(`/community/post/${postId}/edit`); //수정 가능
+  };
+
+  //게시글 삭제
+  const handleDelete = async () => {
+    try {
+      await axiosInstance.delete(`/api/v1/community/post/${postId}`);
+      alert('삭제되었습니다!');
+      navigate('/community');
+    } catch (err) {
+      console.error('삭제 실패:', err);
+      alert('삭제에 실패했습니다.');
+    }
+  };
+
 
   //댓글 전송
   const handleCommentSubmit = async (postId: number, content: string) => {
@@ -150,7 +166,10 @@ const CommunityPostDetailPage = () => {
               {/*{post.isMyCommunityPost && (
                 작성 부분도 구현 완료되면 더보기버튼 코드 여기에 넣을 예정
               )}*/}
-              <EditOrDeleteButton />
+              <EditOrDeleteButton
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
             </div>
             <div className="flex justify-between items-center">
               <div className="flex gap-[8px] items-center">

@@ -9,6 +9,7 @@ import ReplyItem from '@/components/Community/ReplyItem';
 import { createPortal } from 'react-dom';
 import CommunityReportButton from '@/components/Community/ReportButton';
 import EditOrDeleteButton from '@/components/Community/EditOrDeleteButton';
+import { useNavigate } from 'react-router-dom';
 
 export interface CommentData {
   commentId: number;
@@ -19,6 +20,7 @@ export interface CommentData {
   isMyComment: boolean;
   isAuthor: boolean;
   isLiked: boolean;
+  isDeleted:boolean;
   likeCount: number;
   replyListResponse: CommentData[];
 }
@@ -53,6 +55,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
     likeCount,
     replyListResponse,
     isLiked: initialIsLiked,
+    isDeleted,
     isModified,
     isMyComment,
   } = data;
@@ -66,6 +69,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
   const [replyTargetNickname, setReplyTargetNickname] = useState<string | null>(
     null,
   );
+  const navigate = useNavigate();
 
   const isNew = recentCommentId === commentId;
 
@@ -171,6 +175,38 @@ const CommentItem: React.FC<CommentItemProps> = ({
     }
   };
 
+  //댓글 수정
+  const handleCommentEdit = () => {
+    navigate(`/community/comment/${commentId}/edit`);
+  };
+
+  //댓글 삭제
+  const handleCommentDelete = async () => {
+  try {
+    const response = await axiosInstance.delete(
+      `/api/v1/community/comment/${commentId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.status === 200 && response.data?.isSuccess) {
+      alert('삭제되었습니다!');
+      window.location.reload(); // 강제 새로고침
+    } else {
+      console.warn('삭제 실패 응답 내용:', response.data);
+      alert('삭제에 실패했습니다.');
+    }
+  } catch (err) {
+    console.error('삭제 실패 예외:', err);
+    alert('삭제에 실패했습니다.');
+  }
+};
+
+
+
   return (
     <div>
       <div
@@ -207,7 +243,10 @@ const CommentItem: React.FC<CommentItemProps> = ({
           {/* 오른쪽: 더보기/신고하기 아이콘 */}
 
           {isMyComment ? (
-            <EditOrDeleteButton />
+            <EditOrDeleteButton
+                onEdit={handleCommentEdit}
+                onDelete={handleCommentDelete}
+              />
           ) : (
             <CommunityReportButton
               type="comment"
@@ -217,7 +256,11 @@ const CommentItem: React.FC<CommentItemProps> = ({
           )}
         </div>
         <div className="text-[#616161] font-regular text-body-md-title pl-[48px]">
-          {content}
+          {isDeleted
+          ? isReply
+            ? '삭제된 답글입니다.'
+            : '삭제된 댓글입니다.'
+          : content}
         </div>
 
         {/* 하단: 답글쓰기 + 좋아요 */}
