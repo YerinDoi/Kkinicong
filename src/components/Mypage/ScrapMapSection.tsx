@@ -4,6 +4,7 @@ import KakaoMap, {
 } from '@/components/common/KakaoMap';
 import { MapMarker, CustomOverlayMap, useMap } from 'react-kakao-maps-sdk';
 import { useEffect } from 'react';
+import React from 'react';
 
 interface ScrapMapSectionProps {
   scrapStores: {
@@ -47,7 +48,7 @@ const ScrapMapSection = ({ scrapStores, height }: ScrapMapSectionProps) => {
       >
         <FitBounds scrapStores={scrapStores} />
         {scrapStores.map((store) => (
-          <>
+          <React.Fragment key={store.id}>
             <MapMarker
               key={`marker-${store.id}`}
               position={{ lat: store.latitude, lng: store.longitude }}
@@ -93,7 +94,7 @@ const ScrapMapSection = ({ scrapStores, height }: ScrapMapSectionProps) => {
                 {store.name}
               </div>
             </CustomOverlayMap>
-          </>
+          </React.Fragment>
         ))}
       </KakaoMap>
     </div>
