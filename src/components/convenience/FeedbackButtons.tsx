@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface FeedbackButtonsProps {
   isMine: boolean;
   correctCount: number;
@@ -22,7 +20,7 @@ export default function FeedbackButtons({
           className={`flex-1 border-[1.5px] rounded-[12px] py-3 text-title-sb-button font-semibold ${
             isMine
               ? 'border-[#E0E0E0] text-[#C0C0C0] bg-[#F8F8F8] cursor-not-allowed'
-              : 'border-[#C3C3C3] text-[#616161]'
+              : 'border-[#C3C3C3] text-[#616161] hover:bg-[#F3F5ED]'
           }`}
         >
           올바른 정보예요

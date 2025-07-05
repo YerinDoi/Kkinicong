@@ -6,11 +6,12 @@ import { useLocation } from 'react-router-dom';
 import SearchInput from '@/components/common/SearchInput';
 import TopBar from '@/components/common/TopBar';
 import InfoShareCard from '@/components/convenience/InfoShareCard';
-import StoreChipCarousel from '@/components/home/ChipCarousel';
+// import StoreChipCarousel from '@/components/home/ChipCarousel';
 import ProductListSection from '../../components/convenience/ProductListSection';
 //import ButtonGroup from '../../components/convenience/ButtonGroup';
 import Check from '../../components/convenience/Check';
 import CategoryFilterSelector from '../../components/convenience/CategoryFilterSelector';
+import ButtonGroup from '@/components/convenience/ButtonGroup';
 
 const ConvenienceStorePage = () => {
   const location = useLocation();
@@ -20,6 +21,8 @@ const ConvenienceStorePage = () => {
   const [selectedBrand, setBrand] = useState(initialBrand); //  편의점 브랜드 선택
   const [onlyAvailable, setOnlyAvailable] = useState(false); // 결제 가능 제품만 보기 여부
   const [keyword, setKeyword] = useState(''); // 검색 키워드 상태
+
+  const brands = ['GS25', 'CU', '세븐일레븐', '이마트24', '미니스톱'];
 
   // pagination 기본값
   const page = 0;
@@ -61,12 +64,17 @@ const ConvenienceStorePage = () => {
 
       {/* 하단 : 필터링바, 제품 리스트 */}
       <div className="flex flex-col flex-1 bg-white">
-        <div className="flex items-center justify-between gap-2 px-4 py-3 overflow-x-auto">
+        <div className="flex items-center justify-between gap-2 px-4 py-3 overflow-x-auto scrollbar-hide">
           <CategoryFilterSelector
             selected={selectedCategory}
             onChange={setSelectedCategory}
           />
-          <StoreChipCarousel selected={selectedBrand} onSelect={setBrand} />
+          {/* <StoreChipCarousel selected={selectedBrand} onSelect={setBrand} /> */}
+          <ButtonGroup
+            options={brands}
+            selected={selectedBrand}
+            onChange={setBrand}
+          />
         </div>
 
         <Check

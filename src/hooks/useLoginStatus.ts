@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 
 export const useLoginStatus = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
 
   useEffect(() => {
     const checkLoginStatus = () => {

@@ -16,7 +16,7 @@ const CategoryFilterSelector: React.FC<Props> = ({ selected, onChange }) => {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center shrink-0 py-1 px-3 rounded-[12px] border border-[#919191] bg-[#F4F6F8] whitespace-nowrap text-font-body-md-title font-regular"
+        className="flex items-center shrink-0 py-1 px-3 rounded-[12px] border border-[#919191] bg-[#F4F6F8] whitespace-nowrap text-[16px] font-medium leading-[24px] mb-[4px]"
       >
         <img
           src={settingIcon}

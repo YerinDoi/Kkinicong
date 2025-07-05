@@ -1,3 +1,35 @@
+# name: Sync to Forked Repo & Deploy to Vercel
+
+# on:
+#   push:
+#     branches: [main]
+#   pull_request:
+#     branches: [main]
+
+# jobs:
+#   sync:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout source repo
+#         uses: actions/checkout@v3
+
+#       - name: Set Git identity
+#         run: |
+#           git config --global user.name "${{ secrets.NAME }}"
+#           git config --global user.email "${{ secrets.EMAIL }}"
+
+#       - name: Clone forked repo
+#         run: |
+#           git clone https://x-access-token:${{ secrets.ACCESS_TOKEN }}@github.com/YerinDoi/Kkinicong.git out-repo
+#           rsync -av --exclude='.git' ./ out-repo/
+
+#       - name: Commit & push
+#         run: |
+#           cd out-repo
+#           git add .
+#           git commit -m "🔄 Auto sync from org repo" || echo "No changes to commit"
+#           git push origin main
 name: Sync to Forked Repo & Deploy to Vercel
 
 on:
@@ -20,11 +52,13 @@ jobs:
           git config --global user.email "${{ secrets.EMAIL }}"
 
       - name: Clone forked repo
+        if: github.repository == 'Heroineeee/FE'
         run: |
-          git clone https://x-access-token:${{ secrets.ACCESS_TOKEN }}@github.com/YerinDoi/forked-repo-name.git out-repo
+          git clone https://x-access-token:${{ secrets.YERIN_PTA }}@github.com/YerinDoi/Kkinicong.git out-repo
           rsync -av --exclude='.git' ./ out-repo/
 
       - name: Commit & push
+        if: github.repository == 'Heroineeee/FE'
         run: |
           cd out-repo
           git add .

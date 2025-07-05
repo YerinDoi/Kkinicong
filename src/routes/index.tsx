@@ -17,7 +17,12 @@ import ConvenienceStorePage from '@/pages/convenience/ConveniencePage';
 import AddConveniencePage from '@/pages/convenience/AddConveniencePage';
 import ConvenienceDetailPage from '@/pages/convenience/ConvenienceDetailPage';
 import NameRecommendationPage from '@/pages/convenience/NameRecommendationPage';
+import AccountDeletePage from '@/pages/mypage/AccountDeletePage';
+import NicknameEditPage from '@/pages/mypage/NicknameEditPage';
 import CommunityPage from '@/pages/community/CommunityPage';
+import FeedbackPage from '@/pages/mypage/FeedbackPage';
+import MyPostsPage from '@/pages/mypage/MyPostsPage';
+import MyReviewsPage from '@/pages/mypage/MyReviewsPage';
 import PostDetailPage from '@/pages/community/CommunityPostDetailPage';
 
 const Router = () => {
@@ -38,6 +43,11 @@ const Router = () => {
       <Route path="/nicknameXXX" element={<NicknamePageXXX />} />
       <Route path="/my-neighborhood" element={<MyNeighborhoodPage />} />
       <Route path="/mypage" element={<MyPage />} />
+      <Route path="/account-delete" element={<AccountDeletePage />} />
+      <Route path="/nickname-edit" element={<NicknameEditPage />} />
+      <Route path="/feedback" element={<FeedbackPage />} />
+      <Route path="/my-posts" element={<MyPostsPage />} />
+      <Route path="/my-reviews" element={<MyReviewsPage />} />
 
       {/*가맹점 페이지*/}
       <Route

@@ -18,7 +18,7 @@ export default function ButtonGroup({
           key={option}
           onClick={() => onChange(selected === option ? '' : option)}
           className={`
-            px-4 py-1 rounded-[12px] border border-[#919191] text-[14px] font-regular 
+            px-4 py-1 rounded-[12px] border border-[#919191] text-[14px] font-regular leading-[24px] mb-[4px]
             ${selected === option ? 'bg-[#B1D960] border-[#B1D960] text-black ' : 'bg-[#F4F6F8]'}
           `}
         >
