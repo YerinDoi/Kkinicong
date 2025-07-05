@@ -175,8 +175,8 @@ const CommentItem: React.FC<CommentItemProps> = ({
     <div>
       <div
         className={`
-    ${isReply ? 'pl-0 pr-[20px] border-none' : `px-[20px]`}
-    py-[12px] border-b-[1.5px] border-[#E6E6E6]
+    ${isReply ? 'pl-0 pr-[20px] border-none pt-0' : `px-[20px] pt-[12px]`}
+    pb-[12px] border-b-[1.5px] border-[#E6E6E6]
     ${isNew ? 'bg-[#F4F6F8]' : ''}
   `}
       >

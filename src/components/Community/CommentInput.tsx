@@ -29,12 +29,12 @@ const CommentInput: React.FC<CommentInputProps> = ({
   const handleSubmit = async () => {
     if (content.trim()) {
       try {
-        const newCommentId = await onSubmit(content); // ✅ 상위에서 댓글 등록 처리하고 commentId 반환
-        console.log('✅ onSubmit 결과 commentId:', newCommentId);
+        const newCommentId = await onSubmit(content); //  상위에서 댓글 등록 처리하고 commentId 반환
+        console.log('onSubmit 결과 commentId:', newCommentId);
 
         if (setRecentCommentId && typeof newCommentId === 'number') {
-          console.log('✅ setRecentCommentId 호출 전:', newCommentId);
-          setRecentCommentId(newCommentId); // ✅ 댓글 ID 저장
+          console.log('setRecentCommentId 호출 전:', newCommentId);
+          setRecentCommentId(newCommentId); //  댓글 ID 저장
         }
 
         setContent('');
