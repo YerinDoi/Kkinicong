@@ -37,3 +37,12 @@ export const getMyScrapStores = () =>
       Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
     },
   });
+
+// 내가 쓴 댓글 조회
+export const getMyComments = (page: number, size: number) =>
+  axiosInstance.get('/api/v1/mypage/comment', {
+    params: { page, size },
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+    },
+  });
