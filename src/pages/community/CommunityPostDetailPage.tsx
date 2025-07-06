@@ -13,6 +13,7 @@ import CommentItem from '@/components/Community/CommentItem';
 import CommentInput from '@/components/Community/CommentInput';
 import ReportButton from '@/components/Community/ReportButton';
 import EditOrDeleteButton from '@/components/Community/EditOrDeleteButton';
+import useCommentActions from '@/hooks/useCommentActions';
 
 interface Comment {
   commentId: number;
@@ -42,6 +43,7 @@ interface PostDetail {
   isMyCommunityPost: boolean | null;
   imageUrls: string[];
   commentListResponse: Comment[];
+
 }
 
 const CommunityPostDetailPage = () => {
@@ -52,11 +54,19 @@ const CommunityPostDetailPage = () => {
   const [likeCount, setLikeCount] = useState(0);
   const [isReplying, setIsReplying] = useState(false);
   const [recentCommentId, setRecentCommentId] = useState<number | null>(null);
+  // 댓글 수정용 상태
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [editingContent, setEditingContent] = useState('');
+  const token = localStorage.getItem('accessToken');
+  
+
+
   const navigate = useNavigate();
 
   const { share } = useShare();
   const { isLoggedIn } = useLoginStatus();
-  const token = localStorage.getItem('accessToken');
+  
 
   //게시글 조회
   const fetchPost = useCallback(async () => {
@@ -70,6 +80,7 @@ const CommunityPostDetailPage = () => {
       console.error('게시글 조회 실패:', err);
     }
   }, [postId]);
+  const { editComment, deleteComment } = useCommentActions(token!, fetchPost);
 
   useEffect(() => {
     fetchPost();
@@ -108,12 +119,12 @@ const CommunityPostDetailPage = () => {
     }
   };
 
-  //게시글 수정
+  //게시글 수정 -> 글쓰기 연동 후 확인 가능
   const handleEdit = () => {
     navigate(`/community/post/${postId}/edit`); //수정 가능
   };
 
-  //게시글 삭제
+  //게시글 삭제 -> 글쓰기 연동 후 확인 가능
   const handleDelete = async () => {
     try {
       await axiosInstance.delete(`/api/v1/community/post/${postId}`);
@@ -152,6 +163,23 @@ const CommunityPostDetailPage = () => {
       alert('댓글 등록 중 오류가 발생했습니다.');
     }
   };
+
+  // 댓글 수정/작성 판단
+  const handleCommentEditSubmit = async (content: string) => {
+  if (isEditing && editingCommentId) {
+    const success = await editComment(editingCommentId, content);
+    if (success) {
+      setIsEditing(false);
+      setEditingCommentId(null);
+      setEditingContent('');
+
+    }
+  } else {
+    await handleCommentSubmit(Number(postId), content);
+  }
+};
+
+
 
   if (!post) return <p>로딩 중...</p>;
 
@@ -258,7 +286,10 @@ const CommunityPostDetailPage = () => {
                 setIsReplying={setIsReplying}
                 setRecentCommentId={setRecentCommentId}
                 recentCommentId={recentCommentId}
-           
+                setIsEditing={setIsEditing}
+                setEditingCommentId={setEditingCommentId}
+                setEditingContent={setEditingContent}
+              
               />
             </div>
           ))}
@@ -272,8 +303,12 @@ const CommunityPostDetailPage = () => {
       {!isReplying && (
         <div className="px-[20px] mt-[20px] mb-[39px]">
           <CommentInput
-            onSubmit={(comment) => handleCommentSubmit(Number(postId), comment)}
+            onSubmit={handleCommentEditSubmit}
+
+            defaultValue={editingContent}
+            placeholder={isEditing ? '댓글을 수정하세요' : '댓글을 입력해보세요'}
           />
+
         </div>
       )}
     </div>

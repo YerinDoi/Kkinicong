@@ -6,9 +6,10 @@ interface ReplyItemProps {
   postId: number;
   onReload?: () => void;
   isNew?: boolean;
+  parentNickname?: string ;
 }
 
-const ReplyItem = ({ data, postId, onReload, isNew }: ReplyItemProps) => {
+const ReplyItem = ({ data, postId, onReload, isNew, parentNickname }: ReplyItemProps) => {
   return (
     <div
       className={`border-b-[1.5px] border-[#E6E6E6] ${isNew ? 'bg-[#F4F6F8]' : ''}`}
@@ -21,6 +22,7 @@ const ReplyItem = ({ data, postId, onReload, isNew }: ReplyItemProps) => {
             postId={postId}
             onReload={onReload}
             isReply
+            parentNickname={parentNickname}
           />
         </div>
       </div>

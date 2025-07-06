@@ -21,14 +21,20 @@ const EditOrDeleteBottomSheet: React.FC<Props> = ({
         <div className="flex flex-col gap-[8px]">
           <div
             className="px-[28px] py-[12px] flex gap-[10px] cursor-pointer"
-            onClick={onDelete}
+             onClick={() => {
+              onDelete();    
+              onClose();      
+            }}
           >
             <Icon name="delete" />
             <span>삭제하기</span>
           </div>
           <div
             className="px-[28px] py-[12px] flex gap-[10px] cursor-pointer"
-            onClick={onEdit}
+            onClick={() => {
+              onEdit();    
+              onClose();      
+            }}
           >
             <Icon name="edit" />
             <span>수정하기</span>
