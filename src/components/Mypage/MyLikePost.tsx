@@ -25,7 +25,7 @@ const MyLikePost: React.FC<MyLikePostProps> = ({ like, noBorder }) => {
   return (
     <div
       className={
-        'flex flex-col gap-[12px] px-[20px] py-[19px] self-stretch cursor-pointer' +
+        'flex flex-col gap-[12px] px-[20px] py-[12px] self-stretch cursor-pointer' +
         (noBorder ? '' : ' border-b-[1.5px] border-[#E6E6E6]')
       }
       onClick={() => navigate(`/community/post/${like.communityPostId}`)}

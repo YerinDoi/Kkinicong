@@ -3,16 +3,15 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import TabBar from '@/components/Mypage/TabBar';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import ChipGroup from '@/components/Mypage/ChipGroup';
-import PostItem from '@/components/Community/PostItem';
 import MyConveniencePostItem from '@/components/Mypage/MyConveniencePostItem';
 import {
   getMyCommunityPosts,
   getMyConveniencePosts,
   getMyComments,
 } from '@/api/mypage';
-import EmptyView from '@/components/Mypage/EmptyView';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import MyCommentPostList from '@/components/Mypage/MyCommentPostList';
+import MyCommunityPostList from '@/components/Mypage/MyCommunityPostList';
 
 const PAGE_SIZE = 10;
 
@@ -23,9 +22,12 @@ const MyPostsPage = () => {
   const chip = searchParams.get('chip') || '커뮤니티';
 
   // 게시글 데이터 상태 (any[]로 타입 지정)
-  const [communityPosts, setCommunityPosts] = useState<any[]>([]);
   const [conveniencePosts, setConveniencePosts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [conveniencePage, setConveniencePage] = useState(0);
+  const [hasNextConveniencePage, setHasNextConveniencePage] = useState(true);
+  const [convenienceLoading, setConvenienceLoading] = useState(false);
+  const isLoadingConvenienceRef = useRef(false);
+  const hasNextConveniencePageRef = useRef(true);
 
   // 내가 쓴 댓글 상태
   const [commentPosts, setCommentPosts] = useState<any[]>([]);
@@ -35,6 +37,10 @@ const MyPostsPage = () => {
   const isLoadingCommentRef = useRef(false);
   const hasNextCommentPageRef = useRef(true);
 
+  // 커뮤니티 빈 상태
+  const [isCommunityEmpty, setIsCommunityEmpty] = useState(false);
+  const [isConvenienceEmpty, setIsConvenienceEmpty] = useState(false);
+
   // 탭/칩 변경 핸들러
   const handleTabChange = (newTab: string) => {
     setSearchParams({ tab: newTab, chip });
@@ -43,19 +49,75 @@ const MyPostsPage = () => {
     setSearchParams({ tab, chip: newChip });
   };
 
-  useEffect(() => {
-    if (tab !== '게시글') return;
-    setLoading(true);
-    if (chip === '커뮤니티') {
-      getMyCommunityPosts(0, 10)
-        .then((res: any) => setCommunityPosts(res.data.results.content))
-        .finally(() => setLoading(false));
-    } else if (chip === '편의점 게시판') {
-      getMyConveniencePosts(0, 10)
-        .then((res: any) => setConveniencePosts(res.data.results.content))
-        .finally(() => setLoading(false));
+  function fetchConveniencePosts() {
+    if (isLoadingConvenienceRef.current || !hasNextConveniencePageRef.current) {
+      return;
     }
+    setConvenienceLoading(true);
+    isLoadingConvenienceRef.current = true;
+    getMyConveniencePosts(conveniencePage, PAGE_SIZE)
+      .then((res) => {
+        const newPosts = res.data.results.content;
+        setConveniencePosts((prev: any[]) => {
+          const prevIds = new Set(prev.map((p: any) => p.id));
+          const filtered = (newPosts as any[]).filter(
+            (p: any) => !prevIds.has(p.id),
+          );
+          return [...prev, ...filtered];
+        });
+        const isLast =
+          res.data.results.currentPage + 1 >= res.data.results.totalPage;
+        setHasNextConveniencePage(!isLast);
+        hasNextConveniencePageRef.current = !isLast;
+        // 페이지 증가는 무한스크롤에서만 (첫 로딩이 아닐 때만)
+        if (conveniencePage > 0) {
+          setConveniencePage((prev) => prev + 1);
+        } else {
+          setConveniencePage(1); // 첫 로딩 후에는 1페이지로 설정
+        }
+      })
+      .finally(() => {
+        setConvenienceLoading(false);
+        isLoadingConvenienceRef.current = false;
+      });
+  }
+
+  useEffect(() => {
+    if (tab !== '게시글' || chip !== '편의점 게시판') return;
+
+    // 모든 상태 완전 초기화
+    setConveniencePosts([]);
+    setConveniencePage(0);
+    setHasNextConveniencePage(true);
+    hasNextConveniencePageRef.current = true;
+    isLoadingConvenienceRef.current = false;
+    setConvenienceLoading(false);
+
+    // 직접 0페이지 요청
+    setConvenienceLoading(true);
+    isLoadingConvenienceRef.current = true;
+    getMyConveniencePosts(0, PAGE_SIZE)
+      .then((res) => {
+        const newPosts = res.data.results.content;
+        setConveniencePosts(newPosts);
+        const isLast =
+          res.data.results.currentPage + 1 >= res.data.results.totalPage;
+        setHasNextConveniencePage(!isLast);
+        hasNextConveniencePageRef.current = !isLast;
+        setConveniencePage(1); // 첫 로딩 후에는 1페이지로 설정
+      })
+      .finally(() => {
+        setConvenienceLoading(false);
+        isLoadingConvenienceRef.current = false;
+      });
   }, [tab, chip]);
+
+  const { loaderRef: convenienceLoaderRef } = useInfiniteScroll({
+    onIntersect: fetchConveniencePosts,
+    isLoadingRef: isLoadingConvenienceRef,
+    hasNextPageRef: hasNextConveniencePageRef,
+    threshold: 0.01,
+  });
 
   // 내가 쓴 댓글 무한스크롤 데이터 패칭
   const fetchComments = useCallback(async () => {
@@ -130,29 +192,32 @@ const MyPostsPage = () => {
           options={['커뮤니티', '편의점 게시판']}
           selected={chip}
           onChange={handleChipChange}
+          className={
+            tab === '게시글' && chip === '커뮤니티' && isCommunityEmpty
+              ? 'bg-[#F4F6F8]'
+              : tab === '게시글' &&
+                  chip === '편의점 게시판' &&
+                  isConvenienceEmpty
+                ? 'bg-[#F4F6F8]'
+                : ''
+          }
         />
       )}
 
       {/* 게시글 탭 - 커뮤니티 */}
       {tab === '게시글' && chip === '커뮤니티' && (
-        <div className="">
-          {communityPosts.map((post, idx) => (
-            <PostItem key={post.communityPostId ?? idx} post={post} />
-          ))}
-          {communityPosts.length === 0 && !loading && (
-            <EmptyView
-              title={'아직 작성한 글이 없어요\n당신의 첫 이야기를 들려주세요'}
-              actionText="커뮤니티로 이동해볼까요?"
-              onActionClick={() => navigate('/community')}
-              actionType="link"
-            />
-          )}
-        </div>
+        <MyCommunityPostList onEmptyChange={setIsCommunityEmpty} chip={chip} />
       )}
 
       {/* 게시글 탭 - 편의점 게시판 */}
       {tab === '게시글' && chip === '편의점 게시판' && (
-        <MyConveniencePostItem products={conveniencePosts} />
+        <MyConveniencePostItem
+          products={conveniencePosts}
+          onEmptyChange={setIsConvenienceEmpty}
+          hasNextPage={hasNextConveniencePage}
+          loaderRef={convenienceLoaderRef}
+          loading={convenienceLoading}
+        />
       )}
 
       {/* 댓글 탭 */}
