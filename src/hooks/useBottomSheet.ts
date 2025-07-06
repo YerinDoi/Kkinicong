@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 
-const LOWERED_SHEET_HEIGHT_FIXED = 148;
-
-export default function useBottomSheet(headerHeight: number) {
+export default function useBottomSheet(
+  headerHeight: number,
+  loweredHeight = 148,
+) {
   const [sheetHeight, setSheetHeight] = useState(0);
   const [raisedSheetHeight, setRaisedSheetHeight] = useState(0);
   const initialSheetHeightRef = useRef(0);
@@ -35,7 +36,7 @@ export default function useBottomSheet(headerHeight: number) {
     const deltaY = e.touches[0].clientY - startYRef.current;
     const newHeight = initialSheetHeightRef.current - deltaY;
     const clamped = Math.max(
-      LOWERED_SHEET_HEIGHT_FIXED,
+      loweredHeight,
       Math.min(raisedSheetHeight, newHeight),
     );
     setSheetHeight(clamped);
@@ -43,8 +44,8 @@ export default function useBottomSheet(headerHeight: number) {
   const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
     e.preventDefault();
     isDraggingRef.current = false;
-    const halfway = (raisedSheetHeight + LOWERED_SHEET_HEIGHT_FIXED) / 2;
-    if (sheetHeight < halfway) setSheetHeight(LOWERED_SHEET_HEIGHT_FIXED);
+    const halfway = (raisedSheetHeight + loweredHeight) / 2;
+    if (sheetHeight < halfway) setSheetHeight(loweredHeight);
     else setSheetHeight(raisedSheetHeight);
   };
 
@@ -63,7 +64,7 @@ export default function useBottomSheet(headerHeight: number) {
     lastYRef.current = e.clientY;
     const newHeight = initialSheetHeightRef.current - deltaY;
     const clamped = Math.max(
-      LOWERED_SHEET_HEIGHT_FIXED,
+      loweredHeight,
       Math.min(raisedSheetHeight, newHeight),
     );
     setSheetHeight(clamped);
@@ -73,8 +74,8 @@ export default function useBottomSheet(headerHeight: number) {
     const endY = e ? e.clientY : lastYRef.current;
     const deltaY = endY - startYRef.current;
     const newHeight = initialSheetHeightRef.current - deltaY;
-    const halfway = (raisedSheetHeight + LOWERED_SHEET_HEIGHT_FIXED) / 2;
-    if (newHeight < halfway) setSheetHeight(LOWERED_SHEET_HEIGHT_FIXED);
+    const halfway = (raisedSheetHeight + loweredHeight) / 2;
+    if (newHeight < halfway) setSheetHeight(loweredHeight);
     else setSheetHeight(raisedSheetHeight);
     window.removeEventListener('mousemove', handleMouseMove as any);
     window.removeEventListener('mouseup', handleMouseUp as any);

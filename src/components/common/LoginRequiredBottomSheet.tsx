@@ -6,17 +6,19 @@ import Icon from '@/assets/icons';
 interface LoginRequiredBottomSheetProps {
   isOpen: boolean;
   onClose: () => void;
+  pendingPath?: string | null;
 }
 
 const LoginRequiredBottomSheet: React.FC<LoginRequiredBottomSheetProps> = ({
   isOpen,
   onClose,
+  pendingPath,
 }) => {
   const navigate = useNavigate();
 
   const handleLoginClick = () => {
     onClose();
-    navigate('/login');
+    navigate('/login', { state: { redirectTo: pendingPath } });
   };
 
   return (
@@ -30,7 +32,7 @@ const LoginRequiredBottomSheet: React.FC<LoginRequiredBottomSheetProps> = ({
               로그인이 필요한 기능이에요
             </span>
             {/* 서브텍스트 */}
-            <span className="text-[14px] font-normal text-[#919191] leading-[18px]">
+            <span className="text-[14px] font-regular text-[#919191] leading-[18px]">
               로그인 후 더 많은 기능을 이용해볼까요?
             </span>
           </div>
