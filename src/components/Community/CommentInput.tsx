@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Icon from '@/assets/icons';
 import { useLoginStatus } from '@/hooks/useLoginStatus';
 import LoginRequiredBottomSheet from '@/components/common/LoginRequiredBottomSheet';
@@ -7,6 +7,7 @@ interface CommentInputProps {
   onSubmit: (content: string) => void;
   placeholder?: string;
   setRecentCommentId?: React.Dispatch<React.SetStateAction<number | null>>;
+  defaultValue?: string;
 }
 
 const MAX_LENGTH = 4000;
@@ -15,10 +16,16 @@ const CommentInput: React.FC<CommentInputProps> = ({
   onSubmit,
   placeholder,
   setRecentCommentId,
+  defaultValue
 }) => {
-  const { isLoggedIn } = useLoginStatus(); // 로그인 상태
-  const [content, setContent] = useState('');
+  const { isLoggedIn } = useLoginStatus();
+  const [content, setContent] = useState(defaultValue ?? '');
   const [isLoginBottomSheetOpen, setIsLoginBottomSheetOpen] = useState(false);
+
+  // defaultValue가 바뀌면 content 초기화
+  useEffect(() => {
+    setContent(defaultValue ?? '');
+  }, [defaultValue]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (e.target.value.length <= MAX_LENGTH) {
@@ -29,15 +36,11 @@ const CommentInput: React.FC<CommentInputProps> = ({
   const handleSubmit = async () => {
     if (content.trim()) {
       try {
-        const newCommentId = await onSubmit(content); // ✅ 상위에서 댓글 등록 처리하고 commentId 반환
-        console.log('✅ onSubmit 결과 commentId:', newCommentId);
-
+        const newCommentId = await onSubmit(content);
         if (setRecentCommentId && typeof newCommentId === 'number') {
-          console.log('✅ setRecentCommentId 호출 전:', newCommentId);
-          setRecentCommentId(newCommentId); // ✅ 댓글 ID 저장
+          setRecentCommentId(newCommentId);
         }
-
-        setContent('');
+        setContent(''); // 전송 후 초기화
       } catch (err) {
         console.error('댓글 등록 중 오류:', err);
       }
@@ -45,7 +48,6 @@ const CommentInput: React.FC<CommentInputProps> = ({
   };
 
   const handleRequireLoginClick = () => {
-    console.log('로그인 필요합니다');
     setIsLoginBottomSheetOpen(true);
   };
 
@@ -55,8 +57,7 @@ const CommentInput: React.FC<CommentInputProps> = ({
         value={content}
         onChange={handleInputChange}
         placeholder={
-          placeholder ??
-          (isLoggedIn ? '댓글을 남겨보세요' : '로그인하고 댓글을 남겨보세요')
+          placeholder ?? (isLoggedIn ? '댓글을 남겨보세요' : '로그인하고 댓글을 남겨보세요')
         }
         spellCheck={false}
         rows={1}

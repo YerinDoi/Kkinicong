@@ -1,29 +1,30 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import TrashIcon from '@/assets/svgs/review/trash.svg';
 import Button from '@/components/common/Button';
-import { createPortal } from 'react-dom';
 
-interface DeleteReviewModalProps {
+interface DeleteModalProps {
+  title: string;
+  description: string;
   onClose: () => void;
   onDelete: () => void;
 }
 
-const DeleteReviewModal: React.FC<DeleteReviewModalProps> = ({
+const DeleteModal: React.FC<DeleteModalProps> = ({
+  title,
+  description,
   onClose,
   onDelete,
 }) => {
   return createPortal(
     <div className="fixed inset-0 bg-black/40 z-[9998] flex justify-center items-center">
-      <div className="pt-[45px]  font-pretendard bg-white rounded-[12px] ">
+      <div className="pt-[45px] font-pretendard bg-white rounded-[12px]">
         <div className="flex flex-col px-[66px] gap-[28px] items-center">
           <img src={TrashIcon} className="w-[40px] h-[40px]" />
-
           <div className="text-center flex flex-col gap-[8px]">
-            <p className="text-black text-title-sb-button font-bold">
-              리뷰를 정말 삭제하시겠어요?
-            </p>
+            <p className="text-black text-title-sb-button font-bold">{title}</p>
             <p className="text-body-md-title font-regular text-[#919191]">
-              삭제된 리뷰는 복구시킬 수 없어요
+              {description}
             </p>
           </div>
         </div>
@@ -49,4 +50,4 @@ const DeleteReviewModal: React.FC<DeleteReviewModalProps> = ({
   );
 };
 
-export default DeleteReviewModal;
+export default DeleteModal;

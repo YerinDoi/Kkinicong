@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
 import { useEffect, useState, useCallback } from 'react';
 import axiosInstance from '@/api/axiosInstance';
 import TopBar from '@/components/common/TopBar';
@@ -8,12 +8,13 @@ import MainTag from '@/components/StoreReview/MainTag';
 import LoginRequiredBottomSheet from '@/components/common/LoginRequiredBottomSheet';
 import Icon from '@/assets/icons';
 import { useShare } from '@/hooks/useShare';
-import EditOrDeleteBottomSheet from '@/components/Community/EditOrDeleteBottomSheet';
 import { useLoginStatus } from '@/hooks/useLoginStatus';
 import CommentItem from '@/components/Community/CommentItem';
 import CommentInput from '@/components/Community/CommentInput';
 import ReportButton from '@/components/Community/ReportButton';
 import EditOrDeleteButton from '@/components/Community/EditOrDeleteButton';
+import useCommentActions from '@/hooks/useCommentActions';
+import DeleteModal from '@/components/common/DeleteModal';
 
 interface Comment {
   commentId: number;
@@ -43,6 +44,7 @@ interface PostDetail {
   isMyCommunityPost: boolean | null;
   imageUrls: string[];
   commentListResponse: Comment[];
+
 }
 
 const CommunityPostDetailPage = () => {
@@ -53,10 +55,18 @@ const CommunityPostDetailPage = () => {
   const [likeCount, setLikeCount] = useState(0);
   const [isReplying, setIsReplying] = useState(false);
   const [recentCommentId, setRecentCommentId] = useState<number | null>(null);
+  // 댓글 수정용 상태
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [editingContent, setEditingContent] = useState('');
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const token = localStorage.getItem('accessToken');
+
+  const navigate = useNavigate();
 
   const { share } = useShare();
   const { isLoggedIn } = useLoginStatus();
-  const token = localStorage.getItem('accessToken');
+  
 
   //게시글 조회
   const fetchPost = useCallback(async () => {
@@ -70,6 +80,7 @@ const CommunityPostDetailPage = () => {
       console.error('게시글 조회 실패:', err);
     }
   }, [postId]);
+  const { editComment } = useCommentActions(token!, fetchPost);
 
   useEffect(() => {
     fetchPost();
@@ -108,7 +119,27 @@ const CommunityPostDetailPage = () => {
     }
   };
 
-  //더보기 바텀시트
+  //게시글 수정 -> 글쓰기 연동 후 확인 가능
+  const handleEdit = () => {
+    navigate(`/community/post/${postId}/edit`); //수정 가능
+  };
+
+  //게시글 삭제 -> 글쓰기 연동 후 확인 가능
+  const handleDelete = async () => {
+    try {
+      await axiosInstance.delete(`/api/v1/community/post/${postId}`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },);
+      alert('삭제되었습니다!');
+      navigate('/community');
+    } catch (err) {
+      console.error('삭제 실패:', err);
+      alert('삭제에 실패했습니다.');
+    }
+  };
+
 
   //댓글 전송
   const handleCommentSubmit = async (postId: number, content: string) => {
@@ -137,6 +168,23 @@ const CommunityPostDetailPage = () => {
     }
   };
 
+  // 댓글 수정/작성 판단
+  const handleCommentEditSubmit = async (content: string) => {
+  if (isEditing && editingCommentId) {
+    const success = await editComment(editingCommentId, content);
+    if (success) {
+      setIsEditing(false);
+      setEditingCommentId(null);
+      setEditingContent('');
+
+    }
+  } else {
+    await handleCommentSubmit(Number(postId), content);
+  }
+};
+
+
+
   if (!post) return <p>로딩 중...</p>;
 
   return (
@@ -150,7 +198,10 @@ const CommunityPostDetailPage = () => {
               {/*{post.isMyCommunityPost && (
                 작성 부분도 구현 완료되면 더보기버튼 코드 여기에 넣을 예정
               )}*/}
-              <EditOrDeleteButton />
+              <EditOrDeleteButton
+                onEdit={handleEdit}
+                onDelete={() => setIsDeleteModalOpen(true)}
+              />
             </div>
             <div className="flex justify-between items-center">
               <div className="flex gap-[8px] items-center">
@@ -164,7 +215,7 @@ const CommunityPostDetailPage = () => {
                     {post.nickname ?? '익명'}
                   </span>
                   <span className="flex gap-[2px] text-body-md-description text-[#C3C3C3]">
-                    {post.createdAt} · 조회 {post.viewCount}
+                    {post.isModified && '수정됨 ·'}{post.createdAt} · 조회 {post.viewCount}
                   </span>
                 </div>
               </div>
@@ -239,7 +290,10 @@ const CommunityPostDetailPage = () => {
                 setIsReplying={setIsReplying}
                 setRecentCommentId={setRecentCommentId}
                 recentCommentId={recentCommentId}
-           
+                setIsEditing={setIsEditing}
+                setEditingCommentId={setEditingCommentId}
+                setEditingContent={setEditingContent}
+              
               />
             </div>
           ))}
@@ -253,9 +307,24 @@ const CommunityPostDetailPage = () => {
       {!isReplying && (
         <div className="px-[20px] mt-[20px] mb-[39px]">
           <CommentInput
-            onSubmit={(comment) => handleCommentSubmit(Number(postId), comment)}
+            onSubmit={handleCommentEditSubmit}
+
+            defaultValue={editingContent}
+            placeholder={isEditing ? '댓글을 수정하세요' : '댓글을 입력해보세요'}
           />
+
         </div>
+      )}
+      {isDeleteModalOpen && (
+        <DeleteModal
+          title="게시글을 정말 삭제하시겠어요?"
+          description="삭제된 글은 복구시킬 수 없어요"
+          onClose={() => setIsDeleteModalOpen(false)}
+          onDelete={() => {
+            setIsDeleteModalOpen(false);
+            handleDelete();
+          }}
+        />
       )}
     </div>
   );
