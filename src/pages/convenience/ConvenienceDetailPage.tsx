@@ -6,7 +6,7 @@ import {
   submitPostFeedback,
   deleteConveniencePost,
 } from '@/api/convenience';
-import { fromServerBrand, fromServerCategory } from '@/types/convenienceMapper';
+import { fromServerBrand, fromServerCategory } from '@/utils/convenienceMapper';
 
 import TopBar from '@/components/common/TopBar';
 import DeleteConvenience from '@/components/convenience/DeleteConvenience';

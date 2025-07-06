@@ -20,6 +20,7 @@ import NameRecommendationPage from '@/pages/convenience/NameRecommendationPage';
 import AccountDeletePage from '@/pages/mypage/AccountDeletePage';
 import NicknameEditPage from '@/pages/mypage/NicknameEditPage';
 import CommunityPage from '@/pages/community/CommunityPage';
+import CommunityWritePage from '@/pages/community/CommunityWritePage';
 import FeedbackPage from '@/pages/mypage/FeedbackPage';
 import MyPostsPage from '@/pages/mypage/MyPostsPage';
 import MyReviewsPage from '@/pages/mypage/MyReviewsPage';
@@ -73,6 +74,7 @@ const Router = () => {
       <Route path="/store-review/:storeId" element={<StoreReviewPage />} />
       <Route path="/store/:storeId" element={<StoreDetailPage />} />
 
+
 {/*편의점*/}
       <Route path="/convenience" element={<ConvenienceStorePage />} />
       <Route path="/convenience/add" element={<AddConveniencePage />} />
@@ -95,6 +97,7 @@ const Router = () => {
         path="/community/post/:postId"
         element={<PostDetailPage/>}
       />
+      <Route path="/community/write" element={<CommunityWritePage />} />
     </Routes>
   );
 };
