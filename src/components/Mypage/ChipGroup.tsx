@@ -12,7 +12,7 @@ interface ChipGroupProps {
     className = '',
   }: ChipGroupProps) {
     return (
-      <div className={`flex px-[20px] gap-[8px] whitespace-nowrap scrollbar-hide ${className}`}>
+      <div className={`flex px-[20px] pt-[16px] gap-[8px] whitespace-nowrap scrollbar-hide ${className}`}>
         {options.map((option) => (
           <button
             key={option}
