@@ -18,7 +18,9 @@ const MyCommentPostList: React.FC<MyCommentPostListProps> = ({
   loading = false,
   navigate,
 }) => (
-  <div className="flex flex-1 flex-col">
+  <div
+    className={`flex flex-1 flex-col${commentPosts.length > 0 ? ' mt-[4px]' : ''}`}
+  >
     {commentPosts.map((post, idx) => (
       <div key={`${post.postId}-${idx}`}>
         <MyLikePost
@@ -26,8 +28,8 @@ const MyCommentPostList: React.FC<MyCommentPostListProps> = ({
             communityPostId: post.postId,
             titlePreview: post.titlePreview,
             contentPreview: post.contentPreview,
-            thumbnailUrl: null,
-            imageCount: 0,
+            thumbnailUrl: post.thumbnailUrl,
+            imageCount: post.imageCount,
             createdAt: post.createdAt,
             commentCount: post.commentCount,
             likeCount: post.likeCount,
