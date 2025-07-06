@@ -30,7 +30,6 @@ const config: Config = {
         'body-bd-title'       : ['16px', { lineHeight: '24px', letterSpacing: '0.1px' }],
       },      
       fontWeight: {
-        normal: '400',
         regular: '400',
         medium: '500',
         semibold: '600',

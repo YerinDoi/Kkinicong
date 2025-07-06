@@ -1,6 +1,6 @@
 // src/api/convenience.ts
 import axios from '@/api/axiosInstance';
-import { toServerCategory, toServerBrand } from '@/types/convenienceMapper';
+import { toServerCategory, toServerBrand } from '@/utils/convenienceMapper';
 
 // 상품 목록 조회
 export const fetchConvenienceProducts = async ({

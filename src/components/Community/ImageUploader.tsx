@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import imgAddIcon from '@/assets/icons/system/img-add.svg';
 
 interface ImageUploaderProps {
   images: File[];
@@ -39,17 +40,15 @@ export default function ImageUploader({
 
   return (
     <div>
-      <div className="mb-2 text-sm font-medium">사진 업로드 (최대 3장)</div>
-
       <div className="flex gap-3">
         {images.map((file, idx) => {
           const preview = URL.createObjectURL(file);
           return (
-            <div key={idx} className="relative w-24 h-24">
+            <div key={idx} className="relative w-[88px] h-[88px]">
               <img
                 src={preview}
                 alt="preview"
-                className="w-full h-full object-cover rounded"
+                className="w-full h-full object-cover rounded-[12px]"
               />
               <button
                 onClick={() => handleDelete(idx)}
@@ -62,11 +61,8 @@ export default function ImageUploader({
         })}
 
         {images.length < 3 && (
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="w-24 h-24 flex items-center justify-center border rounded text-sm text-gray-500"
-          >
-            + 추가
+          <button onClick={() => fileInputRef.current?.click()}>
+            <img src={imgAddIcon} alt="추가" className="w-[101px]" />
           </button>
         )}
       </div>
