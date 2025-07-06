@@ -14,7 +14,7 @@ import CommentInput from '@/components/Community/CommentInput';
 import ReportButton from '@/components/Community/ReportButton';
 import EditOrDeleteButton from '@/components/Community/EditOrDeleteButton';
 import useCommentActions from '@/hooks/useCommentActions';
-
+import DeleteModal from '@/components/common/DeleteModal';
 
 interface Comment {
   commentId: number;
@@ -59,9 +59,8 @@ const CommunityPostDetailPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editingContent, setEditingContent] = useState('');
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const token = localStorage.getItem('accessToken');
-  
-
 
   const navigate = useNavigate();
 
@@ -201,7 +200,7 @@ const CommunityPostDetailPage = () => {
               )}*/}
               <EditOrDeleteButton
                 onEdit={handleEdit}
-                onDelete={handleDelete}
+                onDelete={() => setIsDeleteModalOpen(true)}
               />
             </div>
             <div className="flex justify-between items-center">
@@ -315,6 +314,17 @@ const CommunityPostDetailPage = () => {
           />
 
         </div>
+      )}
+      {isDeleteModalOpen && (
+        <DeleteModal
+          title="게시글을 정말 삭제하시겠어요?"
+          description="삭제된 글은 복구시킬 수 없어요"
+          onClose={() => setIsDeleteModalOpen(false)}
+          onDelete={() => {
+            setIsDeleteModalOpen(false);
+            handleDelete();
+          }}
+        />
       )}
     </div>
   );

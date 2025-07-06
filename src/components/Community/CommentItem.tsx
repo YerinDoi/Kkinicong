@@ -10,6 +10,8 @@ import { createPortal } from 'react-dom';
 import CommunityReportButton from '@/components/Community/ReportButton';
 import EditOrDeleteButton from '@/components/Community/EditOrDeleteButton';
 import useCommentActions from '@/hooks/useCommentActions';
+import ConfirmModal from '../common/ConfirmModal';
+import ConfirmToast from '../common/ConfirmToast';
 
 export interface CommentData {
   commentId: number;
@@ -86,6 +88,12 @@ const CommentItem: React.FC<CommentItemProps> = ({
   content === '신고된 댓글입니다' ||
   content === '삭제된 댓글입니다' 
 ;
+ //댓글, 답글 삭제 모달
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  //댓글,답글 삭제 토스트
+  const [showDeleteToast, setShowDeleteToast] = useState(false);
+
+
 
   //좋아요
   const handleLikeClick = async () => {
@@ -145,6 +153,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
     setIsReplyInputOpen(true);
   };
 
+  //답글 입력창 닫기
   const handlecloseReplyInput = () => {
   setIsReplying?.(false);
   setIsReplyInputOpen(false);
@@ -229,6 +238,16 @@ const handleEditSubmit = async (newContent: string) => {
     alert('수정 실패!');
   }
 };
+//댓글 삭제
+const handleCommentDelete = async () => {
+  const success = await deleteComment(commentId);
+  if (success) {
+    setShowDeleteToast(true);
+    setTimeout(() => setShowDeleteToast(false), 2000);
+  } else {
+    alert('삭제에 실패했습니다.');
+  }
+};
 
 
   return (
@@ -271,7 +290,7 @@ const handleEditSubmit = async (newContent: string) => {
           isMyComment ? (
             <EditOrDeleteButton
               onEdit={handleCommentEdit}
-               onDelete={() => deleteComment(commentId)}
+              onDelete={() => setIsConfirmOpen(true)}
             />
           ) : (
             <CommunityReportButton
@@ -371,6 +390,29 @@ const handleEditSubmit = async (newContent: string) => {
         isOpen={isLoginBottomSheetOpen}
         onClose={() => setIsLoginBottomSheetOpen(false)}
       />
+
+    
+      {isConfirmOpen && (
+      <ConfirmModal
+       
+        title={isReply ? "답글을 삭제하시겠어요?": "댓글을 삭제하시겠어요?"}
+        onClose={() => setIsConfirmOpen(false)}
+        onDelete={() => {
+          setIsConfirmOpen(false);
+          handleCommentDelete(); // 실제 삭제 실행
+        }}
+      />)}
+
+      {showDeleteToast &&
+        createPortal(
+          <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
+            <ConfirmToast
+              text={"댓글 삭제가 완료되었어요"}
+            />
+          </div>,
+          document.body,
+        )}
+
     </div>
   );
 };

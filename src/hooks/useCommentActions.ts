@@ -17,7 +17,7 @@ const useCommentActions = (token: string, fetchPost: () => Promise<void>) => {
       );
 
       if (response.data.isSuccess) {
-        alert('수정되었습니다!');
+      
         await fetchPost();
         return true;
       } else {
@@ -42,7 +42,6 @@ const useCommentActions = (token: string, fetchPost: () => Promise<void>) => {
       );
 
       if (response.status === 200 && response.data?.isSuccess) {
-        alert('삭제되었습니다!');
         await fetchPost();
         return true;
       } else {
