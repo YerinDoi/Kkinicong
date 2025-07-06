@@ -4,6 +4,8 @@ import type { IconName } from '@/assets/icons';
 import ReactDOM from 'react-dom';
 import { useLogout } from '@/hooks/useLogout';
 import { useLoginStatus } from '@/hooks/useLoginStatus';
+import { useState } from 'react';
+import Modal from '@/components/common/Modal';
 
 interface MenuBarProps {
   isOpen: boolean;
@@ -14,8 +16,10 @@ const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
   const navigate = useNavigate();
   const { handleLogout } = useLogout();
   const { isLoggedIn, setIsLoggedIn } = useLoginStatus();
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const handleLogoutWithClose = () => {
+    setIsLogoutModalOpen(false);
     handleLogout();
     setIsLoggedIn(false);
     onClose();
@@ -59,7 +63,8 @@ const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
                 className="flex items-center gap-[16px] w-full text-left"
                 onClick={() => {
                   if (item.text === '로그아웃') {
-                    handleLogoutWithClose();
+                    setIsLogoutModalOpen(true);
+                    onClose();
                   } else if (item.path) {
                     navigate(item.path);
                     onClose();
@@ -81,7 +86,19 @@ const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
     </div>
   );
 
-  return ReactDOM.createPortal(menuBarContent, document.body);
+  return (
+    <>
+      {ReactDOM.createPortal(menuBarContent, document.body)}
+      <Modal
+        open={isLogoutModalOpen}
+        title="정말 로그아웃 하시겠어요?"
+        confirmText="로그아웃"
+        cancelText="취소"
+        onConfirm={handleLogoutWithClose}
+        onCancel={() => setIsLogoutModalOpen(false)}
+      />
+    </>
+  );
 };
 
 export default MenuBar;
