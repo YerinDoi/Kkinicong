@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from '@/api/axiosInstance';
 import LoginRequiredBottomSheet from '@/components/common/LoginRequiredBottomSheet';
+import { getMyScrapStores } from '@/api/mypage';
 
 const MyPage = () => {
   const { isLoggedIn } = useLoginStatus();
@@ -15,12 +16,23 @@ const MyPage = () => {
   const [isNicknameModified, setIsNicknameModified] = useState(false);
   const [showLoginSheet, setShowLoginSheet] = useState(false);
   const [pendingPath, setPendingPath] = useState<string | null>(null);
+  const [scrapStores, setScrapStores] = useState<any[]>([]);
+  const [scrapCount, setScrapCount] = useState(0);
 
   useEffect(() => {
     if (!isLoggedIn) return;
     axios.get('/api/v1/user/nickname').then((res) => {
       setNickname(res.data.results.nickname);
       setIsNicknameModified(res.data.results.isNicknameModified);
+    });
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    getMyScrapStores().then((res) => {
+      const stores = res.data?.results ?? [];
+      setScrapStores(stores);
+      setScrapCount(stores.length);
     });
   }, [isLoggedIn]);
 
@@ -53,7 +65,7 @@ const MyPage = () => {
 
       <div className="flex flex-col px-[20px] w-full gap-[20px]">
         <FavoriteStoreCard
-          count={0}
+          count={scrapCount}
           onClick={() => handleProtectedRoute('/my-scrap')}
         />
         <div className="flex flex-col gap-[8px]">
@@ -102,9 +114,9 @@ const MyPage = () => {
             )
           }
         />
-        <MenuListBtn 
-          label="의견 남기기" 
-          variant="secondary" 
+        <MenuListBtn
+          label="의견 남기기"
+          variant="secondary"
           onClick={() => navigate('/feedback')}
         />
 
