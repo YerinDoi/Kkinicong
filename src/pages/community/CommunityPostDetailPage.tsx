@@ -15,6 +15,7 @@ import ReportButton from '@/components/Community/ReportButton';
 import EditOrDeleteButton from '@/components/Community/EditOrDeleteButton';
 import useCommentActions from '@/hooks/useCommentActions';
 
+
 interface Comment {
   commentId: number;
   content: string;
@@ -80,7 +81,7 @@ const CommunityPostDetailPage = () => {
       console.error('게시글 조회 실패:', err);
     }
   }, [postId]);
-  const { editComment, deleteComment } = useCommentActions(token!, fetchPost);
+  const { editComment } = useCommentActions(token!, fetchPost);
 
   useEffect(() => {
     fetchPost();
@@ -127,7 +128,11 @@ const CommunityPostDetailPage = () => {
   //게시글 삭제 -> 글쓰기 연동 후 확인 가능
   const handleDelete = async () => {
     try {
-      await axiosInstance.delete(`/api/v1/community/post/${postId}`);
+      await axiosInstance.delete(`/api/v1/community/post/${postId}`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },);
       alert('삭제되었습니다!');
       navigate('/community');
     } catch (err) {
@@ -211,7 +216,7 @@ const CommunityPostDetailPage = () => {
                     {post.nickname ?? '익명'}
                   </span>
                   <span className="flex gap-[2px] text-body-md-description text-[#C3C3C3]">
-                    {post.createdAt} · 조회 {post.viewCount}
+                    {post.isModified && '수정됨 ·'}{post.createdAt} · 조회 {post.viewCount}
                   </span>
                 </div>
               </div>

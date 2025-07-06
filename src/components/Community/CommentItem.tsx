@@ -254,12 +254,14 @@ const handleEditSubmit = async (newContent: string) => {
                 <span className="text-black body-md-title">
                   {nickname ?? '익명'}
                 </span>
+               
                 {isAuthor && (
                   <span className="px-[8px] py-[2px] text-body-md-description font-regular rounded-[8px] bg-[#E6E6E6] text-[#616161]">
                     작성자
                   </span>
                 )}
-                <span className="text-[#919191] text-[12px]">{createdAt}</span>
+                 
+                <span className="text-[#919191] text-[12px]">{isModified && '수정됨 · '}{createdAt}</span>
               </div>
             </div>
           </div>
