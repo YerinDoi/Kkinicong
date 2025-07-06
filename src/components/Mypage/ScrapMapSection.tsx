@@ -15,6 +15,8 @@ interface ScrapMapSectionProps {
     // 기타 필요한 필드
   }[];
   height: number;
+  onMarkerClick: (store: any) => void;
+  onMapClick: () => void;
 }
 
 const FitBounds = ({
@@ -38,14 +40,35 @@ const FitBounds = ({
   return null;
 };
 
-const ScrapMapSection = ({ scrapStores, height }: ScrapMapSectionProps) => {
+const MapClickListener = ({ onMapClick }: { onMapClick: () => void }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (!map) return;
+    window.kakao.maps.event.addListener(map, 'click', onMapClick);
+    return () => {
+      window.kakao.maps.event.removeListener(map, 'click', onMapClick);
+    };
+  }, [map, onMapClick]);
+  return null;
+};
+
+const ScrapMapSection = ({
+  scrapStores,
+  height,
+  onMarkerClick,
+  onMapClick,
+}: ScrapMapSectionProps) => {
   return (
-    <div className="w-full" style={{ height: `${height}px` }}>
+    <div
+      className="w-full"
+      style={{ height: `${height}px`, transition: 'height 0.3s ease-out' }}
+    >
       <KakaoMap
         center={{ lat: 37.494589, lng: 126.868346 }}
         level={3}
         relayoutTrigger={height}
       >
+        <MapClickListener onMapClick={onMapClick} />
         <FitBounds scrapStores={scrapStores} />
         {scrapStores.map((store) => (
           <React.Fragment key={store.id}>
@@ -67,6 +90,7 @@ const ScrapMapSection = ({ scrapStores, height }: ScrapMapSectionProps) => {
                 },
               }}
               zIndex={100}
+              onClick={() => onMarkerClick(store)}
             />
             <CustomOverlayMap
               key={`pin-overlay-${store.id}`}
@@ -85,10 +109,15 @@ const ScrapMapSection = ({ scrapStores, height }: ScrapMapSectionProps) => {
                   borderRadius: 0,
                   whiteSpace: 'nowrap',
                   pointerEvents: 'auto',
+                  cursor: 'pointer',
                   transform: 'translateY(130%)',
                   textAlign: 'center',
                   textShadow:
                     '-1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff',
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onMarkerClick(store);
                 }}
               >
                 {store.name}

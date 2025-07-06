@@ -1,6 +1,6 @@
 import TopBar from '@/components/common/TopBar';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { getMyScrapStores } from '@/api/mypage';
 import EmptyView from '@/components/Mypage/EmptyView';
 import ScrapStoreListSection from '@/components/Mypage/ScrapStoreListSection';
@@ -20,6 +20,9 @@ const MyScrapPage = () => {
   const [sheetHeight, setSheetHeight] = useState(
     getTotalHeight() - MAP_MIN_HEIGHT,
   );
+  const [selectedStore, setSelectedStore] = useState<any | null>(null);
+  const [isFixedSheet, setIsFixedSheet] = useState(false);
+  const storeListRef = useRef<{ resetToMaxHeight: () => void }>(null);
 
   useEffect(() => {
     getMyScrapStores()
@@ -45,7 +48,7 @@ const MyScrapPage = () => {
   }, []);
 
   return (
-    <div className="flex flex-col w-full h-full pt-[11px]">
+    <div className="flex flex-col w-full h-full pt-[11px] overflow-hidden">
       <TopBar
         title="찜한 가게"
         rightType="none"
@@ -73,11 +76,24 @@ const MyScrapPage = () => {
             <ScrapMapSection
               scrapStores={scrapStores}
               height={Math.max(totalHeight - sheetHeight, MAP_MIN_HEIGHT) + 17}
+              onMarkerClick={(store) => {
+                setSelectedStore(store);
+                setSheetHeight(160);
+                setIsFixedSheet(true);
+              }}
+              onMapClick={() => {
+                setSelectedStore(null);
+                setSheetHeight(getTotalHeight() - MAP_MIN_HEIGHT);
+                setIsFixedSheet(false);
+                storeListRef.current?.resetToMaxHeight();
+              }}
             />
             <ScrapStoreListSection
-              scrapStores={scrapStores}
+              ref={storeListRef}
+              scrapStores={selectedStore ? [selectedStore] : scrapStores}
               sheetHeight={sheetHeight}
               setSheetHeight={setSheetHeight}
+              isFixedSheet={isFixedSheet}
             />
           </div>
         </div>
