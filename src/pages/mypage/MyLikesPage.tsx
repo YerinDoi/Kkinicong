@@ -12,6 +12,7 @@ const MyLikesPage = () => {
   const navigate = useNavigate();
 
   const [likes, setLikes] = useState<any[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [hasNextPage, setHasNextPage] = useState(true);
@@ -48,6 +49,7 @@ const MyLikesPage = () => {
     isLoadingRef.current = false;
     getMyLikes(0, PAGE_SIZE).then((res) => {
       setLikes(res.data.results.content);
+      setTotalCount(res.data.results.totalCount);
       setPage(1);
       const isLast = 1 >= res.data.results.totalPage;
       setHasNextPage(!isLast);
@@ -70,14 +72,14 @@ const MyLikesPage = () => {
         onBack={() => navigate('/mypage')}
       />
 
-      {loading && likes.length === 0 ? null : likes.length === 0 ? (
+      {loading && totalCount === 0 ? null : totalCount === 0 ? (
         <div className="flex flex-1 w-full h-full items-center justify-center bg-[#F4F6F8]">
           <EmptyView title={'아직 좋아요 한 글이 없어요'} />
         </div>
       ) : (
         <div className="flex flex-col gap-[12px]">
           <div className="bg-[#F3F5ED] font-pretendard text-title-sb-button text-[#616161] px-[34px] py-[8px] font-medium mt-[8px]">
-            좋아요 한 글 {likes.length}개
+            좋아요 한 글 {totalCount}개
           </div>
 
           <div className="flex flex-col">
