@@ -121,10 +121,10 @@ const CommunityPostDetailPage = () => {
 
   //게시글 수정 -> 글쓰기 연동 후 확인 가능
   const handleEdit = () => {
-    navigate(`/community/post/${postId}/edit`); //수정 가능
+    navigate(`/community/write?postId=${postId}`);
   };
 
-  //게시글 삭제 -> 글쓰기 연동 후 확인 가능
+  //게시글 삭제 
   const handleDelete = async () => {
     try {
       await axiosInstance.delete(`/api/v1/community/post/${postId}`,{
@@ -132,7 +132,7 @@ const CommunityPostDetailPage = () => {
             Authorization: `Bearer ${token}`,
           },
         },);
-      alert('삭제되었습니다!');
+      alert('삭제되었습니다!'); //이거 대신 토스트?
       navigate('/community');
     } catch (err) {
       console.error('삭제 실패:', err);
@@ -195,13 +195,13 @@ const CommunityPostDetailPage = () => {
           <div className="flex flex-col gap-[16px]">
             <div className="flex items-center text-headline-sb-sub font-semibold justify-between">
               {post.title}
-              {/*{post.isMyCommunityPost && (
-                작성 부분도 구현 완료되면 더보기버튼 코드 여기에 넣을 예정
-              )}*/}
-              <EditOrDeleteButton
+              {post.isMyCommunityPost && (
+                <EditOrDeleteButton
                 onEdit={handleEdit}
                 onDelete={() => setIsDeleteModalOpen(true)}
               />
+              )}
+              
             </div>
             <div className="flex justify-between items-center">
               <div className="flex gap-[8px] items-center">
