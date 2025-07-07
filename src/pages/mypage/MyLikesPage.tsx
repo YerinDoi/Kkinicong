@@ -65,7 +65,7 @@ const MyLikesPage = () => {
   });
 
   return (
-    <div className="flex flex-col w-full h-full pt-[11px]">
+    <div className="flex flex-col w-full h-full">
       <TopBar
         title="좋아요"
         rightType="none"

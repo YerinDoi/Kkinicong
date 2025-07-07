@@ -231,7 +231,7 @@ const StoreSearchPage = () => {
 
   return (
     <div>
-      <div className="flex flex-col items-center w-full pt-[11px] shadow-bottom shrink-0">
+      <div className="flex flex-col items-center w-full shadow-bottom shrink-0">
         <Header title="가맹점 찾기" location={gpsAddress} />
         <div className="flex gap-[12px] px-[20px] w-full">
           <button onClick={handleGpsClick}>

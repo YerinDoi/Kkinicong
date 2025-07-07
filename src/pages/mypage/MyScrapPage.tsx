@@ -48,7 +48,7 @@ const MyScrapPage = () => {
   }, []);
 
   return (
-    <div className="flex flex-col w-full h-full pt-[11px] overflow-hidden">
+    <div className="flex flex-col w-full h-full overflow-hidden">
       <TopBar
         title="찜한 가게"
         rightType="none"
