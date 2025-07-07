@@ -22,7 +22,7 @@ const AccountDeletePage = () => {
   };
 
   return (
-    <div className="flex flex-col w-full h-full pt-[11px]">
+    <div className="flex flex-col w-full h-full">
       <TopBar
         title="회원 탈퇴"
         rightType="none"

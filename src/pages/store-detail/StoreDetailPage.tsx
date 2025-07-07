@@ -45,7 +45,7 @@ const StoreDetailPage = () => {
   // 리뷰PR 커밋용 주석 닫기
 
   return (
-    <div className="font-pretendard mt-[11px]">
+    <div className="font-pretendard">
       <TopBar rightType="menu" />
       <StoreDetailInfo
         store={store}

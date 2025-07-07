@@ -50,7 +50,7 @@ const MyPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center w-full pt-[11px]">
+    <div className="flex flex-col items-center w-full">
       <Header title="마이페이지" />
 
       <div className="px-[30px] my-[24px]">

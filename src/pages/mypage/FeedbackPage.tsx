@@ -37,7 +37,7 @@ const FeedbackPage = () => {
     
 
     return (
-        <div className="flex flex-col w-full h-full pt-[11px] pb-[68px]">
+        <div className="flex flex-col w-full h-full pb-[68px]">
             <TopBar
                 title="의견 남기기"
                 rightType="none"
