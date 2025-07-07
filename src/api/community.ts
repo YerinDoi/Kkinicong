@@ -15,18 +15,28 @@ export interface CommunityPostPayload {
   title: string;
   content: string;
   category: string; // 'WELFARE_INFO' | ... 형태 문자열
-  imageUrls: string[];
 }
 //게시글 등록
 export const postCommunity = async (data: CommunityPostPayload) => {
-  const res = await axios.post('/api/v1/community/post', data);
-  return res.data.results;
+  const token = localStorage.getItem('accessToken');
+  const res = await axios.post('/api/v1/community/post', data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
 };
 
 
 //게시글 수정
 export const patchCommunity = async (postId: string, data: CommunityPostPayload) => {
-  const res = await axios.patch(`/api/v1/community/post/${postId}`, data);
+  const token = localStorage.getItem('accessToken');
+  const res = await axios.patch(`/api/v1/community/post/${postId}`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return res.data.results;
 };
+
 

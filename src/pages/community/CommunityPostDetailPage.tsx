@@ -236,7 +236,7 @@ const CommunityPostDetailPage = () => {
           <div className="mt-[20px] flex flex-col gap-[16px]">
             <MainTag rounded="rounded-[8px]" text={post.category} />
             {Array.isArray(post.imageUrls) && post.imageUrls.length > 0 && (
-              <div className="flex flex-col ">
+              <div className="flex flex-col gap-[16px]">
                 {post.imageUrls.map((url, idx) => (
                   <img
                     key={idx}

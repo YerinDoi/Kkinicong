@@ -7,6 +7,8 @@ import axiosInstance from '@/api/axiosInstance';
 import { postCommunity, patchCommunity } from '@/api/community';
 import { labelToValueMap } from '@/api/community';
 import { uploadImages } from '@/api/communityImg';
+import ConfirmToast from '@/components/common/ConfirmToast';
+import { createPortal } from 'react-dom';
 
 export default function CommunityWritePage() {
   const navigate = useNavigate();
@@ -17,14 +19,7 @@ export default function CommunityWritePage() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [images, setImages] = useState<(File | string)[]>([]);
-
-  async function urlToFile(url: string): Promise<File> {
-  const response = await fetch(url);
-  const blob = await response.blob();
-  const filename = url.split('/').pop() || 'image.jpg';
-  return new File([blob], filename, { type: blob.type });
-}
-
+  const [showToast,setShowToast] = useState(false);
 
 
   const isValid =
@@ -56,60 +51,68 @@ export default function CommunityWritePage() {
     fetchPostDetail();
   }, [postId]);
 
- const handleSubmit = async () => {
+  const handleSubmit = async () => {
   try {
-    const newFiles = images.filter((img): img is File => typeof img !== 'string');
-    const existingUrls = images.filter((img): img is string => typeof img === 'string');
-
+    const isEditing = !!postId;
     let finalPostId = postId;
-    let allFiles: File[] = [...newFiles];
 
-    const urlFiles = await Promise.all(existingUrls.map(urlToFile));
-    allFiles = [...urlFiles, ...newFiles];
+    const existingImageUrls = images.filter((img): img is string => typeof img === 'string');
+    const newImageFiles = images.filter((img): img is File => img instanceof File);
 
-    // [1] 새 글이면 먼저 post
-    if (!finalPostId) {
-      const result = await postCommunity({
+    console.log('🧪 현재 모드:', isEditing ? '수정' : '등록');
+    console.log('🧪 카테고리:', category);
+    console.log('🧪 제목:', title);
+    console.log('🧪 본문:', content);
+    console.log('🧪 기존 이미지 URLs:', existingImageUrls);
+    console.log('🧪 새로 추가된 이미지 Files:', newImageFiles);
+
+    // 1. 신규 작성
+    if (!isEditing) {
+      const postRes = await postCommunity({ title, content, category });
+      console.log('🧪 postRes:', postRes);
+
+      finalPostId = postRes?.results?.communityPostId;
+      if (!finalPostId) throw new Error('❌ communityPostId가 없습니다!');
+
+      if (newImageFiles.length > 0) {
+        const imageUrls = await uploadImages(finalPostId, newImageFiles);
+        console.log('🧪 이미지 업로드 완료 (등록):', imageUrls);
+      }
+
+      setShowToast(true);
+      setTimeout(() => {
+        navigate('/community');
+      }, 1500);
+    }
+
+    // 2. 수정
+    if (isEditing && finalPostId) {
+      console.log('🧪 PATCH 요청 데이터:', {
         title,
         content,
         category,
-        imageUrls: [],
       });
-      finalPostId = result.communityPostId;
-    }
 
-    // [2] 이미지 업로드 (기존 + 새 이미지 포함)
-    const uploadedUrls = await uploadImages(finalPostId!, allFiles);
-
-    if (!uploadedUrls || uploadedUrls.length !== allFiles.length) {
-      alert('이미지 업로드 실패');
-      return;
-    }
-
-    // [3] 최종 수정/등록 요청
-    if (postId) {
-      await patchCommunity(postId, {
+      await patchCommunity(finalPostId, {
         title,
         content,
         category,
-        imageUrls: uploadedUrls,
       });
-    } else {
-      await postCommunity({
-        title,
-        content,
-        category,
-        imageUrls: uploadedUrls,
-      });
-    }
 
-    alert('저장 완료!');
-    navigate('/community')
-  } catch (e) {
-    console.error('handleSubmit 오류:', e);
-    alert('저장 실패!');
+      if (newImageFiles.length > 0) {
+        const imageUrls = await uploadImages(finalPostId, newImageFiles);
+        console.log('🧪 이미지 업로드 완료 (수정):', imageUrls);
+      }
+
+      alert('글이 성공적으로 수정되었습니다!');
+      navigate(`/community/post/${finalPostId}`);
+    }
+  } catch (error) {
+    console.error('🔥 저장 실패:', error);
   }
 };
+
+
 
 
 
@@ -179,6 +182,17 @@ export default function CommunityWritePage() {
           등록하기
         </button>
       </div>
+
+       {showToast &&
+        createPortal(
+          <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
+            <ConfirmToast
+              text="게시글 등록이 완료되었어요"
+            />
+          </div>,
+          document.body,
+        )}
+
     </div>
   );
 }

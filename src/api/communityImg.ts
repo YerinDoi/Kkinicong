@@ -3,9 +3,13 @@ import axios from '@/api/axiosInstance';
 export const uploadImages = async (postId: string, images: File[]): Promise<string[]> => {
   const formData = new FormData();
   images.forEach((img) => formData.append('files', img));
+  const token = localStorage.getItem('accessToken');
 
   try {
-    const res = await axios.post(`/api/v1/community/post/${postId}/image`, formData);
+    const res = await axios.post(`/api/v1/community/post/${postId}/image`, formData,{
+      headers: {
+      Authorization: `Bearer ${token}`,
+    },});
     console.log('uploadImages 응답:', res.data.results);
 
     const uploaded = res.data?.results?.imageUrls;
