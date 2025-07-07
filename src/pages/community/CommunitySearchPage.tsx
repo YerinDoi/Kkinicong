@@ -14,39 +14,42 @@ const CommunitySearchPage = () => {
   const pageRef = useRef(0);
   const hasNextPageRef = useRef(true);
   const isLoadingRef = useRef(false);
+  const [isSearched, setIsSearched] = useState(false); 
+  const [searchedKeyword, setSearchedKeyword] = useState("");
+  const [isSearchLoading, setIsSearchLoading] = useState(false); 
 
-  const loadPosts = async () => {
-    if (!keyword.trim() || keyword.trim().length < 2 || keyword.trim().length > 15 || isLoadingRef.current) return;
+  const loadPosts = async (currentPage: number = 0, searchValue: string) => {
+  if (!searchValue.trim() || searchValue.trim().length < 2 || searchValue.trim().length > 15 || isLoadingRef.current) return;
 
-    isLoadingRef.current = true;
+  isLoadingRef.current = true;
+  setIsSearchLoading(true);
 
-    try {
-      const res = await axiosInstance.get("/api/v1/community/search", {
-        params: { keyword, page:0 ,size:10 },
-      });
+  try {
+    const res = await axiosInstance.get("/api/v1/community/search", {
+      params: { keyword: searchValue, page: currentPage, size: 10 },
+    });
 
-      const data = res.data.results;
-      const newPosts = data.content;
-      console.log(res.request.responseURL)
-      console.log("전체 응답", res.data);
+    const data = res.data.results;
+    const newPosts = data.content;
+
+    setPosts(prev => (currentPage === 0 ? newPosts : [...prev, ...newPosts]));
+    hasNextPageRef.current = currentPage + 1 < data.totalPages;
+  } catch (err) {
+    console.error("검색 실패", err);
+  } finally {
+    isLoadingRef.current = false;
+    setIsSearchLoading(false);
+  }
+};
 
 
-      console.log("받은 데이터", data.content);
-
-      setPosts(prev => (page === 0 ? newPosts : [...prev, ...newPosts]));
-      hasNextPageRef.current = page + 1 < data.totalPages;
-    } catch (err) {
-      console.error("검색 실패", err);
-    } finally {
-      isLoadingRef.current = false;
-    }
-  };
 
   useEffect(() => {
-  if (keyword.trim().length >= 2 && keyword.trim().length <= 15) {
-    loadPosts();
+  if (isSearched && searchedKeyword.trim().length >= 2 && searchedKeyword.trim().length <= 15) {
+    loadPosts(page, searchedKeyword);  
   }
 }, [page]);
+
 
 
   const { loaderRef } = useInfiniteScroll({
@@ -69,9 +72,10 @@ const CommunitySearchPage = () => {
   }
   setPage(0); // 첫 페이지부터 검색
   pageRef.current = 0; // ref도 초기화
+  setIsSearched(true); 
+  setSearchedKeyword(keyword);
+  loadPosts(0, keyword);
 
-  // 직접 호출
-  loadPosts();
 };
 
 
@@ -89,14 +93,15 @@ const CommunitySearchPage = () => {
       </div>
       
       <div className="flex flex-col">
-      {posts.length === 0 ? (
-        <CommunitySearchEmptyView keyword={keyword} />
-      ) : (
-        posts.map((post) => (
-          <PostItem key={post.communityPostId} post={post} keyword={keyword} />
-        ))
-      )}
-    </div>
+        {isSearched && !isSearchLoading && posts.length === 0 ? (
+          <CommunitySearchEmptyView keyword={searchedKeyword} />
+        ) : (
+          posts.map((post) => (
+            <PostItem key={post.communityPostId} post={post} keyword={searchedKeyword} />
+          ))
+        )}
+      </div>
+
     <div ref={loaderRef} style={{ height: 20 }} />
 
 
