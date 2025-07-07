@@ -14,7 +14,8 @@ export const labelToValueMap = {
 export interface CommunityPostPayload {
   title: string;
   content: string;
-  category: string; // 'WELFARE_INFO' | ... 형태 문자열
+  category: string; 
+  remainingImageUrls?: string[];
 }
 //게시글 등록
 export const postCommunity = async (data: CommunityPostPayload) => {

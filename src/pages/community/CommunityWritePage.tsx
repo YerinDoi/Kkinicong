@@ -59,24 +59,16 @@ export default function CommunityWritePage() {
     const existingImageUrls = images.filter((img): img is string => typeof img === 'string');
     const newImageFiles = images.filter((img): img is File => img instanceof File);
 
-    console.log('🧪 현재 모드:', isEditing ? '수정' : '등록');
-    console.log('🧪 카테고리:', category);
-    console.log('🧪 제목:', title);
-    console.log('🧪 본문:', content);
-    console.log('🧪 기존 이미지 URLs:', existingImageUrls);
-    console.log('🧪 새로 추가된 이미지 Files:', newImageFiles);
-
     // 1. 신규 작성
     if (!isEditing) {
       const postRes = await postCommunity({ title, content, category });
-      console.log('🧪 postRes:', postRes);
 
       finalPostId = postRes?.results?.communityPostId;
-      if (!finalPostId) throw new Error('❌ communityPostId가 없습니다!');
+      if (!finalPostId) throw new Error('communityPostId가 없습니다!');
 
       if (newImageFiles.length > 0) {
         const imageUrls = await uploadImages(finalPostId, newImageFiles);
-        console.log('🧪 이미지 업로드 완료 (등록):', imageUrls);
+        console.log('이미지 업로드 완료 (등록):', imageUrls);
       }
 
       setShowToast(true);
@@ -87,33 +79,24 @@ export default function CommunityWritePage() {
 
     // 2. 수정
     if (isEditing && finalPostId) {
-      console.log('🧪 PATCH 요청 데이터:', {
-        title,
-        content,
-        category,
-      });
-
       await patchCommunity(finalPostId, {
         title,
         content,
         category,
+        remainingImageUrls: existingImageUrls,
       });
 
       if (newImageFiles.length > 0) {
         const imageUrls = await uploadImages(finalPostId, newImageFiles);
-        console.log('🧪 이미지 업로드 완료 (수정):', imageUrls);
+        console.log('이미지 업로드 완료 (수정):', imageUrls);
       }
 
-      alert('글이 성공적으로 수정되었습니다!');
       navigate(`/community/post/${finalPostId}`);
     }
   } catch (error) {
-    console.error('🔥 저장 실패:', error);
+    console.error('저장 실패:', error);
   }
 };
-
-
-
 
 
   return (
