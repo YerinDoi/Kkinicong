@@ -73,7 +73,7 @@ const MyReviewItem: React.FC<MyReviewItemProps> = ({
         <div className="flex justify-between items-center grow shrink-0 basis-0">
           <div className="flex items-center gap-[8px]">
             <span
-              className="font-pretendard font-medium text-title-sb-button cursor-pointer"
+              className="font-pretendard font-semibold text-title-sb-button cursor-pointer"
               onClick={() => navigate(`/store/${storeId}`)}
             >
               {storeName}

@@ -10,9 +10,9 @@ const FeedbackBox: React.FC<FeedbackBoxProps> = ({ value, onChange }) => {
 
   return (
     <div className="flex flex-col gap-[12px] font-pretendard px-[8px]">
-      <div className="flex text-[#919191] justify-between ">
-        <div className="h-[18px] ">
-          <span className="text-black font-medium text-title-sb-button">
+      <div className="flex text-[#919191] justify-between font-semibold">
+        <div className="h-[18px] font-semibold">
+          <span className="text-black font-semibold text-title-sb-button">
             의견이 있다면 작성해주세요
           </span>{' '}
           (선택)

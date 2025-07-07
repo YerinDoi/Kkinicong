@@ -23,8 +23,8 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({
   const [reviews, setReviews] = useState<StoreReview[]>([]);
   const [ratingAvg, setRatingAvg] = useState<number>(0);
   const [reviewCount, setReviewCount] = useState<number>(0);
-
   const [showLoginModal, setShowLoginModal] = useState(false);
+
 
   // 리뷰PR 커밋용 주석 열기
   const handleReviewClick = () => {
@@ -43,6 +43,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({
         },
       });
     } else {
+
       setShowLoginModal(true);
     }
   };
@@ -153,6 +154,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({
         <LoginModal
           isOpen={showLoginModal}
           onClose={() => setShowLoginModal(false)}
+        
         />
       )}
     </section>

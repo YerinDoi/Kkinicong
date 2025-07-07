@@ -1,38 +1,103 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import CategorySelector from '@/components/Community/CategorySelector';
 import ImageUploader from '@/components/Community/ImageUploader';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate ,useSearchParams } from 'react-router-dom';
 import TopBar from '@/components/common/TopBar';
-
-import { postCommunity } from '@/api/community';
+import axiosInstance from '@/api/axiosInstance';
+import { postCommunity, patchCommunity } from '@/api/community';
+import { labelToValueMap } from '@/api/community';
+import { uploadImages } from '@/api/communityImg';
+import ConfirmToast from '@/components/common/ConfirmToast';
+import { createPortal } from 'react-dom';
 
 export default function CommunityWritePage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const postId = searchParams.get('postId');
 
   const [category, setCategory] = useState('');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [images, setImages] = useState<File[]>([]);
+  const [images, setImages] = useState<(File | string)[]>([]);
+  const [showToast,setShowToast] = useState(false);
+
 
   const isValid =
     category && title.trim().length >= 5 && content.trim().length >= 10;
+  
+    //수정 모드일 경우 게시글 정보 불러오기
+  useEffect(() => {
+  if (!postId) return;
+  const fetchPostDetail = async () => {
+  
+  try {
+    const res = await axiosInstance.get(`/api/v1/community/post/${postId}`);
+    console.log('게시글 데이터:', res.data);
+
+    const { title, content, category, imageUrls } = res.data.results;
+
+    setTitle(title);
+    setContent(content);
+    setCategory(labelToValueMap[category as keyof typeof labelToValueMap] || '');
+
+    setImages(imageUrls); // 여기 수정할수도...
+  } catch (err) {
+    console.error('게시글 불러오기 실패:', err);
+    alert('게시글 정보를 불러오지 못했어요.');
+  }
+};
+
+
+    fetchPostDetail();
+  }, [postId]);
 
   const handleSubmit = async () => {
-    try {
-      const payload = {
+  try {
+    const isEditing = !!postId;
+    let finalPostId = postId;
+
+    const existingImageUrls = images.filter((img): img is string => typeof img === 'string');
+    const newImageFiles = images.filter((img): img is File => img instanceof File);
+
+    // 1. 신규 작성
+    if (!isEditing) {
+      const postRes = await postCommunity({ title, content, category });
+
+      finalPostId = postRes?.results?.communityPostId;
+      if (!finalPostId) throw new Error('communityPostId가 없습니다!');
+
+      if (newImageFiles.length > 0) {
+        const imageUrls = await uploadImages(finalPostId, newImageFiles);
+        console.log('이미지 업로드 완료 (등록):', imageUrls);
+      }
+
+      setShowToast(true);
+      setTimeout(() => {
+        navigate('/community');
+      }, 1500);
+    }
+
+    // 2. 수정
+    if (isEditing && finalPostId) {
+      await patchCommunity(finalPostId, {
         title,
         content,
         category,
-      };
+        remainingImageUrls: existingImageUrls,
+      });
 
-      const result = await postCommunity(payload);
-      console.log('작성 완료! ID:', result.communityPostId);
-      navigate('/community');
-    } catch (error: any) {
-      console.error(error);
-      alert('게시글 등록에 실패했습니다. 다시 시도해주세요.');
+      if (newImageFiles.length > 0) {
+        const imageUrls = await uploadImages(finalPostId, newImageFiles);
+        console.log('이미지 업로드 완료 (수정):', imageUrls);
+      }
+
+      navigate(`/community/post/${finalPostId}`);
     }
-  };
+  } catch (error) {
+    console.error('저장 실패:', error);
+  }
+};
+
 
   return (
     <div className="flex flex-col h-screen">
@@ -100,6 +165,17 @@ export default function CommunityWritePage() {
           등록하기
         </button>
       </div>
+
+       {showToast &&
+        createPortal(
+          <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
+            <ConfirmToast
+              text="게시글 등록이 완료되었어요"
+            />
+          </div>,
+          document.body,
+        )}
+
     </div>
   );
 }

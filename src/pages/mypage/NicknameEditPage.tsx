@@ -83,7 +83,7 @@ const NicknameEditPage = () => {
 
       <div className="flex flex-col px-[20px] gap-[48px]">
         <div className="flex flex-col flex-start w-[298px] gap-[12px] font-pretendard mt-[29px]">
-          <p className="text-[20px] font-medium leading-[28px]">
+          <p className="text-[20px] font-semibold leading-[28px]">
             수정할 닉네임을 적어주세요
           </p>
           <p className="text-[14px] font-normal leading-[24px] text-[#919191]">
@@ -102,7 +102,7 @@ const NicknameEditPage = () => {
               onChange={handleChange}
               type="text"
               placeholder="최대 10자 (ex. 배고픈 콩쥐)"
-              className="flex-1 outline-none text-title-sb-button font-medium placeholder-gray-400"
+              className="flex-1 outline-none text-title-sb-button font-semibold placeholder-gray-400"
             />
             <button
               onClick={checkDuplicate}

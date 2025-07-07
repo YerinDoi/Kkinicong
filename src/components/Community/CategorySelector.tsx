@@ -76,22 +76,19 @@
 //   );
 // }
 
-import { useState } from 'react';
+import { useState ,useEffect} from 'react';
+import { labelToValueMap } from '@/api/community';
 
 interface CategorySelectorProps {
   value: string;
   onChange: (value: string) => void;
 }
 
-const CATEGORY_LIST = [
-  { label: '복지정보', value: 'WELFARE_INFO' },
-  { label: '잡담해요', value: 'CHITCHAT' },
-  { label: '양육/육아', value: 'PARENTING' },
-  { label: '문의/도움', value: 'QUESTION_HELP' },
-  { label: '생활꿀팁', value: 'LIFE_TIP' },
-  { label: '칭찬/감사', value: 'APPRECIATION' },
-  { label: '기타', value: 'ETC' },
-];
+const CATEGORY_LIST = Object.entries(labelToValueMap).map(([label, value]) => ({
+  label,
+  value,
+}));
+
 
 export default function CategorySelector({
   value,
@@ -99,6 +96,10 @@ export default function CategorySelector({
 }: CategorySelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [tempValue, setTempValue] = useState(value);
+
+  useEffect(() => {
+  setTempValue(value);
+}, [value]);
 
   const selectedLabel = CATEGORY_LIST.find(
     (item) => item.value === value,

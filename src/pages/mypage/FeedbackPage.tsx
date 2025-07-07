@@ -44,7 +44,7 @@ const FeedbackPage = () => {
                 onBack={() => navigate('/mypage')}
             />
 
-            <div className="flex flex-col gap-[44px] px-[20px] font-pretendard text-[16px] font-medium leading-[20px]">
+            <div className="flex flex-col gap-[44px] px-[20px] font-pretendard text-[16px] font-semibold leading-[20px]">
                 <div className="border-b border-[#C3C3C3]">
                     <div className="flex flex-col h-[44px] justify-between mt-[24px]">
                     <p><span className="text-main-color">끼니콩</span>을 이용하면서</p>
@@ -56,7 +56,7 @@ const FeedbackPage = () => {
                     </p>
                 </div>
 
-                <div className="flex flex-col px-[8px] gap-[16px]">
+                <div className="flex flex-col px-[8px] gap-[16px] font-semibold">
                     <p>얼마나 만족스럽게 사용하고 계신가요?</p>
                     <Star value={value} onChange={onChange} />
                 </div>

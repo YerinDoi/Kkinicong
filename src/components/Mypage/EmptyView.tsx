@@ -2,11 +2,12 @@ import CuriousCongG from '@/assets/svgs/logo/curious-congG.svg';
 import plusIcon from '@/assets/svgs/common/plus-icon.svg';
 
 interface EmptyViewProps {
-  title: string;
+  title: string | React.ReactNode;
   description?: string;
   actionText?: string;
   onActionClick?: () => void;
-  actionType?: 'button' | 'link';
+  actionType?: 'button' | 'link' | 'text';
+
 }
 
 const EmptyView = ({
@@ -15,6 +16,7 @@ const EmptyView = ({
   actionText,
   onActionClick,
   actionType = 'link',
+
 }: EmptyViewProps) => (
   <div className="flex flex-col items-center justify-center gap-[12px] text-center bg-[#F4F6F8]">
     <img
@@ -37,18 +39,33 @@ const EmptyView = ({
         }}
         onClick={onActionClick}
       >
-        {actionText}
+         {actionText.split('\\n').map((line, idx) => (
+      <span key={idx}>
+        {line}
+        <br />
+      </span>
+    ))}
       </button>
     )}
     {actionText && actionType === 'button' && (
       <button
-        className="flex items-center justify-center mt-[12px] px-[20px] py-[12px] gap-[8px] bg-[#65CE58] font-pretendard text-white rounded-[24px] text-[16px] font-medium leading-normal tracking-[0.016px]"
+        className="flex items-center justify-center mt-[12px] px-[20px] py-[12px] gap-[8px] bg-[#65CE58] font-pretendard text-white rounded-[24px] text-[16px] font-semibold leading-normal tracking-[0.016px]"
         onClick={onActionClick}
       >
         <img src={plusIcon} />
-        {actionText}
+         {actionText}
       </button>
     )}
+
+    {actionText && actionType === 'text' && (
+      <div className="text-[#212121] underline text-center font-pretendard decoration-solid underline-offset-auto text-body-md-description font-normal tracking-[0.012px] whitespace-pre-line">
+        {actionText.split('\\n').map((line, idx) => (
+          <span key={idx}>
+            {line}
+            <br />
+          </span>))}
+      </div>)}
+
   </div>
 );
 

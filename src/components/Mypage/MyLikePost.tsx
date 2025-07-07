@@ -35,7 +35,7 @@ const MyLikePost: React.FC<MyLikePostProps> = ({ like, noBorder }) => {
     
       <div className={`flex ${hasThumbnail ? 'flex-row justify-between' : 'flex-col gap-[12px]'}`}>
       <div className="flex flex-col gap-[8px]">
-        <span className="font-pretendard text-title-sb-button font-medium text-[16px] text-[#212121]">
+        <span className="font-pretendard text-title-sb-button font-semibold text-[16px] text-[#212121]">
           {like.titlePreview}
         </span>
         <span className="font-pretendard text-body-md-title font-normal text-[#C3C3C3]">
@@ -61,7 +61,7 @@ const MyLikePost: React.FC<MyLikePostProps> = ({ like, noBorder }) => {
 
 
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-[5px] font-pretendard text-body-md-title font-normal text-[#C3C3C3]">
+        <div className="flex items-center gap-[5px] font-pretendard text-body-md-title font-medium text-[#C3C3C3]">
           <span>좋아요 {like.likeCount}</span>
           <span>·</span>
           <span>{like.createdAt}</span>
@@ -71,7 +71,7 @@ const MyLikePost: React.FC<MyLikePostProps> = ({ like, noBorder }) => {
 
         <div className="flex items-center gap-[4px]">
           <img src={CommentIcon} className="w-[15px] h-[14px]" />
-          <span className="font-pretendard text-[16px] font-normal text-[#C3C3C3] tracking-[0.016px]">
+          <span className="font-pretendard text-[16px] font-medium text-[#C3C3C3] tracking-[0.016px]">
             {like.commentCount}
           </span>
         </div>
