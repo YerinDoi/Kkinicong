@@ -20,11 +20,13 @@ export default function AddConveniencePage() {
 
   const { isLoggedIn } = useLoginStatus();
   const [isLoginSheetOpen, setLoginSheetOpen] = useState(false);
+  const [pendingPath, setPendingPath] = useState<string | null>(null);
 
   // 로그인 안 했으면 바텀시트 띄우기
   useEffect(() => {
     if (isLoggedIn === null) return; // 아직 판단 중
     if (isLoggedIn === false) {
+      setPendingPath('/convenience/add');
       setLoginSheetOpen(true);
     }
   }, [isLoggedIn]);
@@ -67,7 +69,7 @@ export default function AddConveniencePage() {
       navigate('/convenience');
     } catch (err) {
       console.error('등록 실패:', err);
-      alert('등록 중 오류가 발생했어요 😢');
+      alert('등록 중 오류가 발생했어요 ');
     }
   };
 
@@ -171,6 +173,7 @@ export default function AddConveniencePage() {
         onClose={() => {
           setLoginSheetOpen(false);
         }}
+        pendingPath={pendingPath}
       />
     </div>
   );

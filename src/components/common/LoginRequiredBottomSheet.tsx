@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import BottomSheet from '@/components/common/BottomSheet';
 import Icon from '@/assets/icons';
 
-interface LoginRequiredBottomSheetProps {
+interface LoginRequiredBottomSheetProps  {
   isOpen: boolean;
   onClose: () => void;
   pendingPath?: string | null;
+
 }
 
 const LoginRequiredBottomSheet: React.FC<LoginRequiredBottomSheetProps> = ({

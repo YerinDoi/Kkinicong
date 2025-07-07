@@ -52,10 +52,14 @@ const ReportButton: React.FC<ReportButtonProps> = ({
       alert('신고 사유가 유효하지 않습니다.');
       return;
     }
+    const url =
+    type === 'post'
+      ? `/api/v1/report/community/post/${id}`
+      : `/api/v1/report/community/comment/${id}`;
 
     try {
       await axiosInstance.post(
-        `/api/v1/report/community/${id}`,
+        url,
         {
           description: mappedReason === 'ETC' ? description : null,
         },
@@ -133,7 +137,7 @@ const ReportButton: React.FC<ReportButtonProps> = ({
       {showWarningToast &&
         createPortal(
           <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
-            <WarningToast text="이미 신고 완료된 리뷰에요" />
+            <WarningToast text={['이미 신고 완료된 콘텐츠에요', '빠르게 검토중이니 잠시 기다려주세요']} />
           </div>,
           document.body,
         )}
