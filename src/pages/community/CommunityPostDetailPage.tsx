@@ -15,6 +15,8 @@ import ReportButton from '@/components/Community/ReportButton';
 import EditOrDeleteButton from '@/components/Community/EditOrDeleteButton';
 import useCommentActions from '@/hooks/useCommentActions';
 import DeleteModal from '@/components/common/DeleteModal';
+import ConfirmToast from '@/components/common/ConfirmToast';
+import { createPortal } from 'react-dom';
 
 interface Comment {
   commentId: number;
@@ -60,6 +62,8 @@ const CommunityPostDetailPage = () => {
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editingContent, setEditingContent] = useState('');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  //게시글 삭제 토스트
+  const [showDeleteToast, setShowDeleteToast] = useState(false);
   const token = localStorage.getItem('accessToken');
 
   const navigate = useNavigate();
@@ -132,8 +136,10 @@ const CommunityPostDetailPage = () => {
             Authorization: `Bearer ${token}`,
           },
         },);
-      alert('삭제되었습니다!'); //이거 대신 토스트?
+      setShowDeleteToast(true);
+      setTimeout(() => {
       navigate('/community');
+    }, 1500);
     } catch (err) {
       console.error('삭제 실패:', err);
       alert('삭제에 실패했습니다.');
@@ -326,6 +332,16 @@ const CommunityPostDetailPage = () => {
           }}
         />
       )}
+      {showDeleteToast &&
+        createPortal(
+          <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
+            <ConfirmToast
+              text="게시글 삭제가 완료되었어요"
+            />
+          </div>,
+          document.body,
+        )}
+
     </div>
   );
 };

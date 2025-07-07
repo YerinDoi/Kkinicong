@@ -231,7 +231,6 @@ const handleEditSubmit = async (newContent: string) => {
 
   const success = await editComment(editingReplyId, newContent);
   if (success) {
-    alert('수정되었습니다!');
     handlecloseReplyInput();
     onReload?.();
   } else {
@@ -403,15 +402,17 @@ const handleCommentDelete = async () => {
         }}
       />)}
 
+  
       {showDeleteToast &&
         createPortal(
           <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
             <ConfirmToast
-              text={"댓글 삭제가 완료되었어요"}
+              text={isReply ? "답글 삭제가 완료되었어요" : "댓글 삭제가 완료되었어요"}
             />
           </div>,
           document.body,
         )}
+
 
     </div>
   );

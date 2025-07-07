@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import FloatingButton from '../Community/FloatingButton';
+import FloatingButton from '@/components/common/FloatingButton';
 
 interface Props {
   children: React.ReactNode;
