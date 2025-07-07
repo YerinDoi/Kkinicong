@@ -92,12 +92,18 @@ const CommentItem: React.FC<CommentItemProps> = ({
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   //댓글,답글 삭제 토스트
   const [showDeleteToast, setShowDeleteToast] = useState(false);
+  const [pendingPath, setPendingPath] = useState<string | null>(null);
+
 
 
 
   //좋아요
   const handleLikeClick = async () => {
     if (!isLoggedIn) {
+      if (postId) {
+        console.log('postId',postId)
+        setPendingPath(`/community/post/${postId}`);
+      }
       setIsLoginBottomSheetOpen(true);
       return;
     }
@@ -143,6 +149,9 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
   const handleReplyClick = () => {
     if (!isLoggedIn) {
+      if (postId) {
+        setPendingPath(`/community/post/${postId}`);
+      }
       setIsLoginBottomSheetOpen(true);
       return;
     }
@@ -155,12 +164,12 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
   //답글 입력창 닫기
   const handlecloseReplyInput = () => {
-  setIsReplying?.(false);
-  setIsReplyInputOpen(false);
-  setReplyTargetNickname(null);
-  setIsReplyEditing(false); 
-  setEditingReplyId(null);
-  setEditingReplyContent('');
+    setIsReplying?.(false);
+    setIsReplyInputOpen(false);
+    setReplyTargetNickname(null);
+    setIsReplyEditing(false); 
+    setEditingReplyId(null);
+    setEditingReplyContent('');
 };
 
 
@@ -388,6 +397,7 @@ const handleCommentDelete = async () => {
       <LoginRequiredBottomSheet
         isOpen={isLoginBottomSheetOpen}
         onClose={() => setIsLoginBottomSheetOpen(false)}
+        pendingPath={pendingPath}
       />
 
     

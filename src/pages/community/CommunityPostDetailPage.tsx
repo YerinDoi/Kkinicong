@@ -70,6 +70,7 @@ const CommunityPostDetailPage = () => {
 
   const { share } = useShare();
   const { isLoggedIn } = useLoginStatus();
+  const [pendingPath, setPendingPath] = useState<string | null>(null);
   
 
   //게시글 조회
@@ -94,6 +95,7 @@ const CommunityPostDetailPage = () => {
 
   const handleLikeClick = async () => {
     if (!isLoggedIn) {
+      setPendingPath(`/community/post/${postId}`);
       setIsLoginBottomSheetOpen(true);
       return;
     }
@@ -276,6 +278,7 @@ const CommunityPostDetailPage = () => {
       <LoginRequiredBottomSheet
         isOpen={isLoginBottomSheetOpen}
         onClose={() => setIsLoginBottomSheetOpen(false)}
+        pendingPath={pendingPath}
       />
 
       {/*댓글*/}

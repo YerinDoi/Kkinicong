@@ -4,16 +4,19 @@ import { useLoginStatus } from '@/hooks/useLoginStatus';
 import LoginRequiredBottomSheet from './LoginRequiredBottomSheet';
 import { useState } from 'react';
 
+
 const FloatingButton = () => {
   const navigate = useNavigate();
   const { isLoggedIn} = useLoginStatus();
   const [LoginSheetOpen, setLoginSheetOpen] = useState(false);
+  const [pendingPath, setPendingPath] = useState<string | null>(null);
 
   const handleClick = () => {
 
   if (isLoggedIn) {
     navigate('/community/write');
   } else {
+    setPendingPath('/community/write');
     setLoginSheetOpen(true);
   }
 };
@@ -38,6 +41,7 @@ const FloatingButton = () => {
       <LoginRequiredBottomSheet
         isOpen={LoginSheetOpen}
         onClose={() => setLoginSheetOpen(false)}
+        pendingPath={pendingPath}
       />
     </>
     
