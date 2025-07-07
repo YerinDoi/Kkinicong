@@ -51,7 +51,7 @@ const ConvenienceStorePage = () => {
   return (
     <div className="flex flex-col h-full bg-[#FFF5DF]">
       {/* 상단 : 탑바, 검색바, 정보 카드*/}
-      <TopBar title="편의점 구매정보" />
+      <TopBar title="편의점 구매정보" rightType="menu" />
       <div className="px-4">
         <SearchInput
           placeholder="CU, 불닭볶음면 ..."

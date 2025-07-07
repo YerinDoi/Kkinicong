@@ -77,7 +77,7 @@ export default function ConvenienceDetailPage() {
         console.error('공유 실패:', err);
       }
     } else {
-      alert('이 브라우저는 공유 기능을 지원하지 않아요 😢');
+      alert('이 브라우저는 공유 기능을 지원하지 않아요 ');
     }
   };
 
