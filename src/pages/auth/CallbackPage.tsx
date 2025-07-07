@@ -10,6 +10,7 @@ export default function CallbackPage() {
 
   useEffect(() => {
     const code = searchParams.get('code');
+    const redirectTo = searchParams.get('state') || '/';
     if (!code || !provider || hasCalled.current) return;
 
     hasCalled.current = true; // ✅ 한 번 실행되면 막음
@@ -23,7 +24,7 @@ export default function CallbackPage() {
         console.log('✅ 로그인 성공!!!!!!!!!!!!!!:', user);
 
         if (!user.nickname) navigate('/nickname');
-        else navigate('/');
+        else navigate(redirectTo);
       } catch (e) {
         console.error('❌ 로그인 실패:ㅠㅠㅠㅠㅠㅠㅠㅠ', e);
         alert('로그인에 실패했습니다.');

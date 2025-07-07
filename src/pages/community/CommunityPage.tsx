@@ -13,7 +13,6 @@ const CommunityPage = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
-  const [size] = useState(10); // 고정 사이즈
   const [selectedCategory, setSelectedCategory] = useState('전체');
 
   const pageRef = useRef(0);
@@ -34,7 +33,7 @@ const CommunityPage = () => {
   const fetchPosts = async (
     categoryText: string,
     page: number,
-    size: number,
+    size?: number,
   ) => {
     if (isLoadingRef.current) return;
     isLoadingRef.current = true;
@@ -62,7 +61,7 @@ const CommunityPage = () => {
   };
 
   useEffect(() => {
-    fetchPosts(selectedCategory, page, size);
+    fetchPosts(selectedCategory, page);
   }, [selectedCategory, page]);
 
   const { loaderRef } = useInfiniteScroll({

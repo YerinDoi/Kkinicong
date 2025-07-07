@@ -1,0 +1,105 @@
+import { useState } from 'react';
+import CategorySelector from '@/components/Community/CategorySelector';
+import ImageUploader from '@/components/Community/ImageUploader';
+import { useNavigate } from 'react-router-dom';
+import TopBar from '@/components/common/TopBar';
+
+import { postCommunity } from '@/api/community';
+
+export default function CommunityWritePage() {
+  const navigate = useNavigate();
+
+  const [category, setCategory] = useState('');
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [images, setImages] = useState<File[]>([]);
+
+  const isValid =
+    category && title.trim().length >= 5 && content.trim().length >= 10;
+
+  const handleSubmit = async () => {
+    try {
+      const payload = {
+        title,
+        content,
+        category,
+      };
+
+      const result = await postCommunity(payload);
+      console.log('작성 완료! ID:', result.communityPostId);
+      navigate('/community');
+    } catch (error: any) {
+      console.error(error);
+      alert('게시글 등록에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+
+  return (
+    <div className="flex flex-col h-screen">
+      <TopBar
+        title="커뮤니티 글 작성"
+        // TODO: 임시 저장 기능 구현 예정
+        // rightType="custom"
+        // customRightElement={
+        //   <button
+        //     onClick={() => {
+        //       console.log('임시저장!');
+        //       // TODO: 임시 저장 로직 구현 예정
+        //       alert('임시 저장했습니다.');
+        //     }}
+        //     className="text-[14px] text-body-md-title font-regular"
+        //   >
+        //     임시저장 <span>(개수)</span>
+        //   </button>
+        // }
+      />
+      <div className="p-5 flex-1 space-y-7">
+        <div className="space-y-3">
+          <span className="text-title-sb-button font-semibold">카테고리</span>
+          <CategorySelector value={category} onChange={setCategory} />
+        </div>
+
+        <div className="space-y-3">
+          <span className="text-title-sb-button font-semibold">제목</span>
+          <input
+            type="text"
+            placeholder="글 제목"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full border-[1px] border-[#C3C3C3] rounded-[12px] px-4 py-3 text-body-md-description fort-reular placeholder:text-[#919191]"
+          />
+        </div>
+
+        <div className="space-y-3">
+          <span className="text-title-sb-button font-semibold">내용</span>
+          <textarea
+            placeholder="내용을 작성해주세요"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="w-full border-[1px] border-[#C3C3C3] rounded-[12px] px-4 py-3 h-[70px] text-body-md-description fort-reular placeholder:text-[#919191]"
+          />
+        </div>
+
+        <div className="space-y-3">
+          <span className="text-title-sb-button font-semibold">
+            사진을 추가해주세요
+          </span>
+          <span className="text-[#919191]">(선택/최대 3장)</span>
+          <ImageUploader images={images} setImages={setImages} />
+        </div>
+      </div>
+
+      <div className="mx-5">
+        <button
+          disabled={!isValid}
+          onClick={handleSubmit}
+          className={`py-4 w-full mb-8 rounded-[12px] text-[#919191] text-[16px] font-semibold ${
+            isValid ? 'bg-[#65CE58] text-[#FFFFFF]' : 'bg-[#E6E6E6]'
+          }`}
+        >
+          등록하기
+        </button>
+      </div>
+    </div>
+  );
+}

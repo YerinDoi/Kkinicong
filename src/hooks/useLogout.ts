@@ -7,7 +7,7 @@ export const useLogout = () => {
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
     dispatch(clearUser());
-    window.location.reload();
+    // window.location.reload();
   };
 
   return { handleLogout };

@@ -75,7 +75,7 @@ const StoreReviewPage = () => {
   // 리뷰PR 커밋용 주석 닫기
   return (
     <div>
-      <div className="flex flex-col w-full mt-[11px] mb-[29px] gap-[12px] font-pretendard">
+      <div className="flex flex-col w-full mb-[29px] gap-[12px] font-pretendard">
         <TopBar title="리뷰 쓰기" rightType="none" />
         <StoreInfo
           store={{
