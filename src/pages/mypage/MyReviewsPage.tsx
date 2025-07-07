@@ -82,7 +82,7 @@ const MyReviewsPage = () => {
   };
 
   return (
-    <div className="flex flex-col w-full h-full pt-[11px]">
+    <div className="flex flex-col w-full h-full">
       <TopBar
         title="내가 쓴 리뷰"
         rightType="none"

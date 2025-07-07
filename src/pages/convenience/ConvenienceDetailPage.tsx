@@ -126,7 +126,7 @@ export default function ConvenienceDetailPage() {
 
       <div className="min-h-screen px-4">
         {/* 작성 정보, 삭제버튼 */}
-        <div className="flex items-center gap-1 mb-3">
+        <div className="flex items-center gap-1 mb-3 mt-[12px]">
           <img
             src={ProfileIcon}
             alt="작성자"

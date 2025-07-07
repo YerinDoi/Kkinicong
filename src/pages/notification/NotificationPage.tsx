@@ -20,10 +20,13 @@ export default function NotificationPage() {
   if (isLoading) return <div className="p-4">불러오는 중...</div>;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <TopBar title="알림" />
+
       {data && data.length === 0 ? (
-        <EmptyNotification />
+        <div className="flex-grow flex">
+          <EmptyNotification />
+        </div>
       ) : (
         <div className="py-3">
           {data?.map((n) => (
@@ -32,6 +35,7 @@ export default function NotificationPage() {
               content={n.content}
               isRead={n.isRead}
               createdAt={n.createdAt}
+              senderNickname={n.senderNickname}
               onClick={() => handleClick(n)}
             />
           ))}

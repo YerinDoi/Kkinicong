@@ -92,12 +92,18 @@ const CommentItem: React.FC<CommentItemProps> = ({
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   //댓글,답글 삭제 토스트
   const [showDeleteToast, setShowDeleteToast] = useState(false);
+  const [pendingPath, setPendingPath] = useState<string | null>(null);
+
 
 
 
   //좋아요
   const handleLikeClick = async () => {
     if (!isLoggedIn) {
+      if (postId) {
+        console.log('postId',postId)
+        setPendingPath(`/community/post/${postId}`);
+      }
       setIsLoginBottomSheetOpen(true);
       return;
     }
@@ -143,6 +149,9 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
   const handleReplyClick = () => {
     if (!isLoggedIn) {
+      if (postId) {
+        setPendingPath(`/community/post/${postId}`);
+      }
       setIsLoginBottomSheetOpen(true);
       return;
     }
@@ -155,12 +164,12 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
   //답글 입력창 닫기
   const handlecloseReplyInput = () => {
-  setIsReplying?.(false);
-  setIsReplyInputOpen(false);
-  setReplyTargetNickname(null);
-  setIsReplyEditing(false); 
-  setEditingReplyId(null);
-  setEditingReplyContent('');
+    setIsReplying?.(false);
+    setIsReplyInputOpen(false);
+    setReplyTargetNickname(null);
+    setIsReplyEditing(false); 
+    setEditingReplyId(null);
+    setEditingReplyContent('');
 };
 
 
@@ -231,7 +240,6 @@ const handleEditSubmit = async (newContent: string) => {
 
   const success = await editComment(editingReplyId, newContent);
   if (success) {
-    alert('수정되었습니다!');
     handlecloseReplyInput();
     onReload?.();
   } else {
@@ -389,6 +397,7 @@ const handleCommentDelete = async () => {
       <LoginRequiredBottomSheet
         isOpen={isLoginBottomSheetOpen}
         onClose={() => setIsLoginBottomSheetOpen(false)}
+        pendingPath={pendingPath}
       />
 
     
@@ -403,15 +412,17 @@ const handleCommentDelete = async () => {
         }}
       />)}
 
+  
       {showDeleteToast &&
         createPortal(
           <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
             <ConfirmToast
-              text={"댓글 삭제가 완료되었어요"}
+              text={isReply ? "답글 삭제가 완료되었어요" : "댓글 삭제가 완료되었어요"}
             />
           </div>,
           document.body,
         )}
+
 
     </div>
   );

@@ -6,4 +6,5 @@ export interface Notification {
   targetId: number;
   createdAt: string;
   isRead: boolean;
+  senderNickname: string;
 }

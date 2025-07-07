@@ -2,8 +2,8 @@ import { useRef } from 'react';
 import imgAddIcon from '@/assets/icons/system/img-add.svg';
 
 interface ImageUploaderProps {
-  images: File[];
-  setImages: (files: File[]) => void;
+  images: (File | string)[];
+  setImages: (files: (File | string)[]) => void;
 }
 
 export default function ImageUploader({
@@ -11,6 +11,10 @@ export default function ImageUploader({
   setImages,
 }: ImageUploaderProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const getPreviewUrl = (img: File | string) =>
+  typeof img === 'string' ? img : URL.createObjectURL(img);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -41,12 +45,14 @@ export default function ImageUploader({
   return (
     <div>
       <div className="flex gap-3">
-        {images.map((file, idx) => {
-          const preview = URL.createObjectURL(file);
+        {images.map((img, idx) => {
+          console.log('img:', img);
+          console.log('preview:', getPreviewUrl(img));
+   
           return (
             <div key={idx} className="relative w-[88px] h-[88px]">
               <img
-                src={preview}
+                src={getPreviewUrl(img)}
                 alt="preview"
                 className="w-full h-full object-cover rounded-[12px]"
               />

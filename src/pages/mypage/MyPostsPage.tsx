@@ -61,7 +61,7 @@ const MyPostsPage = () => {
   };
 
   return (
-    <div className="flex flex-col w-full h-full pt-[11px]">
+    <div className="flex flex-col w-full h-full">
       <div className="flex flex-col gap-[16px]">
         <TopBar
           title="내가 쓴 글"

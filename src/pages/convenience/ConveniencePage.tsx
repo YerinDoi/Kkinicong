@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import SearchInput from '@/components/common/SearchInput';
-import TopBar from '@/components/common/TopBar';
+import Header from '@/components/Header';
 import InfoShareCard from '@/components/convenience/InfoShareCard';
 // import StoreChipCarousel from '@/components/home/ChipCarousel';
 import ProductListSection from '../../components/convenience/ProductListSection';
@@ -51,8 +51,9 @@ const ConvenienceStorePage = () => {
   return (
     <div className="flex flex-col h-full bg-[#FFF5DF]">
       {/* 상단 : 탑바, 검색바, 정보 카드*/}
-      <TopBar title="편의점 구매정보" rightType="menu" />
-      <div className="px-4">
+  
+      <Header title="편의점 구매정보" />
+      <div className="px-[27.5px]">
         <SearchInput
           placeholder="CU, 불닭볶음면 ..."
           value={keyword}
@@ -60,11 +61,13 @@ const ConvenienceStorePage = () => {
           onSearch={loadProducts}
         />
       </div>
-      <InfoShareCard />
+      <div className="flex justify-center">
+        <InfoShareCard />
+      </div>
 
       {/* 하단 : 필터링바, 제품 리스트 */}
       <div className="flex flex-col flex-1 bg-white">
-        <div className="flex items-center justify-between gap-2 px-4 py-3 overflow-x-auto scrollbar-hide">
+        <div className="flex items-center justify-between gap-2 px-[20px] py-[12px] overflow-x-auto scrollbar-hide">
           <CategoryFilterSelector
             selected={selectedCategory}
             onChange={setSelectedCategory}
@@ -81,7 +84,7 @@ const ConvenienceStorePage = () => {
           checked={onlyAvailable}
           onChange={setOnlyAvailable}
           label="결제 가능만 모아보기"
-          className="px-4 py-2"
+          className="px-[20px] pt-[8px]"
         />
         <ProductListSection products={products} keyword={keyword} />
       </div>

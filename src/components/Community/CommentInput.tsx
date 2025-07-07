@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import Icon from '@/assets/icons';
 import { useLoginStatus } from '@/hooks/useLoginStatus';
 import LoginRequiredBottomSheet from '@/components/common/LoginRequiredBottomSheet';
+import { useParams } from 'react-router-dom';
 
 interface CommentInputProps {
   onSubmit: (content: string) => void;
   placeholder?: string;
   setRecentCommentId?: React.Dispatch<React.SetStateAction<number | null>>;
   defaultValue?: string;
+  postId?: number;
 }
 
 const MAX_LENGTH = 4000;
@@ -21,6 +23,8 @@ const CommentInput: React.FC<CommentInputProps> = ({
   const { isLoggedIn } = useLoginStatus();
   const [content, setContent] = useState(defaultValue ?? '');
   const [isLoginBottomSheetOpen, setIsLoginBottomSheetOpen] = useState(false);
+  const [pendingPath, setPendingPath] = useState<string | null>(null);
+  const { postId } = useParams();
 
   // defaultValue가 바뀌면 content 초기화
   useEffect(() => {
@@ -48,8 +52,12 @@ const CommentInput: React.FC<CommentInputProps> = ({
   };
 
   const handleRequireLoginClick = () => {
-    setIsLoginBottomSheetOpen(true);
-  };
+  if (postId) {
+    setPendingPath(`/community/post/${postId}`);
+  }
+  setIsLoginBottomSheetOpen(true);
+};
+
 
   return (
     <div className="relative flex items-center mb-[12px] px-[16px] py-[10px] border border-[#C3C3C3] rounded-[12px] text-[#919191] text-[12px]">
@@ -83,6 +91,7 @@ const CommentInput: React.FC<CommentInputProps> = ({
       <LoginRequiredBottomSheet
         isOpen={isLoginBottomSheetOpen}
         onClose={() => setIsLoginBottomSheetOpen(false)}
+        pendingPath={pendingPath}
       />
     </div>
   );
