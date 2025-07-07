@@ -21,7 +21,7 @@ export default function AppLayout({ children }: Props) {
 
       {/* 고정 버튼 - 화면 전체 기준으로 fixed */}
       {isCommunityPage && (
-        <div className="fixed bottom-[60px] left-1/2 -translate-x-1/2 w-full max-w-[375px] pointer-events-none z-50">
+        <div className="fixed bottom-[60px] left-1/2 -translate-x-1/2 w-full max-w-[375px] z-50">
           <div className="pointer-events-auto flex justify-end pr-[20px]">
             <FloatingButton />
           </div>

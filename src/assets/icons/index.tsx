@@ -37,6 +37,7 @@ import Comment from '@/assets/svgs/common/comment.svg?react';
 import Send from '@/assets/svgs/community/send.svg?react';
 import EditOrDelete from '@/assets/svgs/common/more-icon.svg?react';
 import Reply from '@/assets/svgs/community/reply.svg?react';
+import X from '@/assets/icons/system/x.svg?react';
 
 export type IconName =
   | 'backward'
@@ -76,7 +77,8 @@ export type IconName =
   | 'comment'
   | 'send'
   | 'edit-or-delete'
-  | 'reply';
+  | 'reply'
+  | 'x';
 
 interface IconProps {
   name: IconName;
@@ -234,6 +236,10 @@ const Icon = ({ name, className }: IconProps) => {
 
   if (name === 'reply') {
     return <Reply className={className} />;
+  }
+
+  if (name === 'x') {
+    return <X className={className} />;
   }
 };
 

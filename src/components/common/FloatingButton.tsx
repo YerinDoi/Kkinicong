@@ -4,7 +4,6 @@ import { useLoginStatus } from '@/hooks/useLoginStatus';
 import LoginRequiredBottomSheet from './LoginRequiredBottomSheet';
 import { useState } from 'react';
 
-
 const FloatingButton = () => {
   const navigate = useNavigate();
   const { isLoggedIn} = useLoginStatus();
