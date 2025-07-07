@@ -92,7 +92,7 @@ const CommunitySearchPage = () => {
 
       </div>
       
-      <div className="flex flex-col">
+      <div className="flex flex-col ">
         {isSearched && !isSearchLoading && posts.length === 0 ? (
           <CommunitySearchEmptyView keyword={searchedKeyword} />
         ) : (
