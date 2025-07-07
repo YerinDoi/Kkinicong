@@ -41,7 +41,7 @@ export default function ProductListSection({
 
   // 결과가 있을 경우: 상품 리스트 보여줌
   return (
-    <ul className="px-[40px] py-3 flex flex-col gap-2 ">
+    <ul className="px-[40px] py-[12px] flex flex-col gap-2">
       {products.map((product) => (
         <li
           key={product.id}
