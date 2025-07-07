@@ -61,7 +61,7 @@ export default function ProductListSection({
                 : { borderBottomWidth: '1.5px' }
             }
           >
-            <span className="text-black text-title-sb-button font-medium">
+            <span className="text-black text-title-sb-button font-semibold">
               {product.name}
             </span>
             <span

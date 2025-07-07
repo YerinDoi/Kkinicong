@@ -28,7 +28,7 @@ const AccountDeletePage = () => {
         rightType="none"
         onBack={() => navigate('/mypage')}
       />
-      <div className="px-[20px] font-pretendard text-[16px] font-medium leading-[20px]">
+      <div className="px-[20px] font-pretendard text-[16px] font-semibold leading-[20px]">
         <div className="flex flex-col h-[44px] justify-between mt-[24px]">
           <p>끼니콩 탈퇴를 신청하기 전에</p>
           <p className="text-main-color">안내 사항을 확인해주세요</p>
@@ -36,7 +36,7 @@ const AccountDeletePage = () => {
 
         <div className="flex flex-col px-[8px] gap-[24px]">
           <div className="flex flex-col self-stretch text-[#616161] gap-[8px] mt-[44px]">
-            <p>탈퇴 처리 안내</p>
+            <p className="font-semibold">탈퇴 처리 안내</p>
             <ul className="list-disc pl-4 text-[14px] leading-[24px] font-normal text-justify">
               <li>
                 탈퇴한 아이디는 본인과 타인 모두{' '}
@@ -52,7 +52,7 @@ const AccountDeletePage = () => {
           </div>
 
           <div className="flex flex-col self-stretch text-[#616161] text-[14px] gap-[8px] w-full">
-            <p className="text-[16px] leading-[20px]">개인정보 삭제 안내</p>
+            <p className="text-[16px] leading-[20px] font-semibold">개인정보 삭제 안내</p>
             <p className="text-[#616161] self-stretch whitespace-normal leading-[24px] font-normal text-justify">
               탈퇴 후에도{' '}
               <span className="text-[#029F64]">등록한 게시물은 그대로</span>{' '}
@@ -82,7 +82,7 @@ const AccountDeletePage = () => {
 
             <span
               className={
-                'text-title-sb-button font-medium ' +
+                'text-title-sb-button font-semibold ' +
                 (checked ? 'text-[#616161]' : 'text-[#919191]')
               }
             >
