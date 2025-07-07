@@ -9,6 +9,7 @@ interface KakaoMapProps {
   level: number; // 지도 확대 레벨 (선택 아님)
   onMapLoad?: (map: kakao.maps.Map) => void; // 지도 인스턴스 로드 시 콜백 추가
   children?: React.ReactNode; // 마커 및 오버레이를 자식으로 받음
+  relayoutTrigger?: any;
 }
 
 // 마커 이미지 소스 (KakaoMap 외부에 정의하여 재사용성 높임)
@@ -25,10 +26,17 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   level,
   onMapLoad,
   children, // children prop 받음
+  relayoutTrigger,
 }) => {
   const { kakao, loading, error } = useKakaoMapLoader();
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false); // mapLoaded 상태 추가
+
+  useEffect(() => {
+    if (mapRef.current) {
+      mapRef.current.relayout();
+    }
+  }, [relayoutTrigger]);
 
   if (loading) {
     return <div>지도를 불러오는 중입니다.</div>;

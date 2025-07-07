@@ -3,7 +3,7 @@ import YellowStar from '@/assets/svgs/review/yellow-star.svg';
 import EmptyStar from '@/assets/svgs/review/disabled-star.svg';
 import ProfileImg from '@/assets/svgs/common/profile-img.svg';
 import ReportReviewButton from '@/components/StoreDetail/ReportReviewButton';
-import DeleteReviewModal from '@/components/StoreDetail/DeleteReview';
+import DeleteModal from '../common/DeleteModal';
 import MainTag from '@/components/StoreReview/MainTag';
 import axios from '@/api/axiosInstance';
 import type { StoreReview } from '@/types/store';
@@ -151,7 +151,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
         )}
       </div>
       {showDeleteModal && (
-        <DeleteReviewModal onClose={closeDeleteModal} onDelete={handleDelete} />
+        <DeleteModal title="리뷰를 정말 삭제하시겠어요?" description = "삭제된 리뷰는 복구시킬 수 없어요" onClose={closeDeleteModal} onDelete={handleDelete} />
       )}
     </div>
   );

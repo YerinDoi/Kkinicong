@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
 import { createConveniencePost } from '@/api/convenience';
-import { toServerCategory, toServerBrand } from '@/types/convenienceMapper';
+import { toServerCategory, toServerBrand } from '@/utils/convenienceMapper';
 
 import ButtonGroup from '@/components/convenience/ButtonGroup';
 import TopBar from '@/components/common/TopBar';

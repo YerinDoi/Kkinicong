@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import classNames from 'classnames';
 
 interface BottomSheetProps {
   isOpen: boolean;
@@ -13,34 +14,26 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   onClose,
 }) => {
   const sheetRef = useRef<HTMLDivElement>(null);
-  const [, setTop] = useState<number | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
-    if (!isOpen) {
-      setTop(null);
-      return;
-    }
-
-    const updatePosition = () => {
-      const scrollY = window.scrollY;
-      const viewportHeight = window.innerHeight;
-
+    if (isOpen) {
+      setIsVisible(true);
+      // 약간의 딜레이를 두고 translateY 적용해야 애니메이션이 자연스러움
       requestAnimationFrame(() => {
-        const sheetHeight = sheetRef.current?.offsetHeight ?? 0;
-        const newTop = scrollY + viewportHeight - sheetHeight;
-        setTop(Math.max(newTop, 0));
+        setIsAnimating(true);
       });
-    };
-
-    updatePosition();
-    window.addEventListener('resize', updatePosition);
-
-    return () => {
-      window.removeEventListener('resize', updatePosition);
-    };
+    } else {
+      setIsAnimating(false); // 내려가도록 변경
+      const timer = setTimeout(() => {
+        setIsVisible(false); // 내려간 뒤 DOM 제거
+      }, 150); // 트랜지션 시간에 맞춤
+      return () => clearTimeout(timer);
+    }
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isVisible) return null;
 
   return createPortal(
     <div
@@ -50,7 +43,10 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       <div className="relative w-[375px] h-full bg-black/40" onClick={onClose}>
         <div
           ref={sheetRef}
-          className="absolute bottom-0 left-0 w-full bg-white rounded-t-[12px] shadow-md font-pretendard max-h-[90vh] overflow-y-auto transition-transform duration-300 ease-out"
+          className={classNames(
+            'absolute bottom-0 left-0 w-full bg-white rounded-t-[12px] shadow-md font-pretendard max-h-[90vh] overflow-y-auto transition-transform duration-300 ease-out',
+            isAnimating ? 'translate-y-0' : 'translate-y-full',
+          )}
           onClick={(e) => e.stopPropagation()}
         >
           {children}

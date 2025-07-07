@@ -24,13 +24,13 @@ const config: Config = {
       },
       fontSize: {
         'headline-sb-main'    : ['20px', { lineHeight: '32px', letterSpacing: '0' }],
+        'headline-sb-sub'     : ['20px', { lineHeight: '28px', letterSpacing: '0' }],
         'title-sb-button'     : ['16px', { lineHeight: '20px', letterSpacing: '0' }],
         'body-md-title'       : ['14px', { lineHeight: '24px', letterSpacing: '0' }],
         'body-md-description' : ['12px', { lineHeight: '16px', letterSpacing: '0.1px' }],
         'body-bd-title'       : ['16px', { lineHeight: '24px', letterSpacing: '0.1px' }],
       },      
       fontWeight: {
-        normal: '400',
         regular: '400',
         medium: '500',
         semibold: '600',

@@ -22,5 +22,14 @@ export const checkNicknameDuplicate = async (
  */
 export const registerNickname = async (nickname: string) => {
   const res = await axios.post('/api/v1/user/nickname', { nickname });
+  console.log('👉 nickname:', res.data.results.nickname); // 핵심 확인
   return res.data.results;
+};
+
+/**
+ * 닉네임 수정 API (마이페이지에서 닉네임 변경)
+ * @param nickname 변경할 닉네임
+ */
+export const updateNickname = async (nickname: string) => {
+  await axios.patch('/api/v1/user/nickname', { nickname });
 };
