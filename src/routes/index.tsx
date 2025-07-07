@@ -21,6 +21,8 @@ import AccountDeletePage from '@/pages/mypage/AccountDeletePage';
 import NicknameEditPage from '@/pages/mypage/NicknameEditPage';
 import CommunityPage from '@/pages/community/CommunityPage';
 import CommunityWritePage from '@/pages/community/CommunityWritePage';
+import CommunitySearchPage from '@/pages/community/CommunitySearchPage';
+
 import FeedbackPage from '@/pages/mypage/FeedbackPage';
 import MyPostsPage from '@/pages/mypage/MyPostsPage';
 import MyReviewsPage from '@/pages/mypage/MyReviewsPage';
@@ -92,6 +94,7 @@ const Router = () => {
       <Route path="/community" element={<CommunityPage />} />
       <Route path="/community/post/:postId" element={<PostDetailPage />} />
       <Route path="/community/write" element={<CommunityWritePage />} />
+      <Route path="/community/search" element={<CommunitySearchPage />} />
 
       {/*알림*/}
       <Route path="/notification" element={<NotificationPage />} />

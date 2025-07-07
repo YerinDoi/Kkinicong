@@ -1,4 +1,3 @@
-// components/PostItem.tsx
 import MainTag from '../StoreReview/MainTag';
 import CommentIcon from '@/assets/svgs/common/comment.svg';
 import { useNavigate } from 'react-router-dom';
@@ -17,47 +16,53 @@ export interface Post {
   nickname?: string;
 }
 
-const PostItem = ({ post }: { post: Post }) => {
+interface PostItemProps {
+  post: Post;
+  keyword?: string;
+}
+
+const PostItem = ({ post, keyword = '' }: PostItemProps) => {
   const navigate = useNavigate();
-  const hasThumbnail = !!post.thumbnailUrl; //썸네일 유무에 따라 레이아웃 달라짐
+  const hasThumbnail = !!post.thumbnailUrl;
+
   const handleClick = () => {
-    console.log(' Navigating to post:', post.communityPostId);
     navigate(`/community/post/${post.communityPostId}`);
   };
 
   return (
-    <div className="flex flex-col px-[20px] gap-[12px] py-[12px] border-b border-[#C3C3C3] cursor-pointer" onClick = {handleClick}>
-    
-      <div className={`flex ${hasThumbnail ? 'flex-row justify-between ' : 'flex-col gap-[12px]'} `}> 
-        <div
-          className={`flex flex-col ${
-            hasThumbnail ? 'gap-[8px]' : 'gap-[12px]'
-          }`}
-        >
+    <div
+      className="flex flex-col px-[20px] gap-[12px] py-[12px] border-b border-[#C3C3C3] cursor-pointer"
+      onClick={handleClick}
+    >
+      <div className={`flex ${hasThumbnail ? 'flex-row justify-between' : 'flex-col gap-[12px]'}`}>
+        <div className={`flex flex-col ${hasThumbnail ? 'gap-[8px]' : 'gap-[12px]'}`}>
           <MainTag rounded="rounded-[8px]" text={post.category} />
           <div className="flex flex-col gap-[8px]">
             <h3 className="font-semibold text-title-sb-button">
-              {post.titlePreview.length > 25
-                ? post.titlePreview.slice(0, 25) + '…'
-                : post.titlePreview}
+              {highlightKeyword(
+                post.titlePreview.length > 25 ? post.titlePreview.slice(0, 25) + '…' : post.titlePreview,
+                keyword,
+                true
+              )}
             </h3>
             <p className="text-body-md-title text-[#C3C3C3]">
-              {post.contentPreview.length > 50
-                ? post.contentPreview.slice(0, 50) + '…'
-                : post.contentPreview}
+              {highlightKeyword(
+                post.contentPreview.length > 50 ? post.contentPreview.slice(0, 50) + '…' : post.contentPreview,
+                keyword,
+                false
+              )}
             </p>
           </div>
         </div>
 
-
-         {hasThumbnail && (
+        {hasThumbnail && (
           <div className="relative w-[88px] h-[88px] rounded-[8px] overflow-hidden shrink-0">
             <img
               src={post.thumbnailUrl}
               alt="thumbnail"
               className="w-full h-full object-cover"
             />
-            {(post.imageCount ?? 0) > 0  && (
+            {(post.imageCount ?? 0) > 0 && (
               <div className="flex justify-center absolute top-0 left-0 w-[29.3px] h-[29.3px] bg-[rgba(68,60,54,0.94)] items-center text-center  text-white text-[12px] px-[7px] py-[2px] rounded-[8px]">
                 {post.imageCount}
               </div>
@@ -82,3 +87,30 @@ const PostItem = ({ post }: { post: Post }) => {
 };
 
 export default PostItem;
+
+// -----------------------------
+//  하이라이트 유틸 함수
+// -----------------------------
+export const highlightKeyword = (
+  text: string,
+  keyword: string,
+  isTitle: boolean = false
+): (string | JSX.Element)[] => {
+  if (!keyword) return [text];
+
+  const regex = new RegExp(`(${keyword})`, 'gi');
+  const parts = text.split(regex);
+
+  return parts.map((part, i) =>
+    regex.test(part) ? (
+      <span
+        key={i}
+        className={isTitle ? 'font-bold underline underline-offset-2' : 'font-regular text-[#616161]'}
+      >
+        {part}
+      </span>
+    ) : (
+      part
+    )
+  );
+};

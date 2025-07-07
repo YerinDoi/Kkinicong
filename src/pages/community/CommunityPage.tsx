@@ -102,12 +102,12 @@ const CommunityPage = () => {
             <div className="flex gap-[14px]">
               <img
                 src={AlarmIcon}
-                onClick={() => navigate('/')} //추후 알림페이지로 수정
+                onClick={() => navigate('/notification')} 
                 className="w-[18px] h-[20px] cursor-pointer"
               />
               <img
                 src={SearchIcon}
-                onClick={() => navigate('/')} //추후 검색페이지로 수정
+                onClick={() => navigate('/community/search')} 
                 className="w-[20px] h-[20px] cursor-pointer"
               />
             </div>
