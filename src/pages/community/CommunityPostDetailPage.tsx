@@ -15,6 +15,8 @@ import ReportButton from '@/components/Community/ReportButton';
 import EditOrDeleteButton from '@/components/Community/EditOrDeleteButton';
 import useCommentActions from '@/hooks/useCommentActions';
 import DeleteModal from '@/components/common/DeleteModal';
+import ConfirmToast from '@/components/common/ConfirmToast';
+import { createPortal } from 'react-dom';
 
 interface Comment {
   commentId: number;
@@ -60,12 +62,15 @@ const CommunityPostDetailPage = () => {
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editingContent, setEditingContent] = useState('');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  //게시글 삭제 토스트
+  const [showDeleteToast, setShowDeleteToast] = useState(false);
   const token = localStorage.getItem('accessToken');
 
   const navigate = useNavigate();
 
   const { share } = useShare();
   const { isLoggedIn } = useLoginStatus();
+  const [pendingPath, setPendingPath] = useState<string | null>(null);
   
 
   //게시글 조회
@@ -90,6 +95,7 @@ const CommunityPostDetailPage = () => {
 
   const handleLikeClick = async () => {
     if (!isLoggedIn) {
+      setPendingPath(`/community/post/${postId}`);
       setIsLoginBottomSheetOpen(true);
       return;
     }
@@ -121,10 +127,10 @@ const CommunityPostDetailPage = () => {
 
   //게시글 수정 -> 글쓰기 연동 후 확인 가능
   const handleEdit = () => {
-    navigate(`/community/post/${postId}/edit`); //수정 가능
+    navigate(`/community/write?postId=${postId}`);
   };
 
-  //게시글 삭제 -> 글쓰기 연동 후 확인 가능
+  //게시글 삭제 
   const handleDelete = async () => {
     try {
       await axiosInstance.delete(`/api/v1/community/post/${postId}`,{
@@ -132,8 +138,10 @@ const CommunityPostDetailPage = () => {
             Authorization: `Bearer ${token}`,
           },
         },);
-      alert('삭제되었습니다!');
+      setShowDeleteToast(true);
+      setTimeout(() => {
       navigate('/community');
+    }, 1500);
     } catch (err) {
       console.error('삭제 실패:', err);
       alert('삭제에 실패했습니다.');
@@ -195,13 +203,13 @@ const CommunityPostDetailPage = () => {
           <div className="flex flex-col gap-[16px]">
             <div className="flex items-center text-headline-sb-sub font-semibold justify-between">
               {post.title}
-              {/*{post.isMyCommunityPost && (
-                작성 부분도 구현 완료되면 더보기버튼 코드 여기에 넣을 예정
-              )}*/}
-              <EditOrDeleteButton
+              {post.isMyCommunityPost && (
+                <EditOrDeleteButton
                 onEdit={handleEdit}
                 onDelete={() => setIsDeleteModalOpen(true)}
               />
+              )}
+              
             </div>
             <div className="flex justify-between items-center">
               <div className="flex gap-[8px] items-center">
@@ -230,7 +238,7 @@ const CommunityPostDetailPage = () => {
           <div className="mt-[20px] flex flex-col gap-[16px]">
             <MainTag rounded="rounded-[8px]" text={post.category} />
             {Array.isArray(post.imageUrls) && post.imageUrls.length > 0 && (
-              <div className="flex flex-col ">
+              <div className="flex flex-col gap-[16px]">
                 {post.imageUrls.map((url, idx) => (
                   <img
                     key={idx}
@@ -270,6 +278,7 @@ const CommunityPostDetailPage = () => {
       <LoginRequiredBottomSheet
         isOpen={isLoginBottomSheetOpen}
         onClose={() => setIsLoginBottomSheetOpen(false)}
+        pendingPath={pendingPath}
       />
 
       {/*댓글*/}
@@ -326,6 +335,16 @@ const CommunityPostDetailPage = () => {
           }}
         />
       )}
+      {showDeleteToast &&
+        createPortal(
+          <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
+            <ConfirmToast
+              text="게시글 삭제가 완료되었어요"
+            />
+          </div>,
+          document.body,
+        )}
+
     </div>
   );
 };

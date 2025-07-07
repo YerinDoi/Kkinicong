@@ -40,11 +40,13 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
   updatedDate,
 }) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [pendingPath, setPendingPath] = useState<string | null>(null);
 
   const handleLikeClick = async () => {
     const token = localStorage.getItem('accessToken');
 
     if (!token) {
+      setPendingPath(`/store/${storeId}`);
       setIsBottomSheetOpen(true);
       return;
     }
@@ -134,6 +136,7 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
       <LoginRequiredBottomSheet
         isOpen={isBottomSheetOpen}
         onClose={() => setIsBottomSheetOpen(false)}
+        pendingPath = {pendingPath}
       />
     </div>
   );
