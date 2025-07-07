@@ -13,7 +13,7 @@ const TabBar: React.FC<TabBarProps> = ({ value, onChange, tabs }) => {
         <button
           key={tab}
           className={`
-            flex-1 pb-[8px] text-center font-pretendard font-medium text-[16px] tracking-[0.016px] transition-colors
+            flex-1 pb-[8px] text-center font-pretendard font-semibold text-[16px] tracking-[0.016px] transition-colors
             ${value === tab ? 'text-black' : 'text-[#919191]'}
           `}
           onClick={() => onChange(tab)}

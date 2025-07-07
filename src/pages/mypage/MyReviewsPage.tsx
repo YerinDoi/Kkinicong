@@ -94,7 +94,7 @@ const MyReviewsPage = () => {
         </div>
       ) : (
         <div className="flex flex-col gap-[12px]">
-          <div className="bg-[#F3F5ED] font-pretendard text-title-sb-button text-[#616161] px-[34px] py-[8px] font-medium mt-[8px]">
+          <div className="bg-[#F3F5ED] font-pretendard text-title-sb-button text-[#616161] px-[34px] py-[8px] font-semibold mt-[8px]">
             내가 쓴 리뷰 수 {totalCount}개
           </div>
           <div className="flex flex-col gap-[12px]">

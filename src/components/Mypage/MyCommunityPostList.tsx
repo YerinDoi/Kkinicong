@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { getMyCommunityPosts } from '@/api/mypage';
 import MyLikePost from '@/components/Mypage/MyLikePost';
 import EmptyView from './EmptyView';
 import { useNavigate } from 'react-router-dom';

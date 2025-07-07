@@ -49,7 +49,7 @@ const EmptyView = ({
     )}
     {actionText && actionType === 'button' && (
       <button
-        className="flex items-center justify-center mt-[12px] px-[20px] py-[12px] gap-[8px] bg-[#65CE58] font-pretendard text-white rounded-[24px] text-[16px] font-medium leading-normal tracking-[0.016px]"
+        className="flex items-center justify-center mt-[12px] px-[20px] py-[12px] gap-[8px] bg-[#65CE58] font-pretendard text-white rounded-[24px] text-[16px] font-semibold leading-normal tracking-[0.016px]"
         onClick={onActionClick}
       >
         <img src={plusIcon} />
@@ -58,7 +58,7 @@ const EmptyView = ({
     )}
 
     {actionText && actionType === 'text' && (
-      <div className="text-[#212121] underline  font-regular text-center font-pretendard decoration-solid underline-offset-auto text-body-md-description font-normal tracking-[0.012px] whitespace-pre-line">
+      <div className="text-[#212121] underline text-center font-pretendard decoration-solid underline-offset-auto text-body-md-description font-normal tracking-[0.012px] whitespace-pre-line">
         {actionText.split('\\n').map((line, idx) => (
           <span key={idx}>
             {line}
