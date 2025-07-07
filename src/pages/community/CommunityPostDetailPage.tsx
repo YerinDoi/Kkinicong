@@ -310,7 +310,13 @@ const CommunityPostDetailPage = () => {
             onSubmit={handleCommentEditSubmit}
 
             defaultValue={editingContent}
-            placeholder={isEditing ? '댓글을 수정하세요' : '댓글을 입력해보세요'}
+             placeholder={
+              isLoggedIn
+                ? isEditing
+                  ? '댓글을 수정하세요'
+                  : '댓글을 남겨보세요'
+                : '로그인하고 댓글을 남겨보세요'
+            }
           />
 
         </div>

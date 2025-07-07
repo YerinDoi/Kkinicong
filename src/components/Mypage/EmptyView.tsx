@@ -6,7 +6,7 @@ interface EmptyViewProps {
   description?: string;
   actionText?: string;
   onActionClick?: () => void;
-  actionType?: 'button' | 'link';
+  actionType?: 'button' | 'link' | 'text';
 }
 
 const EmptyView = ({
@@ -37,7 +37,12 @@ const EmptyView = ({
         }}
         onClick={onActionClick}
       >
-        {actionText}
+         {actionText.split('\\n').map((line, idx) => (
+      <span key={idx}>
+        {line}
+        <br />
+      </span>
+    ))}
       </button>
     )}
     {actionText && actionType === 'button' && (
@@ -46,9 +51,23 @@ const EmptyView = ({
         onClick={onActionClick}
       >
         <img src={plusIcon} />
-        {actionText}
+         {actionText.split('\\n').map((line, idx) => (
+      <span key={idx}>
+        {line}
+        <br />
+      </span>
+    ))}
       </button>
     )}
+
+    {actionText && actionType === 'text' && (
+      <div className="text-[#212121] text-center font-pretendard text-[12px] font-normal leading-[18px] tracking-[0.012px] whitespace-pre-line">
+        {actionText.split('\\n').map((line, idx) => (
+          <span key={idx}>
+            {line}
+            <br />
+          </span>))}
+      </div>)}
   </div>
 );
 

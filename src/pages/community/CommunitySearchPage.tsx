@@ -4,6 +4,7 @@ import SearchInput from "@/components/common/SearchInput";
 import PostItem, { Post } from "@/components/Community/PostItem";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 import axiosInstance from "@/api/axiosInstance";
+import CommunitySearchEmptyView from "@/components/Community/CommunitySearchEmptyView";
 
 const CommunitySearchPage = () => {
   const [keyword, setKeyword] = useState("");
@@ -67,6 +68,10 @@ const CommunitySearchPage = () => {
     return;
   }
   setPage(0); // 첫 페이지부터 검색
+  pageRef.current = 0; // ref도 초기화
+
+  // 직접 호출
+  loadPosts();
 };
 
 
@@ -84,12 +89,20 @@ const CommunitySearchPage = () => {
       </div>
       
       <div className="flex flex-col">
-        {posts.map(post => (
-          <PostItem key={post.communityPostId} post={post} keyword={keyword}/>
-        ))}
-      </div>
-      <div ref={loaderRef} style={{ height: 20 }} />
+      {posts.length === 0 ? (
+        <CommunitySearchEmptyView keyword={keyword} />
+      ) : (
+        posts.map((post) => (
+          <PostItem key={post.communityPostId} post={post} keyword={keyword} />
+        ))
+      )}
     </div>
+    <div ref={loaderRef} style={{ height: 20 }} />
+
+
+      
+    </div>
+
   );
 };
 
