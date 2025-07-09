@@ -13,6 +13,7 @@ import { useLoginStatus } from '@/hooks/useLoginStatus';
 interface ReportButtonProps {
   type: 'post' | 'comment';
   id: number;
+  postId?: number; //댓글인 경우 게시글의 ID
   info: {
     nickname: string;
     content: string;
@@ -43,7 +44,11 @@ const ReportButton: React.FC<ReportButtonProps> = ({
 
   const handleClick = () => {
     if (!isLoggedIn) {
-      setPendingPath(`/community/post/${id}`);
+      if (type === 'comment' && postId) {
+        setPendingPath(`/community/post/${postId}`);
+      } else {
+        setPendingPath(`/community/post/${id}`);
+      }
       setIsLoginBottomSheetOpen(true);
       return;
     }
