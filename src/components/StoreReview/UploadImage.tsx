@@ -64,7 +64,7 @@ const UploadImage: React.FC<UploadImageProps> = ({ onFileSelect }) => {
 
   useEffect(() => {
     if (showToast) {
-      const timer = setTimeout(() => setShowToast(false), 3000);
+      const timer = setTimeout(() => setShowToast(false), 1500);
       return () => clearTimeout(timer);
     }
   }, [showToast]);

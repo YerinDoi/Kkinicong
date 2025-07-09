@@ -56,7 +56,7 @@ const RequestEditButton: React.FC<Props> = ({
       console.log('수정 요청 전송됨');
       setIsEditOpen(false);
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+      setTimeout(() => setShowToast(false), 1500);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const errorCode = error.response?.data?.code;
@@ -66,7 +66,7 @@ const RequestEditButton: React.FC<Props> = ({
           setIsEditOpen(false);
           setShowWarningToast(true);
 
-          setTimeout(() => setShowWarningToast(false), 3000); // 3초 뒤 자동 닫힘
+          setTimeout(() => setShowWarningToast(false), 1500); // 3초 뒤 자동 닫힘
           return;
         }
 

@@ -66,7 +66,7 @@ const StoreReviewPage = () => {
       setTimeout(() => {
         setShowToast(false);
         navigate(-1);
-      }, 3000);
+      }, 1500);
     } catch (error) {
       console.error('리뷰 작성 실패:', error);
       alert('리뷰 작성에 실패했습니다.');

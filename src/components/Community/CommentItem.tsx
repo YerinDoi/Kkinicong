@@ -244,7 +244,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
     const success = await deleteComment(commentId);
     if (success) {
       setShowDeleteToast(true);
-      setTimeout(() => setShowDeleteToast(false), 2000);
+      setTimeout(() => setShowDeleteToast(false), 1500);
     } else {
       alert('삭제에 실패했습니다.');
     }

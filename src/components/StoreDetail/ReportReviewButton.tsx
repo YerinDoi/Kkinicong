@@ -78,7 +78,7 @@ const ReportReviewButton: React.FC<Props> = ({
       console.log('리뷰 신고 전송됨');
       setIsEditOpen(false);
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+      setTimeout(() => setShowToast(false), 1500);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const errorCode = error.response?.data?.code;
@@ -87,7 +87,7 @@ const ReportReviewButton: React.FC<Props> = ({
         if (errorCode === 'REPORT_ALREADY_EXISTS') {
           setIsEditOpen(false);
           setShowWarningToast(true);
-          setTimeout(() => setShowWarningToast(false), 3000);
+          setTimeout(() => setShowWarningToast(false), 1500);
           return;
         }
 
