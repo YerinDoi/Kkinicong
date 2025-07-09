@@ -38,20 +38,29 @@ const PostItem = ({ post, keyword = '' }: PostItemProps) => {
         <div className={`flex flex-col ${hasThumbnail ? 'gap-[8px]' : 'gap-[12px]'}`}>
           <MainTag rounded="rounded-[8px]" text={post.category} />
           <div className="flex flex-col gap-[8px]">
-            <h3 className="font-semibold text-title-sb-button">
+            {post.titlePreview && (
+              <h3 className="font-semibold text-title-sb-button">
               {highlightKeyword(
                 post.titlePreview.length > 25 ? post.titlePreview.slice(0, 25) + '…' : post.titlePreview,
                 keyword,
                 true
               )}
             </h3>
-            <p className="text-body-md-title text-[#C3C3C3]">
-              {highlightKeyword(
-                post.contentPreview.length > 50 ? post.contentPreview.slice(0, 50) + '…' : post.contentPreview,
-                keyword,
-                false
-              )}
-            </p>
+
+            )}
+            
+            {post.contentPreview && (
+              <p className="text-body-md-title text-[#C3C3C3]">
+                {highlightKeyword(
+                  post.contentPreview.length > 50
+                    ? post.contentPreview.slice(0, 50) + '…'
+                    : post.contentPreview,
+                  keyword,
+                  false
+                )}
+              </p>
+            )}
+
           </div>
         </div>
 
