@@ -92,7 +92,9 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
             <img src={ProfileImg} className="w-[40px]" />
             <div className="flex gap-[4px]">
               <span className="font-meidum text-body-md-title">{userName}</span>
-              <span className="text-body-md-description text-[#919191] self-end">{date}</span>
+              <span className="text-body-md-description text-[#919191] self-end">
+                {date}
+              </span>
             </div>
           </div>
           {isOwner ? (
@@ -134,6 +136,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
                 <ReportReviewButton
                   reviewId={reviewId}
                   review={{ userName, content }}
+                  storeId={storeId}
                 />
               )}
         </div>
@@ -151,7 +154,12 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
         )}
       </div>
       {showDeleteModal && (
-        <DeleteModal title="리뷰를 정말 삭제하시겠어요?" description = "삭제된 리뷰는 복구시킬 수 없어요" onClose={closeDeleteModal} onDelete={handleDelete} />
+        <DeleteModal
+          title="리뷰를 정말 삭제하시겠어요?"
+          description="삭제된 리뷰는 복구시킬 수 없어요"
+          onClose={closeDeleteModal}
+          onDelete={handleDelete}
+        />
       )}
     </div>
   );

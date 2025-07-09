@@ -7,6 +7,8 @@ import axiosInstance from '@/api/axiosInstance';
 import axios from 'axios';
 import { createPortal } from 'react-dom';
 import WarningToast from '@/components/common/WarningToast';
+import { useLoginStatus } from '@/hooks/useLoginStatus';
+import LoginRequiredBottomSheet from '@/components/common/LoginRequiredBottomSheet';
 
 interface Props {
   onClick?: () => void;
@@ -15,12 +17,22 @@ interface Props {
     userName: string;
     content: string;
   };
+  storeId: number;
 }
 
-const ReportReviewButton: React.FC<Props> = ({ onClick, review, reviewId }) => {
+const ReportReviewButton: React.FC<Props> = ({
+  onClick,
+  storeId,
+  review,
+  reviewId,
+}) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [showWarningToast, setShowWarningToast] = useState(false);
+  const token = localStorage.getItem('accessToken');
+  const { isLoggedIn } = useLoginStatus();
+  const [isLoginBottomSheetOpen, setIsLoginBottomSheetOpen] = useState(false);
+  const [pendingPath, setPendingPath] = useState<string | null>(null);
 
   const reasonMap = {
     '부적절한 언어 사용 (욕설, 비방 등)': 'ABUSIVE_LANGUAGE',
@@ -31,17 +43,18 @@ const ReportReviewButton: React.FC<Props> = ({ onClick, review, reviewId }) => {
   } as const;
 
   const handleClick = () => {
+    if (!isLoggedIn) {
+      setPendingPath(`/store/${storeId}`);
+      setIsLoginBottomSheetOpen(true);
+      return;
+    }
     onClick?.();
     setIsEditOpen(true); // 바텀시트 열기
   };
 
   const handleEditSubmit = async (reason: string, description: string) => {
-    const token = localStorage.getItem('accessToken');
     const mappedReason = reasonMap[reason as keyof typeof reasonMap];
-    if (!token) {
-      alert('로그인이 필요한 기능입니다.');
-      return;
-    }
+
     if (!mappedReason) {
       alert('신고 사유가 유효하지 않습니다.');
       return;
@@ -133,6 +146,11 @@ const ReportReviewButton: React.FC<Props> = ({ onClick, review, reviewId }) => {
           </div>,
           document.body,
         )}
+      <LoginRequiredBottomSheet
+        isOpen={isLoginBottomSheetOpen}
+        onClose={() => setIsLoginBottomSheetOpen(false)}
+        pendingPath={pendingPath}
+      />
     </>
   );
 };
