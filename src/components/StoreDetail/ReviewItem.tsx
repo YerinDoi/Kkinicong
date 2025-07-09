@@ -35,7 +35,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
   setReviews,
   refreshReviews,
 }) => {
-  const isLoggedIn = !!localStorage.getItem('accessToken');
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAllTags, setShowAllTags] = useState(false);
   const visibleTags = showAllTags ? tags : (tags ?? []).slice(0, 2);
@@ -90,9 +90,9 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-[8px] ">
             <img src={ProfileImg} className="w-[40px]" />
-            <div className="flex gap-[4px]">
-              <span className="font-meidum text-body-md-title">{userName}</span>
-              <span className="text-body-md-description text-[#919191] self-end">
+            <div className="flex gap-[4px] ">
+              <span className="font-meidum text-body-md-title ">{userName}</span>
+              <span className="text-body-md-description text-[#919191] self-center">
                 {date}
               </span>
             </div>
