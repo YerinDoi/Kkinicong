@@ -132,7 +132,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
 
           {isOwner
             ? null
-            : isLoggedIn && (
+            : (
                 <ReportReviewButton
                   reviewId={reviewId}
                   review={{ userName, content }}
