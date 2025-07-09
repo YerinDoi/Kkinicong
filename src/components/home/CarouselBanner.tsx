@@ -54,7 +54,7 @@ export default function CarouselBanner({ onSlideChange }: CarouselBannerProps) {
   
       <Swiper
         modules={[Autoplay]}
-        autoplay={{ delay: 10000 }}
+        autoplay={{ delay: 3000 }}
         loop={true}
         onSlideChange={(swiper) => {
           const i = swiper.realIndex;
