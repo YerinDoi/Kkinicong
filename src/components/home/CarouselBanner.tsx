@@ -5,8 +5,19 @@ import 'swiper/css';
 import { useState } from 'react';
 import CongG from '@/assets/svgs/logo/congG.svg'
 import AddIcon from '@/assets/svgs/common/add-icon.svg'
+import { useNavigate } from 'react-router-dom';
 
-const slides = [
+
+interface CarouselBannerProps {
+  onSlideChange: (index: number) => void;
+}
+
+
+export default function CarouselBanner({ onSlideChange }: CarouselBannerProps) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const navigate = useNavigate();
+
+  const slides = [
   {
     content: (
       <div className="flex justify-between px-[20px] ">
@@ -32,7 +43,7 @@ const slides = [
         
           
 
-        <button className="mt-[12px] px-[16px] h-[28px] bg-[#65CE58] text-white rounded-[12px] text-body-md-title font-regular items-center flex gap-[8px]">
+        <button className="mt-[12px] px-[16px] h-[28px] bg-[#65CE58] text-white rounded-[12px] text-body-md-title font-regular items-center flex gap-[8px]" onClick={() => navigate('/feedback')}>
           <img src={AddIcon} className='w-[12px] h-[12px]'/>
           지역 요청하기
         </button>
@@ -41,13 +52,6 @@ const slides = [
   },
 ];
 
-interface CarouselBannerProps {
-  onSlideChange: (index: number) => void;
-}
-
-
-export default function CarouselBanner({ onSlideChange }: CarouselBannerProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
 
   return (
     <div className="w-full flex flex-col items-center">
