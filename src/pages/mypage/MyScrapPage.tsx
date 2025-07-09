@@ -6,23 +6,30 @@ import EmptyView from '@/components/Mypage/EmptyView';
 import ScrapStoreListSection from '@/components/Mypage/ScrapStoreListSection';
 import ScrapMapSection from '@/components/Mypage/ScrapMapSection';
 
-const TOPBAR_AND_MARGIN = 102; // TopBar + 여백
+const TOPBAR_AND_MARGIN = 104; // TopBar + 여백
 const MAP_MIN_HEIGHT = 234; // 지도 최소 높이
-
-const getTotalHeight = () =>
-  typeof window !== 'undefined' ? window.innerHeight - TOPBAR_AND_MARGIN : 600;
 
 const MyScrapPage = () => {
   const navigate = useNavigate();
   const [scrapStores, setScrapStores] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [totalHeight, setTotalHeight] = useState(getTotalHeight());
-  const [sheetHeight, setSheetHeight] = useState(
-    getTotalHeight() - MAP_MIN_HEIGHT,
-  );
+  const [sheetHeight, setSheetHeight] = useState(0);
   const [selectedStore, setSelectedStore] = useState<any | null>(null);
   const [isFixedSheet, setIsFixedSheet] = useState(false);
   const storeListRef = useRef<{ resetToMaxHeight: () => void }>(null);
+
+  // 모바일 대응: --real-vh CSS 변수 설정
+  useEffect(() => {
+    function setRealHeight() {
+      document.documentElement.style.setProperty(
+        '--real-vh',
+        `${window.innerHeight * 0.01}px`,
+      );
+    }
+    setRealHeight();
+    window.addEventListener('resize', setRealHeight);
+    return () => window.removeEventListener('resize', setRealHeight);
+  }, []);
 
   useEffect(() => {
     getMyScrapStores()
@@ -36,19 +43,17 @@ const MyScrapPage = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  // 창 크기 변경 시 totalHeight, sheetHeight 재계산
+  // sheetHeight 계산 (지도 최소 높이 보장)
   useEffect(() => {
-    const handleResize = () => {
-      const th = getTotalHeight();
-      setTotalHeight(th);
-      setSheetHeight(Math.max(th - MAP_MIN_HEIGHT, 0));
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const realHeight =
+      window.innerHeight || document.documentElement.clientHeight || 600;
+    setSheetHeight(
+      Math.max(realHeight - TOPBAR_AND_MARGIN - MAP_MIN_HEIGHT, 0),
+    );
   }, []);
 
   return (
-    <div className="flex flex-col w-full h-full overflow-hidden">
+    <div className="flex flex-col w-full h-screen">
       <TopBar
         title="찜한 가게"
         rightType="none"
@@ -71,11 +76,21 @@ const MyScrapPage = () => {
           </div>
           <div
             className="relative w-full"
-            style={{ height: `${totalHeight}px` }}
+            style={{
+              height: `calc(var(--real-vh, 1vh) * 100 - ${TOPBAR_AND_MARGIN}px)`,
+            }}
           >
             <ScrapMapSection
               scrapStores={scrapStores}
-              height={Math.max(totalHeight - sheetHeight, MAP_MIN_HEIGHT) + 17}
+              height={
+                Math.max(
+                  (window.innerHeight ||
+                    document.documentElement.clientHeight) -
+                    TOPBAR_AND_MARGIN -
+                    sheetHeight,
+                  MAP_MIN_HEIGHT,
+                ) + 17
+              }
               onMarkerClick={(store) => {
                 setSelectedStore(store);
                 setSheetHeight(160);
@@ -83,7 +98,14 @@ const MyScrapPage = () => {
               }}
               onMapClick={() => {
                 setSelectedStore(null);
-                setSheetHeight(getTotalHeight() - MAP_MIN_HEIGHT);
+                // 지도 클릭 시 sheetHeight 재계산
+                const realHeight =
+                  window.innerHeight ||
+                  document.documentElement.clientHeight ||
+                  600;
+                setSheetHeight(
+                  Math.max(realHeight - TOPBAR_AND_MARGIN - MAP_MIN_HEIGHT, 0),
+                );
                 setIsFixedSheet(false);
                 storeListRef.current?.resetToMaxHeight();
               }}
