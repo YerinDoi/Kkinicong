@@ -52,7 +52,7 @@ const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
         isOpen ? 'translate-y-0' : '-translate-y-full'
       }`}
       style={{
-        boxShadow: '0px 4px 24px 0px rgba(0, 0, 0, 0.30)',
+        boxShadow: isOpen ? '0px 4px 24px 0px rgba(0, 0, 0, 0.30)' : 'none',
       }}
     >
       <div className="flex flex-col p-[20px] pb-[28px] gap-[20px]">
