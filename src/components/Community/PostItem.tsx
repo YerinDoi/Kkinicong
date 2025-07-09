@@ -34,7 +34,7 @@ const PostItem = ({ post, keyword = '' }: PostItemProps) => {
       className="flex flex-col px-[20px] gap-[12px] py-[12px] border-b border-[#C3C3C3] cursor-pointer"
       onClick={handleClick}
     >
-      <div className={`flex ${hasThumbnail ? 'flex-row justify-between' : 'flex-col gap-[12px]'}`}>
+      <div className={`flex ${hasThumbnail ? 'flex-row justify-between gap-[19px]' : 'flex-col gap-[12px]'}`}>
         <div className={`flex flex-col ${hasThumbnail ? 'gap-[8px]' : 'gap-[12px]'}`}>
           <MainTag rounded="rounded-[8px]" text={post.category} />
           <div className="flex flex-col gap-[8px]">
@@ -65,7 +65,7 @@ const PostItem = ({ post, keyword = '' }: PostItemProps) => {
         </div>
 
         {hasThumbnail && (
-          <div className="relative w-[88px] h-[88px] rounded-[8px] overflow-hidden shrink-0">
+          <div className="relative w-[88px] h-[88px] rounded-[8px] overflow-hidden shrink-0 gap-aut">
             <img
               src={post.thumbnailUrl}
               alt="thumbnail"
