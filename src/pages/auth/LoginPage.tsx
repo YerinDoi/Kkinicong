@@ -17,8 +17,8 @@ const GOOGLE_REDIRECT_URI = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
 export default function LoginPage() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const redirectTo = 
-    searchParams.get('redirectTo') || 
+  const redirectTo =
+    searchParams.get('redirectTo') ||
     (location.state && location.state.redirectTo) ||
     '/';
 
@@ -43,7 +43,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <div className="h-screen flex flex-col justify-center px-12">
+      <div className="real-vh flex flex-col justify-center px-12">
         {/* 아이콘 영역 */}
         <div className="flex flex-col items-center gap-6 mb-24">
           <LogoIcon className="w-16" />
