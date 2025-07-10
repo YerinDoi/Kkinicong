@@ -19,44 +19,44 @@ const UploadImage: React.FC<UploadImageProps> = ({ onFileSelect }) => {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
 
-    const allowedTypes = [
-      'image/jpeg',
-      'image/png',
-      'image/heic',
-      'image/heif',
-    ];
-    const maxSizeInBytes = 10 * 1024 * 1024;
+  //e.target.value = '';
 
-    try {
-      if (!allowedTypes.includes(file.type)) {
-        setToastMessage(['지원하지 않는 형식이에요', '다시 시도해주세요']);
-        setShowToast(true);
-        e.target.value = '';
-        return;
-      }
+  const file = e.target.files?.[0];
+  console.log(' file:', file);
+  console.log(' file type:', file?.type);
+  console.log(' file size:', file?.size);
+  console.log(' preview URL:', file ? URL.createObjectURL(file) : 'N/A');
+  if (!file) return;
 
-      if (file.size > maxSizeInBytes) {
-        setToastMessage([
-          '업로드 가능한 용량을 초과했어요',
-          '다시 시도해주세요',
-        ]);
-        setShowToast(true);
-        e.target.value = '';
-        return;
-      }
+  const ext = file.name.split('.').pop()?.toLowerCase();
+  const allowedExtensions = ['jpg', 'jpeg', 'png', 'heic', 'heif'];
+  const maxSizeInBytes = 10 * 1024 * 1024;
 
-      const imageURL = URL.createObjectURL(file);
-      setPreview(imageURL);
-      onFileSelect(file);
-    } catch {
-      setToastMessage(['이미지 업로드에 실패했어요', '다시 시도해주세요']);
-      setShowToast(true);
-      onFileSelect(null);
-    }
-  };
+
+
+  if (!ext || !allowedExtensions.includes(ext)) {
+    setToastMessage(['지원하지 않는 형식이에요', '다시 시도해주세요']);
+    setShowToast(true);
+    return;
+  }
+
+  if (file.size > maxSizeInBytes) {
+    setToastMessage(['업로드 가능한 용량을 초과했어요', '다시 시도해주세요']);
+    setShowToast(true);
+    return;
+  }
+
+  try {
+    const imageURL = URL.createObjectURL(file);
+    setPreview(imageURL);
+    onFileSelect(file);
+  } catch {
+    setToastMessage(['이미지 업로드에 실패했어요', '다시 시도해주세요']);
+    setShowToast(true);
+    onFileSelect(null);
+  }
+};
 
   const handleDeleteImage = () => {
     setPreview(null);
@@ -82,7 +82,7 @@ const UploadImage: React.FC<UploadImageProps> = ({ onFileSelect }) => {
         className="relative w-[88px] h-[88px] cursor-pointer"
         onClick={handleUploadClick}
       >
-        <div className="w-full h-full overflow-hidden rounded-[12px]">
+        <div className="w-full h-full aspect-square overflow-hidden rounded-[12px]">
           {preview ? (
             <>
               <img

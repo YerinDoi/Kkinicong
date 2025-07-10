@@ -141,8 +141,8 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
               )}
         </div>
       </div>
-      <div className="flex gap-auto justify-between">
-        <p className="text-body-md-title font-regular leading-[24px] text-[#616161] w-[221px]">
+      <div className="flex gap-[20px] justify-between">
+        <p className="text-body-md-title font-regular leading-[24px] text-[#616161] flex-1">
           {content}
         </p>
         {imageUrl && (
