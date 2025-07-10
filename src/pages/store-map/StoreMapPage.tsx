@@ -676,7 +676,7 @@ const StoreMapPage = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col real-vh">
       <div className="flex flex-col items-center w-full z-[100]">
         <Header title="가맹점 지도" location={gpsAddress} />
 

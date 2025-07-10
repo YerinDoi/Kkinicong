@@ -1,11 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 body,
 html {
   font-synthesis: none;
   font-family: 'Pretendard', sans-serif;
 }
+
+/* 모바일 뷰포트 높이 문제 해결을 위한 CSS 변수 */
+:root {
+  --vh: 1vh;
+}
+
+/* 실제 뷰포트 높이를 사용하는 클래스 */
+.real-vh {
+  height: calc(var(--vh, 1vh) * 100);
+}
+
+.real-vh-min {
+  min-height: calc(var(--vh, 1vh) * 100);
+}
+
 /* 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
