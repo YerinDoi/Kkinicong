@@ -23,7 +23,7 @@ export default function CommunityWritePage() {
 
 
   const isValid =
-    category && title.trim().length >= 5 && content.trim().length >= 10;
+    category && title.trim().length >= 1;
   
     //수정 모드일 경우 게시글 정보 불러오기
   useEffect(() => {
