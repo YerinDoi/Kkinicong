@@ -73,8 +73,9 @@ const CommunitySearchPage = () => {
 
 
   useEffect(() => {
-    fetchRecentKeywords();
-  }, []);
+  if (!token) return; // 비회원은 호출 안 함
+  fetchRecentKeywords();
+}, []);
 
   //최근 검색어 삭제하기
   const handleDeleteKeyword = async (keyword: string) => {

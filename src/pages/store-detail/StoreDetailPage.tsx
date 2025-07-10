@@ -39,7 +39,6 @@ const StoreDetailPage = () => {
     if (storeId) fetchStoreDetail();
   }, [storeId]);
 
-  if (loading) return <div>로딩 중...</div>;
   if (error || !store) return <div>가맹점 정보를 찾을 수 없습니다.</div>;
 
   // 리뷰PR 커밋용 주석 닫기

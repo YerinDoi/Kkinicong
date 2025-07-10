@@ -35,7 +35,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
   setReviews,
   refreshReviews,
 }) => {
-  const isLoggedIn = !!localStorage.getItem('accessToken');
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAllTags, setShowAllTags] = useState(false);
   const visibleTags = showAllTags ? tags : (tags ?? []).slice(0, 2);
@@ -90,9 +90,11 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-[8px] ">
             <img src={ProfileImg} className="w-[40px]" />
-            <div className="flex gap-[4px]">
-              <span className="font-meidum text-body-md-title">{userName}</span>
-              <span className="text-body-md-description text-[#919191] self-end">{date}</span>
+            <div className="flex gap-[4px] ">
+              <span className="font-meidum text-body-md-title ">{userName}</span>
+              <span className="text-body-md-description text-[#919191] self-center">
+                {date}
+              </span>
             </div>
           </div>
           {isOwner ? (
@@ -130,28 +132,34 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
 
           {isOwner
             ? null
-            : isLoggedIn && (
+            : (
                 <ReportReviewButton
                   reviewId={reviewId}
                   review={{ userName, content }}
+                  storeId={storeId}
                 />
               )}
         </div>
       </div>
-      <div className="flex gap-auto justify-between">
-        <p className="text-body-md-title font-regular leading-[24px] text-[#616161] w-[221px]">
+      <div className="flex gap-[20px] justify-between">
+        <p className="text-body-md-title font-regular leading-[24px] text-[#616161] flex-1">
           {content}
         </p>
         {imageUrl && (
           <img
             src={imageUrl}
             alt="리뷰 이미지"
-            className="w-[100px] h-[80px] rounded-[12px]"
+            className="w-[100px] h-[80px] rounded-[12px] object-cover"
           />
         )}
       </div>
       {showDeleteModal && (
-        <DeleteModal title="리뷰를 정말 삭제하시겠어요?" description = "삭제된 리뷰는 복구시킬 수 없어요" onClose={closeDeleteModal} onDelete={handleDelete} />
+        <DeleteModal
+          title="리뷰를 정말 삭제하시겠어요?"
+          description="삭제된 리뷰는 복구시킬 수 없어요"
+          onClose={closeDeleteModal}
+          onDelete={handleDelete}
+        />
       )}
     </div>
   );

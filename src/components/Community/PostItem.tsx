@@ -34,35 +34,44 @@ const PostItem = ({ post, keyword = '' }: PostItemProps) => {
       className="flex flex-col px-[20px] gap-[12px] py-[12px] border-b border-[#C3C3C3] cursor-pointer"
       onClick={handleClick}
     >
-      <div className={`flex ${hasThumbnail ? 'flex-row justify-between' : 'flex-col gap-[12px]'}`}>
+      <div className={`flex ${hasThumbnail ? 'flex-row justify-between gap-[19px]' : 'flex-col gap-[12px]'}`}>
         <div className={`flex flex-col ${hasThumbnail ? 'gap-[8px]' : 'gap-[12px]'}`}>
           <MainTag rounded="rounded-[8px]" text={post.category} />
           <div className="flex flex-col gap-[8px]">
-            <h3 className="font-semibold text-title-sb-button">
+            {post.titlePreview && (
+              <h3 className="font-semibold text-title-sb-button">
               {highlightKeyword(
                 post.titlePreview.length > 25 ? post.titlePreview.slice(0, 25) + '…' : post.titlePreview,
                 keyword,
                 true
               )}
             </h3>
-            <p className="text-body-md-title text-[#C3C3C3]">
-              {highlightKeyword(
-                post.contentPreview.length > 50 ? post.contentPreview.slice(0, 50) + '…' : post.contentPreview,
-                keyword,
-                false
-              )}
-            </p>
+
+            )}
+            
+            {post.contentPreview && (
+              <p className="text-body-md-title text-[#C3C3C3]">
+                {highlightKeyword(
+                  post.contentPreview.length > 50
+                    ? post.contentPreview.slice(0, 50) + '…'
+                    : post.contentPreview,
+                  keyword,
+                  false
+                )}
+              </p>
+            )}
+
           </div>
         </div>
 
         {hasThumbnail && (
-          <div className="relative w-[88px] h-[88px] rounded-[8px] overflow-hidden shrink-0">
+          <div className="relative w-[88px] h-[88px] rounded-[8px] overflow-hidden shrink-0 gap-aut">
             <img
               src={post.thumbnailUrl}
               alt="thumbnail"
               className="w-full h-full object-cover"
             />
-            {(post.imageCount ?? 0) > 0 && (
+            {(post.imageCount ?? 0) > 1 && (
               <div className="flex justify-center absolute top-0 left-0 w-[29.3px] h-[29.3px] bg-[rgba(68,60,54,0.94)] items-center text-center  text-white text-[12px] px-[7px] py-[2px] rounded-[8px]">
                 {post.imageCount}
               </div>

@@ -7,10 +7,13 @@ import { createPortal } from 'react-dom';
 import AlarmIcon from '@/assets/svgs/common/report.svg';
 import axiosInstance from '@/api/axiosInstance';
 import axios from 'axios';
+import LoginRequiredBottomSheet from '@/components/common/LoginRequiredBottomSheet';
+import { useLoginStatus } from '@/hooks/useLoginStatus';
 
 interface ReportButtonProps {
   type: 'post' | 'comment';
   id: number;
+  postId?: number; //댓글인 경우 게시글의 ID
   info: {
     nickname: string;
     content: string;
@@ -23,10 +26,14 @@ const ReportButton: React.FC<ReportButtonProps> = ({
   id,
   info,
   onClick,
+  postId,
 }) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [showWarningToast, setShowWarningToast] = useState(false);
+  const { isLoggedIn } = useLoginStatus();
+  const [isLoginBottomSheetOpen, setIsLoginBottomSheetOpen] = useState(false);
+  const [pendingPath, setPendingPath] = useState<string | null>(null);
 
   const reasonMap = {
     '부적절한 언어 사용 (욕설, 비방 등)': 'ABUSIVE_LANGUAGE',
@@ -37,6 +44,15 @@ const ReportButton: React.FC<ReportButtonProps> = ({
   } as const;
 
   const handleClick = () => {
+    if (!isLoggedIn) {
+      if (type === 'comment' && postId) {
+        setPendingPath(`/community/post/${postId}`);
+      } else {
+        setPendingPath(`/community/post/${id}`);
+      }
+      setIsLoginBottomSheetOpen(true);
+      return;
+    }
     onClick?.();
     setIsEditOpen(true);
   };
@@ -44,18 +60,15 @@ const ReportButton: React.FC<ReportButtonProps> = ({
   const handleEditSubmit = async (reason: string, description: string) => {
     const token = localStorage.getItem('accessToken');
     const mappedReason = reasonMap[reason as keyof typeof reasonMap];
-    if (!token) {
-      alert('로그인이 필요한 기능입니다.');
-      return;
-    }
+
     if (!mappedReason) {
       alert('신고 사유가 유효하지 않습니다.');
       return;
     }
     const url =
-    type === 'post'
-      ? `/api/v1/report/community/post/${id}`
-      : `/api/v1/report/community/comment/${id}`;
+      type === 'post'
+        ? `/api/v1/report/community/post/${id}`
+        : `/api/v1/report/community/comment/${id}`;
 
     try {
       await axiosInstance.post(
@@ -75,7 +88,7 @@ const ReportButton: React.FC<ReportButtonProps> = ({
       console.log('신고 전송됨');
       setIsEditOpen(false);
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+      setTimeout(() => setShowToast(false), 1500);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const errorCode = error.response?.data?.code;
@@ -84,7 +97,7 @@ const ReportButton: React.FC<ReportButtonProps> = ({
         if (errorCode === 'REPORT_ALREADY_EXISTS') {
           setIsEditOpen(false);
           setShowWarningToast(true);
-          setTimeout(() => setShowWarningToast(false), 3000);
+          setTimeout(() => setShowWarningToast(false), 1500);
           return;
         }
 
@@ -137,10 +150,20 @@ const ReportButton: React.FC<ReportButtonProps> = ({
       {showWarningToast &&
         createPortal(
           <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
-            <WarningToast text={['이미 신고 완료된 콘텐츠에요', '빠르게 검토중이니 잠시 기다려주세요']} />
+            <WarningToast
+              text={[
+                '이미 신고 완료된 콘텐츠에요',
+                '빠르게 검토중이니 잠시 기다려주세요',
+              ]}
+            />
           </div>,
           document.body,
         )}
+      <LoginRequiredBottomSheet
+        isOpen={isLoginBottomSheetOpen}
+        onClose={() => setIsLoginBottomSheetOpen(false)}
+        pendingPath={pendingPath}
+      />
     </>
   );
 };
