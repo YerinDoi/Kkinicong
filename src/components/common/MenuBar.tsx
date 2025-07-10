@@ -27,6 +27,7 @@ const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
   };
 
   const menuItems = [
+    { icon: 'mainpage' as IconName, text: '메인페이지', path: '/' },
     { icon: 'store-map' as IconName, text: '가맹점 지도', path: '/store-map' },
     {
       icon: 'store-search' as IconName,
@@ -35,7 +36,7 @@ const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
     },
     {
       icon: 'convenience-store' as IconName,
-      text: '편의점 구매가능 품목 게시판',
+      text: '편의점 구매정보',
       path: '/convenience',
     },
     { icon: 'community' as IconName, text: '커뮤니티', path: '/community' },
@@ -47,16 +48,19 @@ const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
 
   const menuBarContent = (
     <div
-      className={`fixed top-0 left-0 pt-[20px] w-full bg-white shadow-md transition-transform duration-300 ease-in-out transform z-50 ${
+      className={`fixed top-0 left-0 pt-[5px] w-full bg-white transition-transform duration-300 ease-in-out transform z-50 ${
         isOpen ? 'translate-y-0' : '-translate-y-full'
       }`}
+      style={{
+        boxShadow: isOpen ? '0px 4px 24px 0px rgba(0, 0, 0, 0.30)' : 'none',
+      }}
     >
-      <div className="relative p-[20px] pb-[28px]">
-        <button className="absolute right-[20px]" onClick={onClose}>
+      <div className="flex flex-col p-[20px] pb-[28px] gap-[20px]">
+        <button className="flex justify-end" onClick={onClose}>
           <Icon name="close-btn" />
         </button>
 
-        <div className="flex flex-col gap-[20px] mt-[40px]">
+        <div className="flex flex-col gap-[20px]">
           {menuItems.map((item, index) => (
             <div key={item.text}>
               <button
@@ -76,7 +80,7 @@ const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
                   {item.text}
                 </span>
               </button>
-              {index === 3 && (
+              {index === 4 && (
                 <div className="mt-[4px] pb-[20px] border-b-4 border-[#F4F6F8]" />
               )}
             </div>

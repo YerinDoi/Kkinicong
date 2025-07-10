@@ -20,7 +20,7 @@ const NicknameEditPage = () => {
     const regex = /^[가-힣a-zA-Z0-9 ]+$/;
     if (value !== value.trim()) return '앞뒤 공백 없이 입력해주세요';
     if (value.trim().length === 0) return '닉네임을 입력해주세요';
-    if (value.length > 10) return '10자 이내로 입력해주세요';
+    if (value.length > 7) return '7자 이내로 입력해주세요';
     if (!regex.test(value)) return '한글, 영문, 숫자, 공백만 사용할 수 있어요';
     return '';
   };
@@ -101,7 +101,7 @@ const NicknameEditPage = () => {
               value={nickname}
               onChange={handleChange}
               type="text"
-              placeholder="최대 10자 (ex. 배고픈 콩쥐)"
+              placeholder="최대 7자 (ex. 배고픈 콩쥐)"
               className="flex-1 outline-none text-title-sb-button font-semibold placeholder-gray-400"
             />
             <button

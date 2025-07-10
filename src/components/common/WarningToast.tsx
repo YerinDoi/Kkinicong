@@ -7,7 +7,7 @@ interface WarningToastProps {
 
 const WarningToast: React.FC<WarningToastProps> = ({ text }) => {
   return (
-    <div className="flex py-[16px] pl-[38px] gap-[32px] w-[338px] font-pretendard bg-[#F4F6F8] rounded-[12px]">
+    <div className="flex py-[16px] pl-[38px] gap-[32px] w-[338px] items-center font-pretendard bg-[#F4F6F8] rounded-[12px]">
       <img src={WarningIcon} className="w-[40px] h-[40px]" />
       <div className="text-body-md-title text-black">
         {Array.isArray(text) ? (

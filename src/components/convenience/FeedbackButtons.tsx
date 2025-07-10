@@ -2,6 +2,8 @@ interface FeedbackButtonsProps {
   isMine: boolean;
   correctCount: number;
   incorrectCount: number;
+  userSelection: boolean | null; 
+  // true = correct, false = incorrect, null = 아직 투표 안함
   onVote: (isCorrect: boolean) => void;
 }
 
@@ -9,6 +11,7 @@ export default function FeedbackButtons({
   isMine,
   correctCount,
   incorrectCount,
+  userSelection,
   onVote,
 }: FeedbackButtonsProps) {
   return (

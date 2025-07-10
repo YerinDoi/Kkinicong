@@ -173,9 +173,9 @@ const StoreMap = ({
 
             // 점 마커 (이름 없음)
             return (
-              <React.Fragment key={`dot-marker-group-${store.id}`}>
+              <React.Fragment key={`dot-marker-group-${store.id}-${idx}`}>
                 <MapMarker
-                  key={`dot-marker-${store.id}`}
+                  key={`dot-marker-${store.id}-${idx}`}
                   position={markerPosition}
                   image={{
                     src: DOT_MARKER,
@@ -203,7 +203,7 @@ const StoreMap = ({
                 />
                 {showName && (
                   <CustomOverlayMap
-                    key={`dot-overlay-${store.id}`}
+                    key={`dot-overlay-${store.id}-${idx}`}
                     position={markerPosition}
                     yAnchor={1.1}
                     xAnchor={0.5}
@@ -244,9 +244,9 @@ const StoreMap = ({
           }
           // 핀 마커 (이름 포함)
           return (
-            <React.Fragment key={`pin-group-${store.id}`}>
+            <React.Fragment key={`pin-group-${store.id}-${idx}`}>
               <MapMarker
-                key={`pin-marker-${store.id}`}
+                key={`pin-marker-${store.id}-${idx}`}
                 position={markerPosition}
                 image={{
                   src: MARKER,
@@ -273,7 +273,7 @@ const StoreMap = ({
                 zIndex={100}
               />
               <CustomOverlayMap
-                key={`pin-overlay-${store.id}`}
+                key={`pin-overlay-${store.id}-${idx}`}
                 position={markerPosition}
                 yAnchor={1.3}
                 xAnchor={0.5}

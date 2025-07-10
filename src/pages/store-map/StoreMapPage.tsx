@@ -24,6 +24,17 @@ const calculateRadius = (level: number): number => {
   return 5000;
 };
 
+// 중복 제거 유틸리티 함수 추가
+const removeDuplicateStores = (stores: Store[]): Store[] => {
+  const storeMap = new Map();
+  stores.forEach((store) => {
+    if (!storeMap.has(store.id)) {
+      storeMap.set(store.id, store);
+    }
+  });
+  return Array.from(storeMap.values());
+};
+
 const StoreMapPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -33,6 +44,7 @@ const StoreMapPage = () => {
   const [stores, setStores] = useState<Store[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const [hasSearched, setHasSearched] = useState(false); // 검색 시도 여부 추적
 
   const pageRef = useRef(0);
   const hasNextPageRef = useRef(true);
@@ -251,7 +263,7 @@ const StoreMapPage = () => {
         longitude: mapCenterRef.current.lng,
         keyword: isLocationRef.current ? undefined : searchTermRef.current,
       }).then((newStores) => {
-        setStores(newStores);
+        setStores(removeDuplicateStores(newStores));
         setFirstLoading(false);
       });
     }
@@ -269,15 +281,8 @@ const StoreMapPage = () => {
           keyword: isLocationRef.current ? undefined : searchTermRef.current,
         }).then((newStores) =>
           setStores((prev) => {
-            const storeMap = new Map(
-              prev.map((store: Store) => [store.id, store]),
-            );
-            newStores.forEach((store: Store) => {
-              if (!storeMap.has(store.id)) {
-                storeMap.set(store.id, store);
-              }
-            });
-            return Array.from(storeMap.values());
+            const combinedStores = [...prev, ...newStores];
+            return removeDuplicateStores(combinedStores);
           }),
         );
       }
@@ -324,13 +329,14 @@ const StoreMapPage = () => {
     setInputValue('');
     setIsMapMoved(false);
     setShouldAutoFitBounds(true);
+    setHasSearched(false); // GPS 클릭 시 검색 시도 상태 초기화
     searchTriggeredRef.current = true;
 
     const newStores = await fetchStoresPromise({
       latitude: lat,
       longitude: lng,
     });
-    setStores(newStores);
+    setStores(removeDuplicateStores(newStores));
     setFirstLoading(false);
   }, requestGps);
 
@@ -376,28 +382,72 @@ const StoreMapPage = () => {
   useEffect(() => {
     setIsMapMoved(false);
     setShouldAutoFitBounds(true); // 카테고리 변경 시 자동 범위 재설정 활성화
+    setHasSearched(false); // 카테고리 변경 시 검색 시도 상태 초기화
   }, [selectedCategory]);
 
   // GPS 위치가 준비된 후 fetchStores 강제 호출
   useEffect(() => {
-    if (isLocationReady && gpsLocation && stores.length === 0) {
+    if (isLocationReady && stores.length === 0) {
       if (location.state?.searchTerm) return;
+
       setFirstLoading(true); // 데이터 요청 시작
       pageRef.current = 0;
       hasNextPageRef.current = true;
+
+      // GPS 위치가 있으면 GPS 위치에서, 없으면 기본 위치에서 데이터 로드
+      const loadLocation = gpsLocation
+        ? { lat: gpsLocation.latitude, lng: gpsLocation.longitude }
+        : mapCenter;
+
+      console.log(
+        '[초기 데이터 로드] 위치:',
+        loadLocation,
+        'GPS 활성화:',
+        isGpsActive,
+      );
+
       fetchStoresPromise({
-        latitude: gpsLocation.latitude,
-        longitude: gpsLocation.longitude,
+        latitude: loadLocation.lat,
+        longitude: loadLocation.lng,
       }).then((newStores) => {
-        setStores(newStores);
+        setStores(removeDuplicateStores(newStores));
         setFirstLoading(false); // 데이터 도착
       });
-      setMapCenter({
-        lat: gpsLocation.latitude,
-        lng: gpsLocation.longitude,
+
+      // GPS 위치가 있으면 지도 중심도 업데이트
+      if (gpsLocation) {
+        setMapCenter({
+          lat: gpsLocation.latitude,
+          lng: gpsLocation.longitude,
+        });
+      }
+    }
+  }, [isLocationReady, gpsLocation, mapCenter]);
+
+  // GPS 권한이 거부되었을 때도 기본 위치에서 데이터 로드
+  useEffect(() => {
+    if (
+      !isGpsActive &&
+      isLocationReady &&
+      stores.length === 0 &&
+      !gpsLocation
+    ) {
+      if (location.state?.searchTerm) return;
+
+      console.log('[GPS 권한 거부] 기본 위치에서 데이터 로드');
+      setFirstLoading(true);
+      pageRef.current = 0;
+      hasNextPageRef.current = true;
+
+      fetchStoresPromise({
+        latitude: mapCenter.lat,
+        longitude: mapCenter.lng,
+      }).then((newStores) => {
+        setStores(removeDuplicateStores(newStores));
+        setFirstLoading(false);
       });
     }
-  }, [isLocationReady, gpsLocation]);
+  }, [isGpsActive, isLocationReady, gpsLocation, stores.length, mapCenter]);
 
   const handleSearchAndFitBounds = async (
     term?: string,
@@ -406,20 +456,28 @@ const StoreMapPage = () => {
     setIsSearching(true);
     setIsMapMoved(false);
     setShouldAutoFitBounds(true);
+    setHasSearched(true); // 검색 시도 표시
 
     const termToSearch = typeof term === 'string' ? term : inputValue;
     if (!termToSearch.trim()) {
       setSearchTerm('');
+      setHasSearched(false); // 검색어가 없으면 검색 시도 상태 초기화
+      // 검색어가 없으면 현재 지도 위치에서 기본 데이터 로드
       pageRef.current = 0;
       hasNextPageRef.current = true;
       setStores([]);
       fetchStoresPromise({
         latitude: mapCenter.lat,
         longitude: mapCenter.lng,
-      }).then((newStores) => setStores(newStores));
-      setIsSearching(false);
+      }).then((newStores) => {
+        setStores(removeDuplicateStores(newStores));
+        setIsSearching(false);
+      });
       return;
     }
+
+    // 검색어 설정
+    setSearchTerm(termToSearch.trim());
 
     const center = centerOverride || mapCenter;
 
@@ -434,13 +492,23 @@ const StoreMapPage = () => {
       { latitude: center.lat, longitude: center.lng },
       isGpsActive,
     );
-    moveMap(newMapCenter);
+
+    // 지역명 검색일 때만 지도 중심 변경
+    if (isLocationRef.current) {
+      moveMap(newMapCenter);
+    }
 
     fetchStoresPromise({
-      latitude: newMapCenter.lat,
-      longitude: newMapCenter.lng,
+      latitude: isLocationRef.current ? newMapCenter.lat : center.lat,
+      longitude: isLocationRef.current ? newMapCenter.lng : center.lng,
       ...(isLocationRef.current ? {} : { keyword: termToSearch }),
-    }).then((newStores) => setStores(newStores));
+    }).then((newStores) => {
+      setStores(removeDuplicateStores(newStores));
+      // 검색 결과가 없으면 searchTerm을 유지하여 엠티뷰 표시
+      if (newStores.length === 0) {
+        console.log('[검색 결과 없음] 엠티뷰 표시');
+      }
+    });
     setIsSearching(false);
   };
 
@@ -531,7 +599,7 @@ const StoreMapPage = () => {
         return Array.from(storeMap.values());
       });
     } else {
-      setStores(newStores);
+      setStores(removeDuplicateStores(newStores));
     }
 
     setPrevMapCenter({ lat, lng });
@@ -566,7 +634,11 @@ const StoreMapPage = () => {
         }}
       >
         <StoreMap
-          stores={selectedStore ? [selectedStore] : stores}
+          stores={
+            selectedStore
+              ? removeDuplicateStores([selectedStore, ...stores])
+              : stores
+          }
           latestBatchStores={
             selectedStore ? [selectedStore] : stores.slice(-10)
           }
@@ -618,7 +690,7 @@ const StoreMapPage = () => {
         </div>
 
         {/* 캐러셀 아래 영역 전체 */}
-        {!isLoading && !firstLoading && stores.length === 0 ? (
+        {!isLoading && !firstLoading && stores.length === 0 && hasSearched ? (
           <div
             className="mt-[32px] overflow-hidden overflow-y-auto"
             ref={scrollContainerRef}
@@ -636,7 +708,13 @@ const StoreMapPage = () => {
               className="h-full overflow-y-auto scrollbar-hide flex-grow"
               ref={scrollContainerRef}
             >
-              <StoreList stores={selectedStore ? [selectedStore] : stores} />
+              <StoreList
+                stores={
+                  selectedStore
+                    ? [selectedStore]
+                    : removeDuplicateStores(stores)
+                }
+              />
               {/* 무한 스크롤 로더 */}
               <div ref={loaderRef} style={{ height: '20px' }} />
             </div>

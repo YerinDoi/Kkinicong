@@ -24,7 +24,6 @@ export interface CommentData {
   isLiked: boolean;
   likeCount: number;
   replyListResponse: CommentData[];
-  
 }
 
 interface CommentItemProps {
@@ -39,7 +38,6 @@ interface CommentItemProps {
   setIsEditing?: (value: boolean) => void;
   setEditingCommentId?: (id: number) => void;
   setEditingContent?: (content: string) => void;
-  
 }
 
 const CommentItem: React.FC<CommentItemProps> = ({
@@ -51,8 +49,9 @@ const CommentItem: React.FC<CommentItemProps> = ({
   recentCommentId,
   setRecentCommentId,
   parentNickname,
-  setIsEditing,setEditingCommentId,setEditingContent
-
+  setIsEditing,
+  setEditingCommentId,
+  setEditingContent,
 }) => {
   const {
     commentId,
@@ -85,23 +84,18 @@ const CommentItem: React.FC<CommentItemProps> = ({
   const isNew = recentCommentId === commentId;
   //신고,삭제된 경우
   const isHiddenComment =
-  content === '신고된 댓글입니다' ||
-  content === '삭제된 댓글입니다' 
-;
- //댓글, 답글 삭제 모달
+    content === '신고된 댓글입니다' || content === '삭제된 댓글입니다';
+  //댓글, 답글 삭제 모달
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   //댓글,답글 삭제 토스트
   const [showDeleteToast, setShowDeleteToast] = useState(false);
   const [pendingPath, setPendingPath] = useState<string | null>(null);
 
-
-
-
   //좋아요
   const handleLikeClick = async () => {
     if (!isLoggedIn) {
       if (postId) {
-        console.log('postId',postId)
+        console.log('postId', postId);
         setPendingPath(`/community/post/${postId}`);
       }
       setIsLoginBottomSheetOpen(true);
@@ -167,11 +161,10 @@ const CommentItem: React.FC<CommentItemProps> = ({
     setIsReplying?.(false);
     setIsReplyInputOpen(false);
     setReplyTargetNickname(null);
-    setIsReplyEditing(false); 
+    setIsReplyEditing(false);
     setEditingReplyId(null);
     setEditingReplyContent('');
-};
-
+  };
 
   useEffect(() => {
     if (isReplyInputOpen && replyInputRef.current) {
@@ -199,7 +192,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
         const newCommentId = response.data.results.id;
         console.log('답글Id', newCommentId);
         setRecentCommentId?.(newCommentId);
-        handlecloseReplyInput(); 
+        handlecloseReplyInput();
 
         onReload?.(); // 상위에서 댓글 다시 불러오게 하기
         return newCommentId; // 이걸로 newCommentId 지정
@@ -213,50 +206,49 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
   //댓글 수정하기 버튼
   const handleCommentEdit = () => {
-  if (!isReply) {
-    setIsEditing?.(true);
-    setEditingCommentId?.(commentId);
-    setEditingContent?.(content);
-  } else {
-    // 답글은 기존 방식 유지
-    handleReplyEdit();
-  }
-};
+    if (!isReply) {
+      setIsEditing?.(true);
+      setEditingCommentId?.(commentId);
+      setEditingContent?.(content);
+    } else {
+      // 답글은 기존 방식 유지
+      handleReplyEdit();
+    }
+  };
 
   //답글 수정하기 버튼
   const handleReplyEdit = () => {
-  const fallback = parentNickname?.trim() ? parentNickname : '익명';
+    const fallback = parentNickname?.trim() ? parentNickname : '익명';
 
-  setReplyTargetNickname(fallback);
-  setIsReplyEditing(true);
-  setEditingReplyId(commentId);
-  setEditingReplyContent(content); // 원래 댓글 내용 입력
-  setIsReplyInputOpen(true); // input 열기
-};
+    setReplyTargetNickname(fallback);
+    setIsReplyEditing(true);
+    setEditingReplyId(commentId);
+    setEditingReplyContent(content); // 원래 댓글 내용 입력
+    setIsReplyInputOpen(true); // input 열기
+  };
 
-//답글 수정 후 전송
-const handleEditSubmit = async (newContent: string) => {
-  if (!editingReplyId || !newContent.trim()) return;
+  //답글 수정 후 전송
+  const handleEditSubmit = async (newContent: string) => {
+    if (!editingReplyId || !newContent.trim()) return;
 
-  const success = await editComment(editingReplyId, newContent);
-  if (success) {
-    handlecloseReplyInput();
-    onReload?.();
-  } else {
-    alert('수정 실패!');
-  }
-};
-//댓글 삭제
-const handleCommentDelete = async () => {
-  const success = await deleteComment(commentId);
-  if (success) {
-    setShowDeleteToast(true);
-    setTimeout(() => setShowDeleteToast(false), 2000);
-  } else {
-    alert('삭제에 실패했습니다.');
-  }
-};
-
+    const success = await editComment(editingReplyId, newContent);
+    if (success) {
+      handlecloseReplyInput();
+      onReload?.();
+    } else {
+      alert('수정 실패!');
+    }
+  };
+  //댓글 삭제
+  const handleCommentDelete = async () => {
+    const success = await deleteComment(commentId);
+    if (success) {
+      setShowDeleteToast(true);
+      setTimeout(() => setShowDeleteToast(false), 1500);
+    } else {
+      alert('삭제에 실패했습니다.');
+    }
+  };
 
   return (
     <div>
@@ -281,72 +273,72 @@ const handleCommentDelete = async () => {
                 <span className="text-black body-md-title">
                   {nickname ?? '익명'}
                 </span>
-               
+
                 {isAuthor && (
                   <span className="px-[8px] py-[2px] text-body-md-description font-regular rounded-[8px] bg-[#E6E6E6] text-[#616161]">
                     작성자
                   </span>
                 )}
-                 
-                <span className="text-[#919191] text-[12px]">{isModified && '수정됨 · '}{createdAt}</span>
+
+                <span className="text-[#919191] text-[12px]">
+                  {isModified && '수정됨 · '}
+                  {createdAt}
+                </span>
               </div>
             </div>
           </div>
 
           {/* 오른쪽: 더보기/신고하기 아이콘 */}
-        {!isHiddenComment && (
-          isMyComment ? (
-            <EditOrDeleteButton
-              onEdit={handleCommentEdit}
-              onDelete={() => setIsConfirmOpen(true)}
-            />
-          ) : (
-            <CommunityReportButton
-              type="comment"
-              id={commentId}
-              info={{ nickname: nickname ?? '익명', content }}
-            />
-          )
-        )}
+          {!isHiddenComment &&
+            (isMyComment ? (
+              <EditOrDeleteButton
+                onEdit={handleCommentEdit}
+                onDelete={() => setIsConfirmOpen(true)}
+              />
+            ) : (
+              <CommunityReportButton
+                type="comment"
+                id={commentId}
+                postId={postId}
+                info={{ nickname: nickname ?? '익명', content }}
+              />
+            ))}
         </div>
         <div className="text-[#616161] font-regular text-body-md-title pl-[48px]">
-        
           {content}
         </div>
 
         {/* 하단: 답글쓰기 + 좋아요 */}
         {!isHiddenComment && (
           <div
-          className={`${isReply ? 'justify-end' : 'justify-between'} flex items-center mt-[12px] pl-[48px]`}
-        >
-          <div
-            onClick={handleReplyClick}
-            className={
-              isReply
-                ? 'hidden '
-                : 'cursor-pointer text-black font-regular text-body-md-title '
-            }
+            className={`${isReply ? 'justify-end' : 'justify-between'} flex items-center mt-[12px] pl-[48px]`}
           >
-            답글쓰기
+            <div
+              onClick={handleReplyClick}
+              className={
+                isReply
+                  ? 'hidden '
+                  : 'cursor-pointer text-black font-regular text-body-md-title '
+              }
+            >
+              답글쓰기
+            </div>
+            <div
+              className={`flex gap-[4px] text-title-sb-button items-center font-bold font-semibold ${
+                isLiked ? 'text-main-color' : 'text-[#C3C3C3]'
+              }`}
+            >
+              <button onClick={handleLikeClick} className="cursor-pointer">
+                <Icon
+                  name={isLiked ? 'heart-filled' : 'heart'}
+                  className="w-[16px]"
+                />
+              </button>
+              {localLikeCount}
+            </div>
           </div>
-          <div
-            className={`flex gap-[4px] text-title-sb-button items-center font-bold font-semibold ${
-              isLiked ? 'text-main-color' : 'text-[#C3C3C3]'
-            }`}
-          >
-            <button onClick={handleLikeClick} className="cursor-pointer">
-              <Icon
-                name={isLiked ? 'heart-filled' : 'heart'}
-                className="w-[16px]"
-              />
-            </button>
-            {localLikeCount}
-          </div>
-        </div>
-   
         )}
-           </div>
-
+      </div>
 
       {/* 대댓글 렌더링 */}
       {!isReply && replyListResponse?.length > 0 && (
@@ -356,7 +348,7 @@ const handleCommentDelete = async () => {
               key={reply.commentId}
               data={reply}
               postId={postId}
-              parentNickname={nickname?? '익명'}
+              parentNickname={nickname ?? '익명'}
               onReload={onReload}
               isNew={recentCommentId === reply.commentId}
             />
@@ -368,7 +360,6 @@ const handleCommentDelete = async () => {
       {isReplyInputOpen &&
         createPortal(
           <div className="fixed bottom-0 w-full z-50 bg-white border-t shadow-lg">
-         
             <div className="pl-[20px] pr-[22px] py-[9px] bg-[#F4F6F8] font-regular text-body-md-description text-[#919191]">
               <span className="text-[#616161]">
                 {replyTargetNickname || '[없음]'}
@@ -384,11 +375,12 @@ const handleCommentDelete = async () => {
             <div className="px-[20px] mt-[12px]">
               <CommentInput
                 onSubmit={isReplyEditing ? handleEditSubmit : handleReplySubmit}
-                placeholder={isReplyEditing ? '답글을 수정하세요' : '답글을 남겨보세요'}
+                placeholder={
+                  isReplyEditing ? '답글을 수정하세요' : '답글을 남겨보세요'
+                }
                 defaultValue={editingReplyContent} // input에 미리 채워 넣을 값
                 setRecentCommentId={setRecentCommentId}
               />
-
             </div>
           </div>,
           document.body, // Portal로 body에 직접 렌더링
@@ -400,30 +392,30 @@ const handleCommentDelete = async () => {
         pendingPath={pendingPath}
       />
 
-    
       {isConfirmOpen && (
-      <ConfirmModal
-       
-        title={isReply ? "답글을 삭제하시겠어요?": "댓글을 삭제하시겠어요?"}
-        onClose={() => setIsConfirmOpen(false)}
-        onDelete={() => {
-          setIsConfirmOpen(false);
-          handleCommentDelete(); // 실제 삭제 실행
-        }}
-      />)}
+        <ConfirmModal
+          title={isReply ? '답글을 삭제하시겠어요?' : '댓글을 삭제하시겠어요?'}
+          onClose={() => setIsConfirmOpen(false)}
+          onDelete={() => {
+            setIsConfirmOpen(false);
+            handleCommentDelete(); // 실제 삭제 실행
+          }}
+        />
+      )}
 
-  
       {showDeleteToast &&
         createPortal(
           <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
             <ConfirmToast
-              text={isReply ? "답글 삭제가 완료되었어요" : "댓글 삭제가 완료되었어요"}
+              text={
+                isReply
+                  ? '답글 삭제가 완료되었어요'
+                  : '댓글 삭제가 완료되었어요'
+              }
             />
           </div>,
           document.body,
         )}
-
-
     </div>
   );
 };

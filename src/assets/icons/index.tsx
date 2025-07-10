@@ -38,7 +38,7 @@ import Send from '@/assets/svgs/community/send.svg?react';
 import EditOrDelete from '@/assets/svgs/common/more-icon.svg?react';
 import Reply from '@/assets/svgs/community/reply.svg?react';
 import X from '@/assets/icons/system/x.svg?react';
-
+import Mainpage from '@/assets/icons/menubar/mainpage.svg?react';
 export type IconName =
   | 'backward'
   | 'menubar'
@@ -78,7 +78,8 @@ export type IconName =
   | 'send'
   | 'edit-or-delete'
   | 'reply'
-  | 'x';
+  | 'x'
+  | 'mainpage';
 
 interface IconProps {
   name: IconName;
@@ -240,6 +241,10 @@ const Icon = ({ name, className }: IconProps) => {
 
   if (name === 'x') {
     return <X className={className} />;
+  }
+
+  if (name === 'mainpage') {
+    return <Mainpage className={className} />;
   }
 };
 
