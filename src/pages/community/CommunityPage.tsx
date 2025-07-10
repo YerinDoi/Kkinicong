@@ -65,7 +65,7 @@ const CommunityPage = () => {
   }, [selectedCategory, page]);
 
   useEffect(() => {
-  console.log('[🔍 posts 데이터]', posts);
+  console.log('[posts 데이터]', posts);
 }, [posts]);
 
   const { loaderRef } = useInfiniteScroll({

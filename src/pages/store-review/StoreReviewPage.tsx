@@ -30,12 +30,17 @@ const StoreReviewPage = () => {
   const [checked, setChecked] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const isSubmitEnabled = rating > 0 && checked;
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!storeId) {
     return <div>가게 정보를 찾을 수 없습니다.</div>;
   }
 
   const handleSubmitReview = async () => {
+
+    if (isSubmitting) return; // 중복 제출 방지
+    setIsSubmitting(true);
+
     try {
       const reviewRes = await axios.post(`/api/v1/${storeId}/review`, {
         rating,
@@ -70,6 +75,9 @@ const StoreReviewPage = () => {
     } catch (error) {
       console.error('리뷰 작성 실패:', error);
       alert('리뷰 작성에 실패했습니다.');
+    }
+    finally {
+      setIsSubmitting(false);
     }
   };
   // 리뷰PR 커밋용 주석 닫기
