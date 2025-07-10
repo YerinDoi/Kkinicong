@@ -152,7 +152,14 @@ export default function ConvenienceDetailPage() {
           <span className="text-headline-sb-main font-semibold">
             {post.name}
           </span>
-          <span className="text-[#65CE58] text-body-md-title font-regular ml-3">
+          {/* <span className="text-[#65CE58] text-body-md-title font-regular ml-3">
+            {post.isAvailable ? '결제가능' : '결제불가능'}
+          </span> */}
+          
+          <span className={`text-body-md-title font-regular ml-3 ${
+              post.isAvailable ? 'text-[#65CE58]' : 'text-red-500'
+            }`}
+          >
             {post.isAvailable ? '결제가능' : '결제불가능'}
           </span>
         </div>
