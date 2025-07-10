@@ -91,6 +91,13 @@ const CommunityPostDetailPage = () => {
     fetchPost();
   }, [postId]);
 
+  useEffect(() => {
+  if (post) {
+    console.log(' 불러온 post 데이터:', post);
+    console.log(' 이미지 URL 목록:', post.imageUrls);
+  }
+}, [post]);
+
   //좋아요
 
   const handleLikeClick = async () => {

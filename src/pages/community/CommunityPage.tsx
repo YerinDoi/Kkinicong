@@ -64,6 +64,10 @@ const CommunityPage = () => {
     fetchPosts(selectedCategory, page);
   }, [selectedCategory, page]);
 
+  useEffect(() => {
+  console.log('[posts 데이터]', posts);
+}, [posts]);
+
   const { loaderRef } = useInfiniteScroll({
     onIntersect: () => {
       if (hasNextPageRef.current) {

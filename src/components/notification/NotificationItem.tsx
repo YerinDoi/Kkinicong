@@ -20,10 +20,10 @@ export default function NotificationItem({
         isRead ? 'bg-white' : 'bg-[#F4F6F8]'
       }`}
     >
-      <p className="text-[12px] text-[#999] text-right mb-2 px-5">
+      <p className="text-[12px] text-[#999] text-right mb-2 px-5 ">
         {createdAt}
       </p>
-      <div className="flex items-baseline px-5">
+      <div className="flex items-baseline px-5 whitespace-nowrap">
         <span className="text-title-sb-button font-semibold text-[#616161]">
           {senderNickname}
         </span>

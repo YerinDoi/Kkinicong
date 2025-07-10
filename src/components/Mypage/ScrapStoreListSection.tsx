@@ -58,6 +58,7 @@ const ScrapStoreListSection = forwardRef(
         {/* 드래그 핸들 */}
         <div
           className="touch-none flex justify-center items-center py-2 cursor-grab active:cursor-grabbing flex-shrink-0"
+          style={{ touchAction: 'none' }}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}

@@ -27,6 +27,7 @@ interface PostDetail {
   description: string;
   CorrectCount: number;
   IncorrectCount: number;
+  userSelection: boolean | null; // 사용자 선택값 (true / false / null)
 }
 
 export default function ConvenienceDetailPage() {
@@ -55,7 +56,7 @@ export default function ConvenienceDetailPage() {
     try {
       await deleteConveniencePost(Number(postId));
       setModalOpen(false);
-      navigate('/convenience'); // 목록 페이지로 이동
+      navigate('/convenience');
     } catch (err) {
       console.error('삭제 실패', err);
       alert('삭제에 실패했어요. 다시 시도해주세요.');
@@ -84,13 +85,35 @@ export default function ConvenienceDetailPage() {
   const handleVote = async (isCorrect: boolean) => {
     if (!post || !postId) return;
 
-    // 1. Optimistic update
     const prev = { ...post };
+
+    const isSame =
+      (isCorrect === true && post.userSelection === true) ||
+      (isCorrect === false && post.userSelection === false);
+
+    // 낙관적 UI 업데이트
+    let correct = post.CorrectCount;
+    let incorrect = post.IncorrectCount;
+
+    if (isSame) {
+      // 같은 값을 다시 누른 경우: 취소 처리
+      if (isCorrect) correct -= 1;
+      else incorrect -= 1;
+    } else {
+      // 다른 값으로 변경한 경우: 이전 값 제거, 새 값 추가
+      if (post.userSelection === true) correct -= 1;
+      if (post.userSelection === false) incorrect -= 1;
+      if (isCorrect) correct += 1;
+      else incorrect += 1;
+    }
+
     setPost({
       ...post,
-      CorrectCount: post.CorrectCount + (isCorrect ? 1 : 0),
-      IncorrectCount: post.IncorrectCount + (!isCorrect ? 1 : 0),
+      CorrectCount: correct,
+      IncorrectCount: incorrect,
+      userSelection: isSame ? null : isCorrect,
     });
+
 
     // 2. 서버에 요청
     try {
@@ -101,6 +124,7 @@ export default function ConvenienceDetailPage() {
               ...prev,
               CorrectCount: res.correctCount,
               IncorrectCount: res.incorrectCount,
+              userSelection: res.userSelection ?? null,
             }
           : null,
       );
@@ -152,7 +176,14 @@ export default function ConvenienceDetailPage() {
           <span className="text-headline-sb-main font-semibold">
             {post.name}
           </span>
-          <span className="text-[#65CE58] text-body-md-title font-regular ml-3">
+          {/* <span className="text-[#65CE58] text-body-md-title font-regular ml-3">
+            {post.isAvailable ? '결제가능' : '결제불가능'}
+          </span> */}
+          
+          <span className={`text-body-md-title font-regular ml-3 ${
+              post.isAvailable ? 'text-[#65CE58]' : 'text-red-500'
+            }`}
+          >
             {post.isAvailable ? '결제가능' : '결제불가능'}
           </span>
         </div>
@@ -186,6 +217,7 @@ export default function ConvenienceDetailPage() {
           isMine={post.isMine}
           correctCount={post.CorrectCount}
           incorrectCount={post.IncorrectCount}
+          userSelection={post.userSelection}
           onVote={handleVote}
         />
       </div>

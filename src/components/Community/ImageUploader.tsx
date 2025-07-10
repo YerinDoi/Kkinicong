@@ -1,5 +1,7 @@
-import { useRef } from 'react';
+import { useRef,useState ,useEffect} from 'react';
 import imgAddIcon from '@/assets/icons/system/img-add.svg';
+import WarningToast from '@/components/common/WarningToast';
+import { createPortal } from 'react-dom';
 
 interface ImageUploaderProps {
   images: (File | string)[];
@@ -11,6 +13,20 @@ export default function ImageUploader({
   setImages,
 }: ImageUploaderProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [toastMessage, setToastMessage] = useState<string[] | null>(null);
+  const [showToast, setShowToast] = useState(false);
+
+  useEffect(() => {
+  if (showToast) {
+    const timer = setTimeout(() => {
+      setShowToast(false);
+    }, 1500);
+
+    return () => clearTimeout(timer); // 컴포넌트 언마운트 또는 showToast 재변경 시 타이머 정리
+  }
+}, [showToast]);
+
+
 
   const getPreviewUrl = (img: File | string) =>
   typeof img === 'string' ? img : URL.createObjectURL(img);
@@ -20,16 +36,30 @@ export default function ImageUploader({
     const files = e.target.files;
     if (!files) return;
     const newFiles = Array.from(files);
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'heic', 'heif'];
 
     const overLimit = images.length + newFiles.length > 3;
     const oversize = newFiles.some((file) => file.size > 10 * 1024 * 1024);
 
+    const invalidType = newFiles.some((file) => {
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      return !ext || !allowedExtensions.includes(ext);
+    });
+
     if (overLimit) {
-      alert('이미지는 최대 3장까지 첨부할 수 있어요.');
+      setToastMessage(['이미지는 최대 3장까지','업로드 할 수 있어요']);
+      setShowToast(true);
       return;
     }
     if (oversize) {
-      alert('10MB를 초과하는 이미지는 업로드할 수 없어요.');
+      setToastMessage(['업로드 가능한 용량을 초과했어요', '다시 시도해주세요']);
+      setShowToast(true);
+      return;
+    }
+
+    if (invalidType) {
+      setToastMessage(['지원하지 않는 형식이에요','다시 시도해주세요']);
+      setShowToast(true);
       return;
     }
 
@@ -81,6 +111,17 @@ export default function ImageUploader({
         hidden
         onChange={handleChange}
       />
+
+      {showToast && toastMessage &&
+        createPortal(
+          <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
+            <WarningToast
+              text={toastMessage}
+            />
+          </div>,
+          document.body,
+        )}
+
     </div>
   );
 }
