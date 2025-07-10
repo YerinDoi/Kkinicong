@@ -36,12 +36,20 @@ function HeaderToCarouselSection() {
 
       const stores: Store[] = response.data.results?.content || [];
 
+      // 중복 제거
+      const uniqueStores = stores.filter(
+        (store, index, self) =>
+          index === self.findIndex((s) => s.id === store.id),
+      );
+
       // 결과가 정확히 1개이고, 이름이 검색어와 정확히 일치하면 상세 페이지로 이동
       if (
-        stores.length === 1 &&
-        stores[0].name.toLowerCase() === searchTerm.toLowerCase()
+        uniqueStores.length === 1 &&
+        uniqueStores[0].name.toLowerCase().replace(/\s/g, '') ===
+          searchTerm.toLowerCase().replace(/\s/g, '')
       ) {
-        navigate(`/store/${stores[0].id}`);
+        console.log('상세페이지로 이동:', uniqueStores[0].id);
+        navigate(`/store/${uniqueStores[0].id}`);
       } else {
         // 지역명(동/구/역)으로 끝나면 center 없이 검색어만 넘김
         const isAddress = /동$|구$|역$/.test(searchTerm);
