@@ -106,6 +106,7 @@ export default function NicknamePage() {
           <input
             value={nickname}
             onChange={handleChange}
+            maxLength={7}
             type="text"
             placeholder="최대 7자 (ex. 배고픈 콩쥐)"
             className="flex-1 outline-none text-title-sb-button placeholder-gray-400"
