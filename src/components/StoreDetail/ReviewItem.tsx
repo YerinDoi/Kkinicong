@@ -149,7 +149,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
           <img
             src={imageUrl}
             alt="리뷰 이미지"
-            className="w-[100px] h-[80px] rounded-[12px]"
+            className="w-[100px] h-[80px] rounded-[12px] object-cover"
           />
         )}
       </div>
