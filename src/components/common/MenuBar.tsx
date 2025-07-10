@@ -23,7 +23,7 @@ const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
     handleLogout();
     setIsLoggedIn(false);
     onClose();
-    navigate('/'); // 메인페이지로 이동
+    window.location.replace('/');
   };
 
   const menuItems = [
