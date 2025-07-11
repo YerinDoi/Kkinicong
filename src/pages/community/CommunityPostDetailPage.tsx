@@ -300,7 +300,7 @@ const CommunityPostDetailPage = () => {
 
       {/* 댓글 목록 렌더링 */}
       {post.commentListResponse.length > 0 ? (
-        <div className="flex flex-col">
+        <div className="flex flex-col ">
           {post.commentListResponse.map((comment, index) => (
             <div key={comment.commentId}>
               <CommentItem
@@ -325,7 +325,7 @@ const CommunityPostDetailPage = () => {
         </div>
       )}
       {!isReplying && (
-        <div className="px-[20px] mt-[20px] mb-[39px]">
+        <div className="px-[20px] mt-[20px] ">
           <CommentInput
             onSubmit={handleCommentEditSubmit}
 
@@ -341,6 +341,7 @@ const CommunityPostDetailPage = () => {
 
         </div>
       )}
+      <div className="h-[144px]" />
       {isDeleteModalOpen && (
         <DeleteModal
           title="게시글을 정말 삭제하시겠어요?"

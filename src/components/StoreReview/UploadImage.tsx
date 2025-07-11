@@ -3,6 +3,8 @@ import UploadIcon from '@/assets/svgs/review/upload-image.svg';
 import AddIcon from '@/assets/svgs/review/add-image.svg';
 import DeleteIcon from '@/assets/svgs/review/delete-img.svg';
 import WarningToast from '@/components/common/WarningToast';
+import imageCompression from 'browser-image-compression';
+
 
 interface UploadImageProps {
   onFileSelect: (file: File | null) => void;
@@ -18,7 +20,7 @@ const UploadImage: React.FC<UploadImageProps> = ({ onFileSelect }) => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
   //e.target.value = '';
 
@@ -34,7 +36,6 @@ const UploadImage: React.FC<UploadImageProps> = ({ onFileSelect }) => {
   const maxSizeInBytes = 10 * 1024 * 1024;
 
 
-
   if (!ext || !allowedExtensions.includes(ext)) {
     setToastMessage(['지원하지 않는 형식이에요', '다시 시도해주세요']);
     setShowToast(true);
@@ -48,9 +49,21 @@ const UploadImage: React.FC<UploadImageProps> = ({ onFileSelect }) => {
   }
 
   try {
-    const imageURL = URL.createObjectURL(file);
-    setPreview(imageURL);
-    onFileSelect(file);
+    const compressedBlob = await imageCompression(file, {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1024,
+        useWebWorker: true,
+      });
+
+      const compressedFile = new File([compressedBlob], file.name, {
+        type: compressedBlob.type,
+        lastModified: Date.now(),
+      });
+
+      // 압축된 파일 기준으로 미리보기 URL 생성
+      const imageURL = URL.createObjectURL(compressedFile);
+      setPreview(imageURL);
+      onFileSelect(compressedFile);
   } catch {
     setToastMessage(['이미지 업로드에 실패했어요', '다시 시도해주세요']);
     setShowToast(true);
@@ -60,6 +73,7 @@ const UploadImage: React.FC<UploadImageProps> = ({ onFileSelect }) => {
 
   const handleDeleteImage = () => {
     setPreview(null);
+    onFileSelect(null);
   };
 
   useEffect(() => {
