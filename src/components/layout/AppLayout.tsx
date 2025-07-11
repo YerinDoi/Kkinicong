@@ -10,11 +10,11 @@ export default function AppLayout({ children }: Props) {
   const isCommunityPage = location.pathname === '/community';
 
   return (
-    <div className="w-screen h-screen bg-gray-100 relative">
+    <div className="w-screen real-vh bg-gray-100 relative">
       {/* 스크롤 가능한 콘텐츠 영역 */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                   w-full max-w-[375px] h-screen bg-white overflow-y-scroll scrollbar-hide"
+                   w-full max-w-[375px] real-vh bg-white overflow-y-scroll scrollbar-hide"
       >
         {children}
       </div>
