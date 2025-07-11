@@ -230,7 +230,7 @@ const StoreSearchPage = () => {
   };
 
   return (
-    <div>
+    <div className="real-vh">
       <div className="flex flex-col items-center w-full shadow-bottom shrink-0">
         <Header title="가맹점 찾기" location={gpsAddress} />
         <div className="flex gap-[12px] px-[20px] w-full">
@@ -251,7 +251,7 @@ const StoreSearchPage = () => {
       </div>
 
       {!isLoading && stores.length === 0 ? (
-        <div className="flex items-center justify-center h-[calc(100vh-240px)]">
+        <div className="flex items-center justify-center h-[calc(var(--vh,1vh)*100-240px)]">
           {searchTerm && !isLocation ? (
             <NoSearchResults type="search" query={searchTerm} />
           ) : (
@@ -261,10 +261,18 @@ const StoreSearchPage = () => {
       ) : (
         <div className="pt-[20px] px-[16px]">
           <div className="flex justify-end pb-[20px]">
-            <Dropdown  options={['가까운 순', '리뷰 많은 순', '별점 높은 순', '조회수 순']} onSelect={setSort} />
+            <Dropdown
+              options={[
+                '가까운 순',
+                '리뷰 많은 순',
+                '별점 높은 순',
+                '조회수 순',
+              ]}
+              onSelect={setSort}
+            />
           </div>
           <div
-            className="h-[calc(100vh-310px)] overflow-y-auto scrollbar-hide"
+            className="h-[calc(var(--vh,1vh)*100-310px)] overflow-y-auto scrollbar-hide"
             ref={scrollContainerRef}
           >
             <StoreList stores={stores} />

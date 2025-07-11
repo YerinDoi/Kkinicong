@@ -53,7 +53,7 @@ const MyScrapPage = () => {
   }, []);
 
   return (
-    <div className="flex flex-col w-full h-screen">
+    <div className="flex flex-col w-full real-vh">
       <TopBar
         title="찜한 가게"
         rightType="none"
