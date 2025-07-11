@@ -2,6 +2,7 @@ import { useRef,useState ,useEffect} from 'react';
 import imgAddIcon from '@/assets/icons/system/img-add.svg';
 import WarningToast from '@/components/common/WarningToast';
 import { createPortal } from 'react-dom';
+import imageCompression from 'browser-image-compression';
 
 interface ImageUploaderProps {
   images: (File | string)[];
@@ -32,7 +33,7 @@ export default function ImageUploader({
   typeof img === 'string' ? img : URL.createObjectURL(img);
 
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
     const newFiles = Array.from(files);
@@ -63,7 +64,26 @@ export default function ImageUploader({
       return;
     }
 
-    setImages([...images, ...newFiles]);
+    try {
+      const compressedFiles: File[] = [];
+
+      for (const file of newFiles) {
+        const compressed = await imageCompression(file, {
+          maxSizeMB: 1,
+          maxWidthOrHeight: 1024,
+          useWebWorker: true,
+        });
+        compressedFiles.push(compressed);
+      }
+
+      setImages([...images, ...compressedFiles]);
+    } catch (err) {
+      console.error('이미지 압축 오류:', err);
+      setToastMessage(['이미지 압축 중 오류가 발생했어요', '다시 시도해주세요']);
+      setShowToast(true);
+    }
+
+    
   };
 
   const handleDelete = (index: number) => {

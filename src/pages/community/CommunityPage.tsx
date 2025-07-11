@@ -8,6 +8,8 @@ import { useState, useEffect, useRef } from 'react';
 import axiosInstance from '@/api/axiosInstance';
 import PostItem, { Post } from '@/components/Community/PostItem';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
+import Icon from '@/assets/icons';
+import MenuBar from '@/components/common/MenuBar';
 
 const CommunityPage = () => {
   const navigate = useNavigate();
@@ -18,6 +20,17 @@ const CommunityPage = () => {
   const pageRef = useRef(0);
   const hasNextPageRef = useRef(true);
   const isLoadingRef = useRef(false);
+  // 메뉴 열림/닫힘 상태 관리
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // 메뉴 열기/닫기 함수
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
 
   const categoryMap: Record<string, string> = {
     전체: '',
@@ -103,7 +116,7 @@ const CommunityPage = () => {
           paddingX="px-[15px]"
           rightType="custom"
           customRightElement={
-            <div className="flex gap-[14px]">
+            <div className="flex gap-[14px] items-center">
               <img
                 src={AlarmIcon}
                 onClick={() => navigate('/notification')} 
@@ -114,6 +127,15 @@ const CommunityPage = () => {
                 onClick={() => navigate('/community/search')} 
                 className="w-[20px] h-[20px] cursor-pointer"
               />
+           
+              <button
+                className="w-[24px] h-[24px] aspect-square"
+                onClick={toggleMenu}
+              >
+                <Icon name="menubar" />
+              </button>
+ 
+
             </div>
           }
         />
@@ -139,6 +161,7 @@ const CommunityPage = () => {
         <PostList posts={posts} />
         <div ref={loaderRef} style={{ height: 20 }} />
       </div>
+      <MenuBar isOpen={isMenuOpen} onClose={closeMenu} />
     </>
   );
 };
