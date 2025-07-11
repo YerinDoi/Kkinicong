@@ -39,7 +39,7 @@ const StoreDetailPage = () => {
     if (storeId) fetchStoreDetail();
   }, [storeId]);
 
-  if (error || !store) return <div>가맹점 정보를 찾을 수 없습니다.</div>;
+  if (error || !store) return;
 
   // 리뷰PR 커밋용 주석 닫기
 

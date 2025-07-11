@@ -1,4 +1,4 @@
-import { useRef,useState ,useEffect} from 'react';
+import { useRef,useState ,useEffect,useMemo} from 'react';
 import imgAddIcon from '@/assets/icons/system/img-add.svg';
 import WarningToast from '@/components/common/WarningToast';
 import { createPortal } from 'react-dom';
@@ -17,6 +17,27 @@ export default function ImageUploader({
   const [toastMessage, setToastMessage] = useState<string[] | null>(null);
   const [showToast, setShowToast] = useState(false);
 
+  //이미지 압축 적용
+  const compressImages = async (files: File[]) => {
+  return await Promise.all(
+    files.map(async (file) => {
+      const compressedBlob = await imageCompression(file, {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1024,
+        useWebWorker: true,
+      });
+
+      //  압축된 Blob을 다시 File로 변환하면서 name 보존
+      const compressedFile = new File([compressedBlob], file.name, {
+        type: compressedBlob.type,
+        lastModified: Date.now(),
+      });
+
+      return compressedFile;
+    })
+  );
+};
+
   useEffect(() => {
   if (showToast) {
     const timer = setTimeout(() => {
@@ -27,11 +48,33 @@ export default function ImageUploader({
   }
 }, [showToast]);
 
+//url 캐시
+const previewUrlMap = useMemo(() => {
+    return images.reduce((acc, img) => {
+      if (typeof img !== 'string') {
+        acc[img.name] = URL.createObjectURL(img);
+      }
+      return acc;
+    }, {} as Record<string, string>);
+  }, [images]);
+
+  //컴포넌트 언마운트 시 해제
+  useEffect(() => {
+  return () => {
+    images.forEach((img) => {
+      if (typeof img !== 'string') {
+        URL.revokeObjectURL(previewUrlMap[img.name]);
+      }
+    });
+  };
+}, [previewUrlMap, images]);
 
 
-  const getPreviewUrl = (img: File | string) =>
-  typeof img === 'string' ? img : URL.createObjectURL(img);
 
+  const getPreviewUrl = (img: File | string) => {
+  if (typeof img === 'string') return img;
+  return previewUrlMap[img.name] ?? URL.createObjectURL(img);
+};
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -63,27 +106,8 @@ export default function ImageUploader({
       setShowToast(true);
       return;
     }
-
-    try {
-      const compressedFiles: File[] = [];
-
-      for (const file of newFiles) {
-        const compressed = await imageCompression(file, {
-          maxSizeMB: 1,
-          maxWidthOrHeight: 1024,
-          useWebWorker: true,
-        });
-        compressedFiles.push(compressed);
-      }
-
-      setImages([...images, ...compressedFiles]);
-    } catch (err) {
-      console.error('이미지 압축 오류:', err);
-      setToastMessage(['이미지 압축 중 오류가 발생했어요', '다시 시도해주세요']);
-      setShowToast(true);
-    }
-
-    
+    const compressed = await compressImages(newFiles);
+    setImages([...images, ...compressed]);
   };
 
   const handleDelete = (index: number) => {
