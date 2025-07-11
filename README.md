@@ -86,7 +86,7 @@ KKinicong_FE/
 </details>
 
 ----
-## 🔗 Deployment URL
+## 🚀 Deployment URL
 
 - [끼니콩 바로가기](https://kkinicong.vercel.app/)
 ----
