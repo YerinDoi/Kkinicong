@@ -154,6 +154,15 @@ const CommunitySearchPage = () => {
             key={idx}
             label={item.keyword} 
             onDelete={() => handleDeleteKeyword(item.keyword)} 
+            onClick={() => {
+            setKeyword(item.keyword);       
+            setShowRecent(false);
+            setPage(0);
+            pageRef.current = 0;
+            setIsSearched(true);
+            setSearchedKeyword(item.keyword);
+            loadPosts(0, item.keyword);    // 검색 실행
+          }}
             />
           ))}
 

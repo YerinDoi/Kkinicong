@@ -80,6 +80,10 @@ const CommentItem: React.FC<CommentItemProps> = ({
   const [editingReplyId, setEditingReplyId] = useState<number | null>(null);
   const [editingReplyContent, setEditingReplyContent] = useState<string>('');
   const { editComment, deleteComment } = useCommentActions(token!, onReload);
+  //답글 달때 스크롤 위치 저장
+  const previousScrollY = useRef<number>(0);
+  const commentRef = useRef<HTMLDivElement>(null);
+
   // 새로 등록된 댓글/답글 구별
   const isNew = recentCommentId === commentId;
   //신고,삭제된 경우
@@ -154,6 +158,12 @@ const CommentItem: React.FC<CommentItemProps> = ({
     setReplyTargetNickname(fallback);
     setIsReplying?.(true);
     setIsReplyInputOpen(true);
+    previousScrollY.current = window.scrollY;
+
+    // 댓글 요소로 스크롤 이동
+    setTimeout(() => {
+      commentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
   };
 
   //답글 입력창 닫기
@@ -194,7 +204,13 @@ const CommentItem: React.FC<CommentItemProps> = ({
         setRecentCommentId?.(newCommentId);
         handlecloseReplyInput();
 
-        onReload?.(); // 상위에서 댓글 다시 불러오게 하기
+        await onReload?.(); // 상위에서 댓글 다시 불러오게 하기
+
+        // 원래 스크롤 위치로 복귀
+        setTimeout(() => {
+          window.scrollTo({ top: previousScrollY.current, behavior: 'smooth' });
+        }, 100);
+
         return newCommentId; // 이걸로 newCommentId 지정
       } else {
         console.error('대댓글 등록 실패:', response.data.message);
@@ -251,7 +267,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
   };
 
   return (
-    <div>
+    <div ref={commentRef}>
       <div
         className={`
     ${isReply ? 'pl-0 pr-[20px] border-none pt-0' : `px-[20px] pt-[12px]`}
