@@ -54,6 +54,20 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
     console.log('[debug] props:', { refreshReviews });
   }, []);
 
+  useEffect(() => {
+    console.log('[ReviewItem] props', {
+      userName,
+      date,
+      rating,
+      content,
+      imageUrl,
+      isOwner,
+      reviewId,
+      tags,
+      storeId,
+    });
+  }, []);
+  
   const handleDelete = async () => {
     try {
       const token = localStorage.getItem('accessToken');
