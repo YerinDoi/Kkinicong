@@ -14,7 +14,7 @@
 | 구분         | 사용 기술                        |
 | ----------- | ----------------------------- |
 | Framework   | React, TypeScript             |
-| State Mgmt  | React-Query                   |
+| State Mgmt  | React-Query, Redux-Toolkit                   |
 | Styling     | Tailwind CSS                  |
 | Components  | Storybook                     |
 | Build Tool  | Vite                          |
