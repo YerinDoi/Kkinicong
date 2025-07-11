@@ -20,6 +20,7 @@ export default function CommunityWritePage() {
   const [content, setContent] = useState('');
   const [images, setImages] = useState<(File | string)[]>([]);
   const [showToast,setShowToast] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); 
 
 
   const isValid = category && title.trim().length >= 1;
@@ -50,6 +51,10 @@ export default function CommunityWritePage() {
   }, [postId]);
 
   const handleSubmit = async () => {
+
+    if (isSubmitting) return; // 중복 요청 방지
+    setIsSubmitting(true);
+
   try {
     const isEditing = !!postId;
     let finalPostId = postId;
@@ -93,6 +98,8 @@ export default function CommunityWritePage() {
     }
   } catch (error) {
     console.error('저장 실패:', error);
+  }finally {
+    setIsSubmitting(false); 
   }
 };
 
@@ -154,10 +161,10 @@ export default function CommunityWritePage() {
 
       <div className="mx-5">
         <button
-          disabled={!isValid}
+          disabled={!isValid || isSubmitting}
           onClick={handleSubmit}
           className={`py-4 w-full mb-8 rounded-[12px] text-[#919191] text-[16px] font-semibold ${
-            isValid ? 'bg-[#65CE58] text-[#FFFFFF]' : 'bg-[#E6E6E6]'
+            isValid && !isSubmitting ? 'bg-[#65CE58] text-[#FFFFFF]' : 'bg-[#E6E6E6]'
           }`}
         >
           등록하기
