@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState,useEffect } from 'react';
 import CategorySelector from '@/components/Community/CategorySelector';
 import ImageUploader from '@/components/Community/ImageUploader';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate ,useSearchParams } from 'react-router-dom';
 import TopBar from '@/components/common/TopBar';
 import axiosInstance from '@/api/axiosInstance';
 import { postCommunity, patchCommunity } from '@/api/community';
@@ -19,89 +19,86 @@ export default function CommunityWritePage() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [images, setImages] = useState<(File | string)[]>([]);
-  const [showToast, setShowToast] = useState(false);
+  const [showToast,setShowToast] = useState(false);
+
 
   const isValid = category && title.trim().length >= 1;
-
-  //수정 모드일 경우 게시글 정보 불러오기
+    //수정 모드일 경우 게시글 정보 불러오기
   useEffect(() => {
-    if (!postId) return;
-    const fetchPostDetail = async () => {
-      try {
-        const res = await axiosInstance.get(`/api/v1/community/post/${postId}`);
-        console.log('게시글 데이터:', res.data);
+  if (!postId) return;
+  const fetchPostDetail = async () => {
+  
+  try {
+    const res = await axiosInstance.get(`/api/v1/community/post/${postId}`);
+    console.log('게시글 데이터:', res.data);
 
-        const { title, content, category, imageUrls } = res.data.results;
+    const { title, content, category, imageUrls } = res.data.results;
 
-        setTitle(title);
-        setContent(content);
-        setCategory(
-          labelToValueMap[category as keyof typeof labelToValueMap] || '',
-        );
+    setTitle(title);
+    setContent(content);
+    setCategory(labelToValueMap[category as keyof typeof labelToValueMap] || '');
 
-        setImages(imageUrls); // 여기 수정할수도...
-      } catch (err) {
-        console.error('게시글 불러오기 실패:', err);
-        alert('게시글 정보를 불러오지 못했어요.');
-      }
-    };
+    setImages(imageUrls); // 여기 수정할수도...
+  } catch (err) {
+    console.error('게시글 불러오기 실패:', err);
+    alert('게시글 정보를 불러오지 못했어요.');
+  }
+};
+
 
     fetchPostDetail();
   }, [postId]);
 
   const handleSubmit = async () => {
-    try {
-      const isEditing = !!postId;
-      let finalPostId = postId;
+  try {
+    const isEditing = !!postId;
+    let finalPostId = postId;
 
-      const existingImageUrls = images.filter(
-        (img): img is string => typeof img === 'string',
-      );
-      const newImageFiles = images.filter(
-        (img): img is File => img instanceof File,
-      );
+    const existingImageUrls = images.filter((img): img is string => typeof img === 'string');
+    const newImageFiles = images.filter((img): img is File => img instanceof File);
 
-      // 1. 신규 작성
-      if (!isEditing) {
-        const postRes = await postCommunity({ title, content, category });
+    // 1. 신규 작성
+    if (!isEditing) {
+      const postRes = await postCommunity({ title, content, category });
 
-        finalPostId = postRes?.results?.communityPostId;
-        if (!finalPostId) throw new Error('communityPostId가 없습니다!');
-
-        if (newImageFiles.length > 0) {
-          const imageUrls = await uploadImages(finalPostId, newImageFiles);
-          console.log('이미지 업로드 완료 (등록):', imageUrls);
-        }
-
-        setShowToast(true);
-        setTimeout(() => {
-          navigate('/community');
-        }, 1500);
+      finalPostId = postRes?.results?.communityPostId;
+      if (!finalPostId) throw new Error('communityPostId가 없습니다!');
+      
+      if (newImageFiles.length > 0) {
+        const imageUrls = await uploadImages(finalPostId, newImageFiles);
+        console.log('이미지 업로드 완료 (등록):', imageUrls);
       }
 
-      // 2. 수정
-      if (isEditing && finalPostId) {
-        await patchCommunity(finalPostId, {
-          title,
-          content,
-          category,
-          remainingImageUrls: existingImageUrls,
-        });
-
-        if (newImageFiles.length > 0) {
-          const imageUrls = await uploadImages(finalPostId, newImageFiles);
-          console.log('이미지 업로드 완료 (수정):', imageUrls);
-        }
-
-        navigate(`/community/post/${finalPostId}`);
-      }
-    } catch (error) {
-      console.error('저장 실패:', error);
+      setShowToast(true);
+      setTimeout(() => {
+        navigate('/community');
+      }, 1500);
     }
-  };
+
+    // 2. 수정
+    if (isEditing && finalPostId) {
+      await patchCommunity(finalPostId, {
+        title,
+        content,
+        category,
+        remainingImageUrls: existingImageUrls,
+      });
+
+      if (newImageFiles.length > 0) {
+        const imageUrls = await uploadImages(finalPostId, newImageFiles);
+        console.log('이미지 업로드 완료 (수정):', imageUrls);
+      }
+
+      navigate(`/community/post/${finalPostId}`);
+    }
+  } catch (error) {
+    console.error('저장 실패:', error);
+  }
+};
+
 
   return (
-    <div className="flex flex-col real-vh">
+    <div className="flex flex-col h-screen">
       <TopBar
         title="커뮤니티 글 작성"
         // TODO: 임시 저장 기능 구현 예정
@@ -167,13 +164,18 @@ export default function CommunityWritePage() {
         </button>
       </div>
 
-      {showToast &&
+       {showToast &&
         createPortal(
           <div className="fixed bottom-[60px] left-1/2 transform -translate-x-1/2 z-50">
-            <ConfirmToast text="게시글 등록이 완료되었어요" />
+            <ConfirmToast
+              text="게시글 등록이 완료되었어요"
+            />
           </div>,
           document.body,
         )}
+
+
+
     </div>
   );
 }
