@@ -204,7 +204,11 @@ const CommunityPostDetailPage = () => {
 
   return (
     <div>
-      <TopBar />
+      <TopBar
+
+      showBackButton={true}
+      onBack={() => navigate('/community')}
+    />
       <div className="pb-[16px] px-[20px] flex flex-col gap-[40px] border-b border-[#E6E6E6]">
         <div>
           <div className="flex flex-col gap-[16px]">
