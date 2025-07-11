@@ -115,6 +115,8 @@ const CommunityPage = () => {
           title="커뮤니티"
           paddingX="px-[15px]"
           rightType="custom"
+          showBackButton={true}
+          onBack={() => navigate('/')}
           customRightElement={
             <div className="flex gap-[14px] items-center">
               <img
