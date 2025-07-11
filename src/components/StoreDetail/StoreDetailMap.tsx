@@ -64,7 +64,7 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
   }, [store?.storeId]);
 
   if (!store) {
-    return <div className="px-[16px]">가맹점 정보를 찾을 수 없습니다.</div>;
+    return ;
   }
 
   const marker = [{ lat: store.latitude, lng: store.longitude }];
