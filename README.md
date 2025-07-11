@@ -1,54 +1,39 @@
-# React + TypeScript + Vite
+# 🐭 끼니콩 (KkiniCong)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> 아동급식카드를 사용하는 아이들을 위한 편리한 끼니 서비스
+----
+## 💡 Introduction
 
-Currently, two official plugins are available:
+<img width="2526" height="3573" alt="A3포스터 (2)" src="https://github.com/user-attachments/assets/d495c162-3379-453c-8601-9c0cd46c7591" />
+<img width="2526" height="3573" alt="A3포스터 (1)" src="https://github.com/user-attachments/assets/f433de99-8b11-44ac-b634-6b5dfd482c8a" />
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+----
 
-## Expanding the ESLint configuration
+## ⚙️ Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+| 구분         | 사용 기술                        |
+| ----------- | ----------------------------- |
+| Framework   | React, TypeScript             |
+| State Mgmt  | React-Query                   |
+| Styling     | Tailwind CSS                  |
+| Components  | Storybook                     |
+| Build Tool  | Vite                          |
+| Map         | Kakao Maps JavaScript SDK     |
+| Deployment  | Vercel                        |
+----
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## 📁 Project Structure
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+// 프로젝트 폴더구조 추가
+----
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🔗 Deployment URL
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+- https://kkinicong.vercel.app/
+----
+## 🙋🏻‍♂️ Frontend Engineers
+
+| Soyeong | Yerin | Chaeyeon |
+| ------- | ----- | ---- |
+| <img src="https://github.com/soyeong0115.png" width="100"/> | <img src="https://github.com/YerinDoi.png" width="100"/> | <img src="https://github.com/Chaeyeonh.png" width="100"/> |
+| <a href="https://github.com/soyeong0115v"><img src="https://img.shields.io/badge/GitHub-000?style=flat&logo=github&logoColor=white"/></a> | <a href="https://github.com/YerinDoi"><img src="https://img.shields.io/badge/GitHub-000?style=flat&logo=github&logoColor=white"/></a> | <a href="https://github.com/Chaeyeonh"><img src="https://img.shields.io/badge/GitHub-000?style=flat&logo=github&logoColor=white"/></a> |
