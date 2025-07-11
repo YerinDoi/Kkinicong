@@ -36,4 +36,4 @@
 | Soyeong | Yerin | Chaeyeon |
 | ------- | ----- | ---- |
 | <img src="https://github.com/soyeong0115.png" width="100"/> | <img src="https://github.com/YerinDoi.png" width="100"/> | <img src="https://github.com/Chaeyeonh.png" width="100"/> |
-| <a href="https://github.com/soyeong0115v"><img src="https://img.shields.io/badge/GitHub-000?style=flat&logo=github&logoColor=white"/></a> | <a href="https://github.com/YerinDoi"><img src="https://img.shields.io/badge/GitHub-000?style=flat&logo=github&logoColor=white"/></a> | <a href="https://github.com/Chaeyeonh"><img src="https://img.shields.io/badge/GitHub-000?style=flat&logo=github&logoColor=white"/></a> |
+| <a href="https://github.com/soyeong0115"><img src="https://img.shields.io/badge/soyeong0115-000?style=flat&logo=github&logoColor=white" alt="soyeong0115"/></a> | <a href="https://github.com/YerinDoi"><img src="https://img.shields.io/badge/YerinDoi-000?style=flat&logo=github&logoColor=white" alt="YerinDoi"/></a> | <a href="https://github.com/Chaeyeonh"><img src="https://img.shields.io/badge/Chaeyeonh-000?style=flat&logo=github&logoColor=white" alt="Chaeyeonh"/></a> |
