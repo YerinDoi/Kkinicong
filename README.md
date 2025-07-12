@@ -14,7 +14,7 @@
 | 구분         | 사용 기술                        |
 | ----------- | ----------------------------- |
 | Framework   | React, TypeScript             |
-| State Mgmt  | React-Query                   |
+| State Mgmt  | React-Query, Redux-Toolkit                   |
 | Styling     | Tailwind CSS                  |
 | Components  | Storybook                     |
 | Build Tool  | Vite                          |
@@ -22,14 +22,73 @@
 | Deployment  | Vercel                        |
 ----
 
-## 📁 Project Structure
+## 🗂️ Project Structure
 
-// 프로젝트 폴더구조 추가
+| 폴더명          | 설명                           |
+|------------------|-------------------------------|
+| src/components   | 재사용 가능한 UI 컴포넌트     |
+| src/pages        | 라우팅되는 페이지 컴포넌트     |
+| src/hooks        | 커스텀 React 훅               |
+| src/api          | API 통신 모듈                 |
+| src/store        | Redux 상태 관리               |
+| src/contexts     | React Context API             |
+| src/utils        | 공통 유틸 함수                |
+| src/assets       | 이미지, 아이콘 등 정적 자산   |
+
+
+<details>
+<summary>📂 자세한 폴더 구조 (클릭해서 열기)</summary>
+
+```plaintext
+KKinicong_FE/
+├── public/                         # 정적 파일
+├── src/
+│   ├── api/                        # API 관련 파일
+│   ├── assets/
+│   │   ├── icons/
+│   │   └── svgs/
+│   ├── components/
+│   │   ├── Community/
+│   │   ├── Mypage/
+│   │   ├── StoreDetail/
+│   │   ├── StoreMap/
+│   │   ├── StoreReview/
+│   │   ├── StoreSearch/
+│   │   ├── common/
+│   │   ├── convenience/
+│   │   ├── home/
+│   │   ├── layout/
+│   │   └── notification/
+│   ├── constants/
+│   ├── contexts/
+│   ├── hooks/
+│   ├── mocks/
+│   ├── pages/
+│   │   ├── auth/
+│   │   ├── community/
+│   │   ├── convenience/
+│   │   ├── home/
+│   │   ├── mypage/
+│   │   ├── notification/
+│   │   ├── store-detail/
+│   │   ├── store-map/
+│   │   ├── store-review/
+│   │   └── store-search/
+│   ├── routes/
+│   ├── store/
+│   ├── stories/
+│   ├── types/
+│   └── utils/
+├── .github/
+│   └── workflows/
+└── package.json
+```
+</details>
+
 ----
+## 🚀 Deployment URL
 
-## 🔗 Deployment URL
-
-- https://kkinicong.vercel.app/
+- [끼니콩 바로가기](https://kkinicong.vercel.app/)
 ----
 ## 🙋🏻‍♂️ Frontend Engineers
 
