@@ -6,6 +6,8 @@ import { useDispatch } from 'react-redux';
 import { setLoggedIn } from '@/store/userSlice';
 import { useSSE } from '@/hooks/useSSE';
 import { initViewportHeight } from '@/utils/viewport';
+import { initGA, trackPageView } from '@/analytics/ga';
+import { initMixpanel } from '@/analytics/mixpanel';
 
 export default function App() {
   useSSE();
@@ -22,6 +24,12 @@ export default function App() {
     if (token) {
       dispatch(setLoggedIn(true));
     }
+  }, []);
+
+  useEffect(() => {
+    initGA();
+    trackPageView(window.location.pathname + window.location.search);
+    initMixpanel();
   }, []);
 
   return (
