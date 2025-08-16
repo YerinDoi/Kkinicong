@@ -15,33 +15,29 @@ interface StoreDetailMapProps {
 }
 
 /** 외부 링크(메뉴/길찾기) 응답 타입
- *  - menuUrl: 카카오 플레이스 메뉴 페이지
- *  - directionUrlMobile: 네이버 지도앱 딥링크(nmap://...)
- *  - directionUrlDesktop: 네이버 길찾기 웹 링크(m.map.naver.com/...)
+ * - menuUrl: 카카오 플레이스 메뉴 페이지
+ * - directionUrlDesktop: 네이버 길찾기 웹 (m.map.naver.com/..., 프로토콜 없을 수 있음)
+ *   ※ 모바일 앱 링크는 백엔드 걸 안 쓰고, 여기서 좌표로 nmap:///intent://를 직접 생성해 신뢰성 높임
  */
 type ExternalLinks = {
   menuUrl?: string;
-  directionUrlMobile?: string;
   directionUrlDesktop?: string;
 } | null;
 
-/** 유틸: 프로토콜 없으면 https 붙이기 (m.map.naver.com/... 처럼 올 때 대비) */
+/** 프로토콜 없으면 https 붙이기 */
 const normalizeWebUrl = (url: string) =>
   !url ? url : /^https?:\/\//i.test(url) ? url : `https://${url}`;
 
-/** 플랫폼 판별 */
-const isIOS = () =>
-  typeof navigator !== 'undefined' &&
-  /iPhone|iPad|iPod/i.test(navigator.userAgent);
+/** UA 판별 */
+const getUA = () =>
+  typeof navigator !== 'undefined' ? navigator.userAgent : '';
+const isIOS = () => /iPhone|iPad|iPod/i.test(getUA());
+const isAndroid = () => /Android/i.test(getUA());
 
-const isAndroid = () =>
-  typeof navigator !== 'undefined' && /Android/i.test(navigator.userAgent);
-
-/** iOS: 숨은 iframe으로 앱 호출 → 전환 감지 안 되면 웹 폴백
- * - 사파리가 nmap:// 를 현재 탭에서 직접 열려다 실패하며 JS 실행을 끊는 케이스 방지
- * - iframe을 쓰면 현재 탭은 유지 → 타이머/visibility 감지가 안정적으로 동작
+/** iOS: 숨은 iframe으로 nmap:// 호출 → 전환 감지 실패 시 웹 폴백
+ * - Safari가 커스텀 스킴을 현재 탭에서 열다 실패하면 JS가 끊기는 문제를 피하기 위함
  */
-function openAppIOSWithFallback(appUrl: string, webUrl: string, timeoutMs = 800) {
+function openAppIOSWithFallback(appUrl: string, webUrl: string, timeoutMs = 900) {
   const iframe = document.createElement('iframe');
   iframe.style.display = 'none';
   iframe.src = appUrl;
@@ -58,21 +54,18 @@ function openAppIOSWithFallback(appUrl: string, webUrl: string, timeoutMs = 800)
   };
 
   const onHidden = () => {
-    // 앱으로 전환된 것으로 판단 → 폴백 취소
+    // 앱 전환(백그라운드) 감지 → 폴백 취소
     if (document.visibilityState === 'hidden' || (document as any).hidden) {
-      console.log('[nav] iOS: app switch detected → cancel fallback');
       cleanup();
     }
   };
 
-  // 여러 신호를 함께 감지 (브라우저/OS/인앱 편차 커버)
   document.addEventListener('visibilitychange', onHidden);
   window.addEventListener('pagehide', onHidden as any, { once: true });
   window.addEventListener('blur', onHidden, { once: true });
 
   const timer = window.setTimeout(() => {
-    // 앱 미설치/실패 → 웹 폴백
-    console.log('[nav] iOS: fallback to web →', webUrl);
+    // 앱 미설치/차단 → 웹 폴백
     window.location.href = webUrl;
     cleanup();
   }, timeoutMs);
@@ -80,52 +73,85 @@ function openAppIOSWithFallback(appUrl: string, webUrl: string, timeoutMs = 800)
   document.body.appendChild(iframe);
 }
 
-/** Android: intent:// 사용 (설치 O → 앱, 설치 X → S.browser_fallback_url 로 자동 폴백)
- * - dlat/dlng/dname 기준으로 네이버 길찾기 인텐트 생성
- * - 제공받은 mobileUrl(nmap://)로 변환해도 되지만, 좌표로 만드는 방식이 간단·안정적
+/** Android: nmap:// → intent:// → (그래도 실패) 웹, 순서로 더 공격적으로 앱 오픈 시도
+ * - 많은 기기/브라우저에서 바로 앱이 열리도록 우선 nmap://
+ * - 200ms 후 intent:// 재시도 (Chrome 최적)
+ * - 1.2s 후에도 전환이 없으면 웹 폴백
  */
-function openAppAndroidIntent(webUrl: string, dlat: number, dlng: number, dname?: string) {
-  const q = new URLSearchParams();
-  q.set('dlat', String(dlat));
-  q.set('dlng', String(dlng));
-  if (dname) q.set('dname', dname);
+function openAppAndroidRobust(appUrl: string, webUrl: string, intentUrl: string) {
+  let finished = false;
 
-  const intentUrl =
-    `intent://route/public?${q.toString()}` +
-    `#Intent;scheme=nmap;package=com.nhn.android.nmap;` +
-    `S.browser_fallback_url=${encodeURIComponent(webUrl)};end`;
+  const clearAll = () => {
+    finished = true;
+    clearTimeout(t1);
+    clearTimeout(t2);
+    window.removeEventListener('blur', onHidden);
+    document.removeEventListener('visibilitychange', onHidden);
+  };
 
-  console.log('[nav] Android intent →', intentUrl);
-  window.location.href = intentUrl;
+  const onHidden = () => {
+    if (!finished) clearAll(); // 앱 전환 감지되면 타이머 정리
+  };
+
+  window.addEventListener('blur', onHidden);
+  document.addEventListener('visibilitychange', onHidden);
+
+  // 1) nmap:// 먼저
+  window.location.href = appUrl;
+
+  // 2) 잠깐 대기 후 intent:// (Chrome에서 견고)
+  const t1 = window.setTimeout(() => {
+    if (!finished) window.location.href = intentUrl;
+  }, 200);
+
+  // 3) 끝까지 전환 없으면 웹 폴백
+  const t2 = window.setTimeout(() => {
+    if (!finished) {
+      window.location.href = webUrl;
+      clearAll();
+    }
+  }, 1200);
 }
 
-/** 공용: 네이버 길찾기 열기 (앱 우선 → 웹 폴백) */
-function openNaverDirections(opts: {
-  mobileUrl: string;      // nmap://...
-  desktopUrl: string;     // m.map.naver.com/... or https://...
+/** 네이버 길찾기 오픈 (앱 우선)
+ * - 백엔드의 모바일 딥링크 값에 의존하지 않고, 좌표/가게명으로 nmap/intent를 직접 생성
+ */
+function openNaverDirectionsStrong(opts: {
+  desktopUrl: string;  // m.map.naver.com/... or https://...
   dlat: number;
   dlng: number;
   dname?: string;
-  timeoutMs?: number;     // iOS 폴백 지연 (기본 800ms)
+  timeoutMs?: number;  // iOS 폴백 대기 (기본 900ms)
 }) {
-  const { mobileUrl, desktopUrl, dlat, dlng, dname, timeoutMs = 800 } = opts;
+  const { desktopUrl, dlat, dlng, dname, timeoutMs = 900 } = opts;
   const webUrl = normalizeWebUrl(desktopUrl);
 
+  const params = new URLSearchParams();
+  params.set('dlat', String(dlat));
+  params.set('dlng', String(dlng));
+  if (dname) params.set('dname', dname);
+
+  // 앱 스킴 (네이버 지도)
+  const nmapScheme = `nmap://route/public?${params.toString()}`;
+
   if (isAndroid()) {
-    // ✅ Android 최적 경로: intent가 설치/미설치를 모두 처리
-    openAppAndroidIntent(webUrl, dlat, dlng, dname);
+    // Android intent (설치 O→앱, X→S.browser_fallback_url 로 자동 폴백)
+    const intentUrl =
+      `intent://route/public?${params.toString()}` +
+      `#Intent;scheme=nmap;package=com.nhn.android.nmap;` +
+      `S.browser_fallback_url=${encodeURIComponent(webUrl)};end`;
+
+    openAppAndroidRobust(nmapScheme, webUrl, intentUrl);
     return;
   }
 
   if (isIOS()) {
-    // ✅ iOS 안정 경로: 숨은 iframe + 타이머 폴백
-    console.log('[nav] iOS: try app via hidden iframe →', mobileUrl);
-    openAppIOSWithFallback(mobileUrl, webUrl, timeoutMs);
+    // iOS는 숨은 iframe + 타이머 폴백이 가장 안정적
+    openAppIOSWithFallback(nmapScheme, webUrl, timeoutMs);
     return;
   }
 
-  // ✅ 데스크탑/기타: 바로 웹
-  console.log('[nav] Desktop/Other → open web:', webUrl);
+  // 데스크탑/기타: 바로 웹
   window.open(webUrl, '_blank', 'noopener');
 }
 
@@ -133,39 +159,31 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
   hideButtons = false,
   store,
 }) => {
-  // 메뉴/길찾기 URL 상태
   const [externalLinks, setExternalLinks] = useState<ExternalLinks>(null);
   const [loadingLinks, setLoadingLinks] = useState(true);
   const [errorLoadingLinks, setErrorLoadingLinks] = useState(false);
 
-  // 외부 링크 가져오기
+  // 외부 링크 가져오기 (menuUrl, directionUrlDesktop)
   useEffect(() => {
     const fetchExternalLinks = async () => {
       if (!store?.storeId) {
-        console.log('[links] skip: no storeId', store);
         setLoadingLinks(false);
         return;
       }
       try {
         setLoadingLinks(true);
         setErrorLoadingLinks(false);
-        console.log('[links] fetch start →', store.storeId);
 
-        const response = await axiosInstance.get(
+        const res = await axiosInstance.get(
           `/api/v1/store/${store.storeId}/external-links`,
         );
-
-        console.log('[links] response:', response.data);
-        if (response.data?.isSuccess) {
-          // results: { menuUrl, directionUrlMobile, directionUrlDesktop }
-          setExternalLinks(response.data.results);
+        if (res.data?.isSuccess) {
+          setExternalLinks(res.data.results);
         } else {
-          console.error('[links] API isSuccess=false:', response.data?.message);
           setErrorLoadingLinks(true);
           setExternalLinks(null);
         }
-      } catch (err) {
-        console.error('[links] fetch error:', err);
+      } catch (e) {
         setErrorLoadingLinks(true);
         setExternalLinks(null);
       } finally {
@@ -180,32 +198,29 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
 
   const center = { lat: store.latitude, lng: store.longitude };
 
-  // 메뉴 보러가기 (카카오 플레이스 메뉴)
   const handleViewMenu = () => {
     if (externalLinks?.menuUrl) {
-      console.log('[menu] open:', externalLinks.menuUrl);
       window.open(externalLinks.menuUrl, '_blank', 'noopener');
-    } else {
-      console.warn('[menu] no menuUrl');
     }
   };
 
-  // 길찾기 (네이버 지도: 앱 우선 → 웹 폴백)
   const handleFindWay = () => {
-    const mobile = externalLinks?.directionUrlMobile;   // nmap://...
-    const desktop = externalLinks?.directionUrlDesktop; // m.map.naver.com/...
-    if (!mobile || !desktop) {
-      console.warn('[nav] missing direction urls');
-      return;
-    }
+    const desktop = externalLinks?.directionUrlDesktop; // m.map.naver.com/... (프로토콜 없을 수 있음)
+    if (!desktop) return;
 
-    openNaverDirections({
-      mobileUrl: mobile,
+    // 프로젝트 필드명에 맞게 가맹점명 보정
+    const storeName =
+      (store as any).storeName ??
+      (store as any).name ??
+      (store as any).title ??
+      undefined;
+
+    openNaverDirectionsStrong({
       desktopUrl: desktop,
       dlat: store.latitude,
       dlng: store.longitude,
-      dname: (store as any).storeName ?? (store as any).name, // 필드명 프로젝트에 맞춰 조정
-      timeoutMs: 800, // 필요시 1000~1200으로 늘려 안정성 확인 가능
+      dname: storeName,
+      timeoutMs: 900, // 필요시 1000~1500으로 늘려 안정성 확인
     });
   };
 
@@ -213,11 +228,7 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
     <div>
       {/* 지도 영역 */}
       <div className="w-full h-[224px]">
-        <KakaoMap
-          center={center}
-          level={3} // 가맹점 상세 페이지의 기본 줌 레벨
-        >
-          {/* 커스텀 마커 */}
+        <KakaoMap center={center} level={3}>
           <MapMarker
             position={center}
             image={{
@@ -253,14 +264,13 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
             </span>
           </button>
 
-          {/* 길 찾기 (네이버 지도) */}
+          {/* 길 찾기 (네이버 지도: 앱 우선 → 웹 폴백) */}
           <button
             onClick={handleFindWay}
             className="flex-1 flex items-center justify-center gap-[12px] h-[44px] bg-[#FFF] border-[1.5px] border-[#C3C3C3] rounded-[12px] font-medium px-[20px] py-[12px]"
             disabled={
               loadingLinks ||
               errorLoadingLinks ||
-              !externalLinks?.directionUrlMobile ||
               !externalLinks?.directionUrlDesktop
             }
           >
