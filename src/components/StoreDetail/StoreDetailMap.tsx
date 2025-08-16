@@ -3,7 +3,7 @@ import KakaoMap, {
   MARKER_IMAGE_SIZE,
 } from '@/components/common/KakaoMap';
 import { StoreDetail } from '@/types/store';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import MenuBtn from '@/assets/svgs/detail/menu-btn.svg?react';
 import NavigationBtn from '@/assets/svgs/detail/navigation-btn.svg?react';
 import axiosInstance from '@/api/axiosInstance';
@@ -25,6 +25,110 @@ type ExternalLinks = {
   directionUrlDesktop?: string;
 } | null;
 
+/** 유틸: 프로토콜 없으면 https 붙이기 (m.map.naver.com/... 처럼 올 때 대비) */
+const normalizeWebUrl = (url: string) =>
+  !url ? url : /^https?:\/\//i.test(url) ? url : `https://${url}`;
+
+/** 플랫폼 판별 */
+const isIOS = () =>
+  typeof navigator !== 'undefined' &&
+  /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+const isAndroid = () =>
+  typeof navigator !== 'undefined' && /Android/i.test(navigator.userAgent);
+
+/** iOS: 숨은 iframe으로 앱 호출 → 전환 감지 안 되면 웹 폴백
+ * - 사파리가 nmap:// 를 현재 탭에서 직접 열려다 실패하며 JS 실행을 끊는 케이스 방지
+ * - iframe을 쓰면 현재 탭은 유지 → 타이머/visibility 감지가 안정적으로 동작
+ */
+function openAppIOSWithFallback(appUrl: string, webUrl: string, timeoutMs = 800) {
+  const iframe = document.createElement('iframe');
+  iframe.style.display = 'none';
+  iframe.src = appUrl;
+
+  let cleaned = false;
+  const cleanup = () => {
+    if (cleaned) return;
+    cleaned = true;
+    document.removeEventListener('visibilitychange', onHidden);
+    window.removeEventListener('pagehide', onHidden as any);
+    window.removeEventListener('blur', onHidden);
+    if (iframe.parentNode) document.body.removeChild(iframe);
+    clearTimeout(timer);
+  };
+
+  const onHidden = () => {
+    // 앱으로 전환된 것으로 판단 → 폴백 취소
+    if (document.visibilityState === 'hidden' || (document as any).hidden) {
+      console.log('[nav] iOS: app switch detected → cancel fallback');
+      cleanup();
+    }
+  };
+
+  // 여러 신호를 함께 감지 (브라우저/OS/인앱 편차 커버)
+  document.addEventListener('visibilitychange', onHidden);
+  window.addEventListener('pagehide', onHidden as any, { once: true });
+  window.addEventListener('blur', onHidden, { once: true });
+
+  const timer = window.setTimeout(() => {
+    // 앱 미설치/실패 → 웹 폴백
+    console.log('[nav] iOS: fallback to web →', webUrl);
+    window.location.href = webUrl;
+    cleanup();
+  }, timeoutMs);
+
+  document.body.appendChild(iframe);
+}
+
+/** Android: intent:// 사용 (설치 O → 앱, 설치 X → S.browser_fallback_url 로 자동 폴백)
+ * - dlat/dlng/dname 기준으로 네이버 길찾기 인텐트 생성
+ * - 제공받은 mobileUrl(nmap://)로 변환해도 되지만, 좌표로 만드는 방식이 간단·안정적
+ */
+function openAppAndroidIntent(webUrl: string, dlat: number, dlng: number, dname?: string) {
+  const q = new URLSearchParams();
+  q.set('dlat', String(dlat));
+  q.set('dlng', String(dlng));
+  if (dname) q.set('dname', dname);
+
+  const intentUrl =
+    `intent://route/public?${q.toString()}` +
+    `#Intent;scheme=nmap;package=com.nhn.android.nmap;` +
+    `S.browser_fallback_url=${encodeURIComponent(webUrl)};end`;
+
+  console.log('[nav] Android intent →', intentUrl);
+  window.location.href = intentUrl;
+}
+
+/** 공용: 네이버 길찾기 열기 (앱 우선 → 웹 폴백) */
+function openNaverDirections(opts: {
+  mobileUrl: string;      // nmap://...
+  desktopUrl: string;     // m.map.naver.com/... or https://...
+  dlat: number;
+  dlng: number;
+  dname?: string;
+  timeoutMs?: number;     // iOS 폴백 지연 (기본 800ms)
+}) {
+  const { mobileUrl, desktopUrl, dlat, dlng, dname, timeoutMs = 800 } = opts;
+  const webUrl = normalizeWebUrl(desktopUrl);
+
+  if (isAndroid()) {
+    // ✅ Android 최적 경로: intent가 설치/미설치를 모두 처리
+    openAppAndroidIntent(webUrl, dlat, dlng, dname);
+    return;
+  }
+
+  if (isIOS()) {
+    // ✅ iOS 안정 경로: 숨은 iframe + 타이머 폴백
+    console.log('[nav] iOS: try app via hidden iframe →', mobileUrl);
+    openAppIOSWithFallback(mobileUrl, webUrl, timeoutMs);
+    return;
+  }
+
+  // ✅ 데스크탑/기타: 바로 웹
+  console.log('[nav] Desktop/Other → open web:', webUrl);
+  window.open(webUrl, '_blank', 'noopener');
+}
+
 const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
   hideButtons = false,
   store,
@@ -34,40 +138,34 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
   const [loadingLinks, setLoadingLinks] = useState(true);
   const [errorLoadingLinks, setErrorLoadingLinks] = useState(false);
 
-  // 폴백 타이머와 핸들러 정리용 ref (언마운트 시 정리)
-  const fallbackTimerRef = useRef<number | null>(null);
-  const blurHandlerRef = useRef<(() => void) | null>(null);
-  const visibilityHandlerRef = useRef<(() => void) | null>(null);
-
-  // API 호출하여 외부 링크 가져오기
+  // 외부 링크 가져오기
   useEffect(() => {
     const fetchExternalLinks = async () => {
       if (!store?.storeId) {
-        // store 객체나 storeId가 없을 경우 호출 X
-        console.log('store.storeId가 없어 외부 링크 API 호출을 건너뜀:', store);
+        console.log('[links] skip: no storeId', store);
         setLoadingLinks(false);
         return;
       }
       try {
         setLoadingLinks(true);
         setErrorLoadingLinks(false);
-        console.log('외부 링크 API 호출 시작:', store.storeId);
+        console.log('[links] fetch start →', store.storeId);
 
         const response = await axiosInstance.get(
           `/api/v1/store/${store.storeId}/external-links`,
         );
 
-        console.log('외부 링크 API 응답:', response.data);
+        console.log('[links] response:', response.data);
         if (response.data?.isSuccess) {
-          // 응답 results: { menuUrl, directionUrlMobile, directionUrlDesktop }
+          // results: { menuUrl, directionUrlMobile, directionUrlDesktop }
           setExternalLinks(response.data.results);
         } else {
-          console.error('외부 링크 가져오기 실패:', response.data?.message);
+          console.error('[links] API isSuccess=false:', response.data?.message);
           setErrorLoadingLinks(true);
           setExternalLinks(null);
         }
       } catch (err) {
-        console.error('외부 링크를 불러오는데 실패:', err);
+        console.error('[links] fetch error:', err);
         setErrorLoadingLinks(true);
         setExternalLinks(null);
       } finally {
@@ -76,102 +174,39 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
     };
 
     fetchExternalLinks();
-
-    // 언마운트 시 등록 핸들러/타이머 정리
-    return () => {
-      if (fallbackTimerRef.current) {
-        window.clearTimeout(fallbackTimerRef.current);
-        fallbackTimerRef.current = null;
-      }
-      if (blurHandlerRef.current) {
-        window.removeEventListener('blur', blurHandlerRef.current);
-        blurHandlerRef.current = null;
-      }
-      if (visibilityHandlerRef.current) {
-        document.removeEventListener('visibilitychange', visibilityHandlerRef.current);
-        visibilityHandlerRef.current = null;
-      }
-    };
   }, [store?.storeId]);
 
   if (!store) return null;
 
   const center = { lat: store.latitude, lng: store.longitude };
 
-  // 안전하게 웹 URL 정규화 (프로토콜 없으면 https 붙임)
-  const normalizeWebUrl = (url: string) => {
-    if (!url) return url;
-    return /^https?:\/\//i.test(url) ? url : `https://${url}`;
-  };
-
   // 메뉴 보러가기 (카카오 플레이스 메뉴)
   const handleViewMenu = () => {
     if (externalLinks?.menuUrl) {
-      console.log('메뉴 URL로 이동:', externalLinks.menuUrl);
+      console.log('[menu] open:', externalLinks.menuUrl);
       window.open(externalLinks.menuUrl, '_blank', 'noopener');
     } else {
-      console.warn('메뉴 보러가기 URL을 찾을 수 없습니다.');
+      console.warn('[menu] no menuUrl');
     }
   };
 
-  // 길찾기 (네이버 지도 앱 우선 → 미설치/실패 시 웹으로 폴백)
+  // 길찾기 (네이버 지도: 앱 우선 → 웹 폴백)
   const handleFindWay = () => {
-    const mobileLink = externalLinks?.directionUrlMobile;   // nmap://...
-    const desktopLinkRaw = externalLinks?.directionUrlDesktop; // m.map.naver.com/...
-    if (!mobileLink || !desktopLinkRaw) {
-      console.warn('길찾기 URL을 찾을 수 없습니다.');
+    const mobile = externalLinks?.directionUrlMobile;   // nmap://...
+    const desktop = externalLinks?.directionUrlDesktop; // m.map.naver.com/...
+    if (!mobile || !desktop) {
+      console.warn('[nav] missing direction urls');
       return;
     }
 
-    const desktopLink = normalizeWebUrl(desktopLinkRaw);
-    const userAgent = navigator.userAgent || '';
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(userAgent);
-
-    if (isMobile) {
-      /** 모바일 동작 흐름
-       *  1) 먼저 nmap:// 스킴으로 네이버 지도 앱 호출 시도
-       *  2) 일정 시간(예: 800ms) 안에 앱으로 전환(=페이지 blur 또는 hidden)이 되면 폴백 취소
-       *  3) 전환이 없으면 웹 길찾기 URL로 이동
-       */
-      // 2-1) 폴백 타이머: 앱이 열리지 않으면 웹으로
-      fallbackTimerRef.current = window.setTimeout(() => {
-        console.log('앱 실행 감지 실패 → 웹 길찾기로 폴백:', desktopLink);
-        window.location.href = desktopLink;
-      }, 800);
-
-      // 2-2) 앱 전환 감지: blur(안드로이드/일부 iOS) or visibilitychange(hidden)
-      const onBlur = () => {
-        if (fallbackTimerRef.current) {
-          window.clearTimeout(fallbackTimerRef.current);
-          fallbackTimerRef.current = null;
-          console.log('앱 전환 감지(blur) → 폴백 취소');
-        }
-        // 한 번만 필요
-        window.removeEventListener('blur', onBlur);
-      };
-      blurHandlerRef.current = onBlur;
-      window.addEventListener('blur', onBlur, { once: true });
-
-      const onVisibilityChange = () => {
-        if (document.visibilityState === 'hidden' && fallbackTimerRef.current) {
-          window.clearTimeout(fallbackTimerRef.current);
-          fallbackTimerRef.current = null;
-          console.log('앱 전환 감지(visibility hidden) → 폴백 취소');
-          document.removeEventListener('visibilitychange', onVisibilityChange);
-        }
-      };
-      visibilityHandlerRef.current = onVisibilityChange;
-      document.addEventListener('visibilitychange', onVisibilityChange);
-
-      // 1) 앱 열기 시도
-      console.log('네이버 지도 앱 호출 시도:', mobileLink);
-      // location.href 사용: iOS/안드로이드 기본 동작에 가장 호환
-      window.location.href = mobileLink;
-    } else {
-      // 데스크탑: 바로 웹 길찾기 새 탭
-      console.log('데스크탑 환경 → 웹 길찾기로 이동:', desktopLink);
-      window.open(desktopLink, '_blank', 'noopener');
-    }
+    openNaverDirections({
+      mobileUrl: mobile,
+      desktopUrl: desktop,
+      dlat: store.latitude,
+      dlng: store.longitude,
+      dname: (store as any).storeName ?? (store as any).name, // 필드명 프로젝트에 맞춰 조정
+      timeoutMs: 800, // 필요시 1000~1200으로 늘려 안정성 확인 가능
+    });
   };
 
   return (
