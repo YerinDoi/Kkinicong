@@ -1,9 +1,7 @@
-import KakaoMap, {
-  MARKER,
-  MARKER_IMAGE_SIZE,
-} from '@/components/common/KakaoMap';
+// StoreDetailMap.tsx
+import KakaoMap, { MARKER, MARKER_IMAGE_SIZE } from '@/components/common/KakaoMap';
 import { StoreDetail } from '@/types/store';
-import { useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import MenuBtn from '@/assets/svgs/detail/menu-btn.svg?react';
 import NavigationBtn from '@/assets/svgs/detail/navigation-btn.svg?react';
 import axiosInstance from '@/api/axiosInstance';
@@ -14,74 +12,50 @@ interface StoreDetailMapProps {
   store?: StoreDetail;
 }
 
-/** 외부 링크(메뉴/길찾기) 응답 타입
- * - menuUrl: 카카오 플레이스 메뉴 페이지
- * - directionUrlDesktop: 네이버 길찾기 웹 (m.map.naver.com/..., 프로토콜 없을 수 있음)
- *   ※ 모바일 앱 링크는 백엔드 걸 안 쓰고, 여기서 좌표로 nmap:///intent://를 직접 생성해 신뢰성 높임
- */
 type ExternalLinks = {
   menuUrl?: string;
+  /** 백엔드가 주는 네이버 "웹 길찾기" URL (프로토콜 없을 수 있어 보정) */
   directionUrlDesktop?: string;
 } | null;
 
-/** 프로토콜 없으면 https 붙이기 */
-const normalizeWebUrl = (url: string) =>
-  !url ? url : /^https?:\/\//i.test(url) ? url : `https://${url}`;
+/* ============================== 디버그 스위치 ============================== */
+const DEBUG =
+  typeof window !== 'undefined' &&
+  new URLSearchParams(window.location.search).get('debugNav') === '1';
 
-/** UA 판별 */
-const getUA = () =>
-  typeof navigator !== 'undefined' ? navigator.userAgent : '';
-const isIOS = () => /iPhone|iPad|iPod/i.test(getUA());
-const isAndroid = () => /Android/i.test(getUA());
+/* ============================== 공통 유틸 =============================== */
+const UA = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+const IS_IOS = /iPhone|iPad|iPod/i.test(UA);
+const IS_ANDROID = /Android/i.test(UA);
+const IS_MOBILE = IS_IOS || IS_ANDROID;
 
-/** iOS: 숨은 iframe으로 nmap:// 호출 → 전환 감지 실패 시 웹 폴백
- * - Safari가 커스텀 스킴을 현재 탭에서 열다 실패하면 JS가 끊기는 문제를 피하기 위함
- */
-function openAppIOSWithFallback(appUrl: string, webUrl: string, timeoutMs = 900) {
-  const iframe = document.createElement('iframe');
-  iframe.style.display = 'none';
-  iframe.src = appUrl;
+const normalizeWebUrl = (raw: string) => {
+  if (!raw) return '';
+  const t = raw.trim();
+  const withProto = /^https?:\/\//i.test(t) ? t : `https://${t}`;
+  try {
+    return new URL(withProto).toString();
+  } catch {
+    if (DEBUG) alert(`[nav] invalid desktop url: ${raw}`);
+    return '';
+  }
+};
 
-  let cleaned = false;
-  const cleanup = () => {
-    if (cleaned) return;
-    cleaned = true;
-    document.removeEventListener('visibilitychange', onHidden);
-    window.removeEventListener('pagehide', onHidden as any);
-    window.removeEventListener('blur', onHidden);
-    if (iframe.parentNode) document.body.removeChild(iframe);
-    clearTimeout(timer);
-  };
+const toCoord = (v: unknown) => {
+  const n = typeof v === 'string' ? Number(v) : (v as number);
+  return Number.isFinite(n) ? Number(n.toFixed(6)) : NaN;
+};
 
-  const onHidden = () => {
-    // 앱 전환(백그라운드) 감지 → 폴백 취소
-    if (document.visibilityState === 'hidden' || (document as any).hidden) {
-      cleanup();
-    }
-  };
+const isSafeScheme = (s: string) =>
+  !!s && !/\s/.test(s) && /^nmap:\/\/.+/i.test(s) && s.length < 2048;
 
-  document.addEventListener('visibilitychange', onHidden);
-  window.addEventListener('pagehide', onHidden as any, { once: true });
-  window.addEventListener('blur', onHidden, { once: true });
-
-  const timer = window.setTimeout(() => {
-    // 앱 미설치/차단 → 웹 폴백
-    window.location.href = webUrl;
-    cleanup();
-  }, timeoutMs);
-
-  document.body.appendChild(iframe);
-}
-
-/** Android: nmap:// → intent:// → (그래도 실패) 웹, 순서로 더 공격적으로 앱 오픈 시도
- * - 많은 기기/브라우저에서 바로 앱이 열리도록 우선 nmap://
- * - 200ms 후 intent:// 재시도 (Chrome 최적)
- * - 1.2s 후에도 전환이 없으면 웹 폴백
- */
-function openAppAndroidRobust(appUrl: string, webUrl: string, intentUrl: string) {
+/* ========================= Android 앱 오픈(강화) ========================= */
+/** Android: nmap:// → 200ms → intent:// → 1.2s → 웹 폴백 (전환 감지 시 타이머 정리) */
+function openAppAndroid(appUrl: string, intentUrl: string, webUrl: string) {
   let finished = false;
 
   const clearAll = () => {
+    if (finished) return;
     finished = true;
     clearTimeout(t1);
     clearTimeout(t2);
@@ -89,22 +63,17 @@ function openAppAndroidRobust(appUrl: string, webUrl: string, intentUrl: string)
     document.removeEventListener('visibilitychange', onHidden);
   };
 
-  const onHidden = () => {
-    if (!finished) clearAll(); // 앱 전환 감지되면 타이머 정리
-  };
+  const onHidden = () => clearAll();
 
   window.addEventListener('blur', onHidden);
   document.addEventListener('visibilitychange', onHidden);
 
-  // 1) nmap:// 먼저
   window.location.href = appUrl;
 
-  // 2) 잠깐 대기 후 intent:// (Chrome에서 견고)
   const t1 = window.setTimeout(() => {
     if (!finished) window.location.href = intentUrl;
   }, 200);
 
-  // 3) 끝까지 전환 없으면 웹 폴백
   const t2 = window.setTimeout(() => {
     if (!finished) {
       window.location.href = webUrl;
@@ -113,57 +82,47 @@ function openAppAndroidRobust(appUrl: string, webUrl: string, intentUrl: string)
   }, 1200);
 }
 
-/** 네이버 길찾기 오픈 (앱 우선)
- * - 백엔드의 모바일 딥링크 값에 의존하지 않고, 좌표/가게명으로 nmap/intent를 직접 생성
+/* ============================ 공용 오픈 진입점 ============================ */
+/**
+ * 요구사항:
+ * - 데스크탑: 항상 웹 길찾기 새 탭
+ * - 모바일: 앱 우선(설치 O → 앱 / 설치 X → 웹), 앱 다녀와도 웹으로 튀지 않음
+ * - iOS: a[href="nmap://..."] 실제 탭(사용자 제스처)로 실행 + 백그라운드 전환 감지로 타이머 취소
  */
-function openNaverDirectionsStrong(opts: {
-  desktopUrl: string;  // m.map.naver.com/... or https://...
-  dlat: number;
-  dlng: number;
+function buildNaverDeepLinks(opts: {
+  desktopUrl: string;
+  dlat: number | string;
+  dlng: number | string;
   dname?: string;
-  timeoutMs?: number;  // iOS 폴백 대기 (기본 900ms)
+  appname?: string;
 }) {
-  const { desktopUrl, dlat, dlng, dname, timeoutMs = 900 } = opts;
+  const { desktopUrl, dlat, dlng, dname, appname = 'kkinicong' } = opts;
+
+  const lat = toCoord(dlat);
+  const lng = toCoord(dlng);
   const webUrl = normalizeWebUrl(desktopUrl);
 
-  const params = new URLSearchParams();
-  params.set('dlat', String(dlat));
-  params.set('dlng', String(dlng));
-  if (dname) params.set('dname', dname);
+  const q = new URLSearchParams();
+  if (Number.isFinite(lat)) q.set('dlat', String(lat));
+  if (Number.isFinite(lng)) q.set('dlng', String(lng));
+  if (dname) q.set('dname', dname);
+  q.set('appname', appname);
 
-  // 앱 스킴 (네이버 지도)
-  const nmapScheme = `nmap://route/public?${params.toString()}`;
+  const appUrl = `nmap://route/public?${q.toString()}`;
+  const intentUrl =
+    `intent://route/public?${q.toString()}` +
+    `#Intent;scheme=nmap;package=com.nhn.android.nmap;` +
+    `S.browser_fallback_url=${encodeURIComponent(webUrl)};end`;
 
-  if (isAndroid()) {
-    // Android intent (설치 O→앱, X→S.browser_fallback_url 로 자동 폴백)
-    const intentUrl =
-      `intent://route/public?${params.toString()}` +
-      `#Intent;scheme=nmap;package=com.nhn.android.nmap;` +
-      `S.browser_fallback_url=${encodeURIComponent(webUrl)};end`;
-
-    openAppAndroidRobust(nmapScheme, webUrl, intentUrl);
-    return;
-  }
-
-  if (isIOS()) {
-    // iOS는 숨은 iframe + 타이머 폴백이 가장 안정적
-    openAppIOSWithFallback(nmapScheme, webUrl, timeoutMs);
-    return;
-  }
-
-  // 데스크탑/기타: 바로 웹
-  window.open(webUrl, '_blank', 'noopener');
+  return { lat, lng, appUrl, intentUrl, webUrl };
 }
 
-const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
-  hideButtons = false,
-  store,
-}) => {
+/* ================================ 컴포넌트 ================================ */
+const StoreDetailMap: React.FC<StoreDetailMapProps> = ({ hideButtons = false, store }) => {
   const [externalLinks, setExternalLinks] = useState<ExternalLinks>(null);
   const [loadingLinks, setLoadingLinks] = useState(true);
   const [errorLoadingLinks, setErrorLoadingLinks] = useState(false);
 
-  // 외부 링크 가져오기 (menuUrl, directionUrlDesktop)
   useEffect(() => {
     const fetchExternalLinks = async () => {
       if (!store?.storeId) {
@@ -173,24 +132,22 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
       try {
         setLoadingLinks(true);
         setErrorLoadingLinks(false);
-
-        const res = await axiosInstance.get(
-          `/api/v1/store/${store.storeId}/external-links`,
-        );
+        const res = await axiosInstance.get(`/api/v1/store/${store.storeId}/external-links`);
         if (res.data?.isSuccess) {
           setExternalLinks(res.data.results);
         } else {
+          if (DEBUG) alert(`[links] isSuccess=false: ${res.data?.message}`);
           setErrorLoadingLinks(true);
           setExternalLinks(null);
         }
       } catch (e) {
+        if (DEBUG) alert(`[links] fetch error: ${String(e)}`);
         setErrorLoadingLinks(true);
         setExternalLinks(null);
       } finally {
         setLoadingLinks(false);
       }
     };
-
     fetchExternalLinks();
   }, [store?.storeId]);
 
@@ -204,52 +161,126 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
     }
   };
 
-  const handleFindWay = () => {
-    const desktop = externalLinks?.directionUrlDesktop; // m.map.naver.com/... (프로토콜 없을 수 있음)
+  /** 데스크탑: 항상 웹 길찾기 (새 탭) */
+  const handleFindWayDesktop = () => {
+    const desktop = externalLinks?.directionUrlDesktop;
+    if (!desktop) return;
+    const webUrl = normalizeWebUrl(desktop);
+    if (webUrl) window.open(webUrl, '_blank', 'noopener');
+  };
+
+  /** Android: 앱 우선(앱→인텐트→웹) */
+  const handleFindWayAndroid = () => {
+    const desktop = externalLinks?.directionUrlDesktop;
     if (!desktop) return;
 
-    // 프로젝트 필드명에 맞게 가맹점명 보정
-    const storeName =
-      (store as any).storeName ??
-      (store as any).name ??
-      (store as any).title ??
-      undefined;
-
-    openNaverDirectionsStrong({
+    const { lat, lng, appUrl, intentUrl, webUrl } = buildNaverDeepLinks({
       desktopUrl: desktop,
       dlat: store.latitude,
       dlng: store.longitude,
-      dname: storeName,
-      timeoutMs: 900, // 필요시 1000~1500으로 늘려 안정성 확인
+      dname: (store as any).storeName ?? (store as any).name ?? (store as any).title,
+      appname: 'kkinicong',
     });
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || !webUrl || !isSafeScheme(appUrl)) {
+      // 좌표/URL 이상하면 그냥 웹
+      if (webUrl) window.open(webUrl, '_blank', 'noopener');
+      return;
+    }
+
+    openAppAndroid(appUrl, intentUrl, webUrl);
   };
+
+  /**
+   * iOS: 버튼을 <a href="nmap://...">로 렌더링하여
+   * 진짜 사용자 탭 네비게이션으로 앱 호출.
+   * onClick에선 전환 감지/폴백 타이머만 설정(기본 네비게이션 방해 X).
+   */
+  const iosDeepLinks = useMemo(() => {
+    if (!externalLinks?.directionUrlDesktop) return null;
+    const { appUrl, webUrl } = buildNaverDeepLinks({
+      desktopUrl: externalLinks.directionUrlDesktop,
+      dlat: store.latitude,
+      dlng: store.longitude,
+      dname: (store as any).storeName ?? (store as any).name ?? (store as any).title,
+      appname: 'kkinicong',
+    });
+    if (!isSafeScheme(appUrl)) return null;
+    return { appUrl, webUrl };
+  }, [externalLinks?.directionUrlDesktop, store?.latitude, store?.longitude, store]);
+
+  const onClickIOSAnchor = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!iosDeepLinks) return;
+    const { webUrl } = iosDeepLinks;
+
+    // 전환 감지되면 타이머 취소 → 돌아와도 웹 안 뜸
+    let finished = false;
+    const cleanup = () => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timer);
+      document.removeEventListener('visibilitychange', onHidden);
+      window.removeEventListener('pagehide', onHidden as any);
+      window.removeEventListener('blur', onHidden);
+    };
+    const onHidden = () => cleanup();
+
+    document.addEventListener('visibilitychange', onHidden);
+    window.addEventListener('pagehide', onHidden as any);
+    window.addEventListener('blur', onHidden);
+
+    // ✅ 기본 동작(앱 링크 이동)은 막지 않는다! (preventDefault 금지)
+    const timer = window.setTimeout(() => {
+      // 앱 미설치로 전환이 없으면 웹 폴백
+      if (!finished && webUrl) {
+        window.location.href = webUrl;
+      }
+      cleanup();
+    }, 1200);
+  };
+
+  /* ===== 디버그 패널 (선택: ?debugNav=1) ===== */
+  const debugInfo = useMemo(() => {
+    if (!DEBUG || !externalLinks?.directionUrlDesktop) return null;
+    const dname =
+      (store as any).storeName ?? (store as any).name ?? (store as any).title ?? '';
+    const { appUrl, intentUrl, webUrl } = buildNaverDeepLinks({
+      desktopUrl: externalLinks.directionUrlDesktop,
+      dlat: store.latitude,
+      dlng: store.longitude,
+      dname,
+      appname: 'kkinicong',
+    });
+    return {
+      UA,
+      lat: toCoord(store.latitude),
+      lng: toCoord(store.longitude),
+      storeName: dname,
+      appname: 'kkinicong',
+      appUrl,
+      intentUrl,
+      webUrl,
+    };
+  }, [externalLinks?.directionUrlDesktop, store]);
 
   return (
     <div>
-      {/* 지도 영역 */}
+      {/* 지도 */}
       <div className="w-full h-[224px]">
-        <KakaoMap center={center} level={3}>
+        <KakaoMap center={{ lat: store.latitude, lng: store.longitude }} level={3}>
           <MapMarker
-            position={center}
+            position={{ lat: store.latitude, lng: store.longitude }}
             image={{
               src: MARKER,
-              size: {
-                width: MARKER_IMAGE_SIZE.width,
-                height: MARKER_IMAGE_SIZE.height,
-              },
-              options: {
-                offset: {
-                  x: MARKER_IMAGE_SIZE.width / 2,
-                  y: MARKER_IMAGE_SIZE.height,
-                },
-              },
+              size: { width: MARKER_IMAGE_SIZE.width, height: MARKER_IMAGE_SIZE.height },
+              options: { offset: { x: MARKER_IMAGE_SIZE.width / 2, y: MARKER_IMAGE_SIZE.height } },
             }}
             zIndex={100}
           />
         </KakaoMap>
       </div>
 
-      {/* 버튼 영역 */}
+      {/* 버튼 */}
       {!hideButtons && (
         <div className="flex gap-[8px] p-[16px]">
           {/* 메뉴 보러가기 */}
@@ -259,27 +290,162 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
             disabled={loadingLinks || errorLoadingLinks || !externalLinks?.menuUrl}
           >
             <MenuBtn />
-            <span className="text-[16px] text-[#616161] leading-[20px] text-center">
-              메뉴 보러가기
-            </span>
+            <span className="text-[16px] text-[#616161] leading-[20px] text-center">메뉴 보러가기</span>
           </button>
 
-          {/* 길 찾기 (네이버 지도: 앱 우선 → 웹 폴백) */}
-          <button
-            onClick={handleFindWay}
-            className="flex-1 flex items-center justify-center gap-[12px] h-[44px] bg-[#FFF] border-[1.5px] border-[#C3C3C3] rounded-[12px] font-medium px-[20px] py-[12px]"
-            disabled={
-              loadingLinks ||
-              errorLoadingLinks ||
-              !externalLinks?.directionUrlDesktop
-            }
-          >
-            <NavigationBtn />
-            <span className="text-[16px] text-[#616161] leading-[20px] text-center">
-              길 찾기
-            </span>
-          </button>
+          {/* 길찾기 */}
+          {/* 데스크탑 → 버튼(웹 새 탭) / Android → 버튼(JS) / iOS → <a href="nmap://..."> */}
+          {!IS_MOBILE && (
+            <button
+              onClick={handleFindWayDesktop}
+              className="flex-1 flex items-center justify-center gap-[12px] h-[44px] bg-[#FFF] border-[1.5px] border-[#C3C3C3] rounded-[12px] font-medium px-[20px] py-[12px]"
+              disabled={loadingLinks || errorLoadingLinks || !externalLinks?.directionUrlDesktop}
+            >
+              <NavigationBtn />
+              <span className="text-[16px] text-[#616161] leading-[20px] text-center">길 찾기</span>
+            </button>
+          )}
+
+          {IS_ANDROID && (
+            <button
+              onClick={handleFindWayAndroid}
+              className="flex-1 flex items-center justify-center gap-[12px] h-[44px] bg-[#FFF] border-[1.5px] border-[#C3C3C3] rounded-[12px] font-medium px-[20px] py-[12px]"
+              disabled={loadingLinks || errorLoadingLinks || !externalLinks?.directionUrlDesktop}
+            >
+              <NavigationBtn />
+              <span className="text-[16px] text-[#616161] leading-[20px] text-center">길 찾기</span>
+            </button>
+          )}
+
+          {IS_IOS && iosDeepLinks && (
+            <a
+              href={iosDeepLinks.appUrl}        // ✅ 진짜 링크로 열기(사용자 제스처)
+              onClick={onClickIOSAnchor}        // 폴백 타이머/전환 감지
+              className="flex-1 flex items-center justify-center gap-[12px] h-[44px] bg-[#FFF] border-[1.5px] border-[#C3C3C3] rounded-[12px] font-medium px-[20px] py-[12px]"
+              style={{ textDecoration: 'none' }}
+            >
+              <NavigationBtn />
+              <span className="text-[16px] text-[#616161] leading-[20px] text-center">길 찾기</span>
+            </a>
+          )}
+
+          {IS_IOS && !iosDeepLinks && (
+            <button
+              onClick={handleFindWayDesktop}
+              className="flex-1 flex items-center justify-center gap-[12px] h-[44px] bg-[#FFF] border-[1.5px] border-[#C3C3C3] rounded-[12px] font-medium px-[20px] py-[12px]"
+              disabled={loadingLinks || errorLoadingLinks || !externalLinks?.directionUrlDesktop}
+            >
+              <NavigationBtn />
+              <span className="text-[16px] text-[#616161] leading-[20px] text-center">길 찾기</span>
+            </button>
+          )}
         </div>
+      )}
+
+      {/* ===== 디버그 오버레이 (?debugNav=1) ===== */}
+      {DEBUG && debugInfo && (
+        <>
+          <button
+            onClick={() => {
+              const p = document.getElementById('nav-debug-panel');
+              if (p) p.style.display = p.style.display === 'none' ? 'block' : 'none';
+            }}
+            style={{
+              position: 'fixed',
+              right: 12,
+              bottom: 12,
+              zIndex: 9999,
+              padding: '10px 12px',
+              background: '#111',
+              color: '#fff',
+              borderRadius: 12,
+              boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
+            }}
+          >
+            NAV-DEBUG
+          </button>
+
+          <div
+            id="nav-debug-panel"
+            style={{
+              display: 'none',
+              position: 'fixed',
+              right: 12,
+              bottom: 60,
+              maxWidth: '92vw',
+              width: 360,
+              maxHeight: '70vh',
+              overflow: 'auto',
+              zIndex: 9998,
+              background: '#fff',
+              color: '#111',
+              border: '1px solid #ddd',
+              borderRadius: 12,
+              padding: 12,
+              boxShadow: '0 12px 22px rgba(0,0,0,0.28)',
+              wordBreak: 'break-all',
+            }}
+          >
+            <div style={{ fontWeight: 700, marginBottom: 8 }}>NAV DEBUG</div>
+            <div><b>UA</b>: {debugInfo.UA}</div>
+            <div><b>lat,lng</b>: {debugInfo.lat}, {debugInfo.lng}</div>
+            <div><b>dname</b>: {debugInfo.storeName || '(none)'}</div>
+            <div><b>appname</b>: {debugInfo.appname}</div>
+            <div style={{ marginTop: 8 }}><b>appUrl</b>:</div>
+            <div className="break-all">{debugInfo.appUrl}</div>
+            <div style={{ marginTop: 8 }}><b>intentUrl</b>:</div>
+            <div className="break-all">{debugInfo.intentUrl}</div>
+            <div style={{ marginTop: 8 }}><b>webUrl</b>:</div>
+            <div className="break-all">{debugInfo.webUrl}</div>
+            <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
+              {IS_IOS && (
+                <a
+                  href={debugInfo.appUrl}
+                  onClick={(e) => {
+                    // 디버그에서도 동일 로직으로 폴백 타이머만 설정
+                    let finished = false;
+                    const cleanup = () => {
+                      if (finished) return;
+                      finished = true;
+                      clearTimeout(timer);
+                      document.removeEventListener('visibilitychange', onHidden);
+                      window.removeEventListener('pagehide', onHidden as any);
+                      window.removeEventListener('blur', onHidden);
+                    };
+                    const onHidden = () => cleanup();
+                    document.addEventListener('visibilitychange', onHidden);
+                    window.addEventListener('pagehide', onHidden as any);
+                    window.addEventListener('blur', onHidden);
+                    const timer = window.setTimeout(() => {
+                      if (!finished && debugInfo.webUrl) window.location.href = debugInfo.webUrl;
+                      cleanup();
+                    }, 1200);
+                  }}
+                  style={{ padding: '6px 8px', border: '1px solid #ccc', borderRadius: 8 }}
+                  rel="noreferrer"
+                >
+                  iOS 앱 열기 테스트
+                </a>
+              )}
+              {IS_ANDROID && (
+                <button
+                  onClick={() => openAppAndroid(debugInfo.appUrl, debugInfo.intentUrl, debugInfo.webUrl)}
+                  style={{ padding: '6px 8px', border: '1px solid #ccc', borderRadius: 8 }}
+                >
+                  Android 앱 열기 테스트
+                </button>
+              )}
+              <a
+                href={debugInfo.webUrl}
+                target="_blank"
+                rel="noreferrer"
+                style={{ padding: '6px 8px', border: '1px solid #ccc', borderRadius: 8 }}
+              >
+                webUrl 열기
+              </a>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
