@@ -52,8 +52,8 @@ export default function ProductListSection({
             {product.name}
           </span>
           <span
-            className={`text-body-md-title font-normal ${
-              product.isAvailable ? 'text-[#65CE58]' : 'text-[#FF6452]'
+            className={`text-[12px] leading-[18px] font-semibold tracking-[0.01em] bg-[#F4F6F8] border-[1px] rounded-[8px] px-3 py-1 ${
+              product.isAvailable ? 'text-[#029F64] border-[#029F64] ' : 'text-[#FF6452] border-[#FF6452]'
             }`}
           >
             {product.isAvailable ? '결제가능' : '결제불가'}
