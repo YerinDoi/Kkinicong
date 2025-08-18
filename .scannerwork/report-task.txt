@@ -1,0 +1,6 @@
+projectKey=kkinicong
+serverUrl=http://localhost:9000
+serverVersion=25.7.0.110598
+dashboardUrl=http://localhost:9000/dashboard?id=kkinicong
+ceTaskId=567e4b5a-d135-42ae-a449-ed228f6a6d23
+ceTaskUrl=http://localhost:9000/api/ce/task?id=567e4b5a-d135-42ae-a449-ed228f6a6d23
