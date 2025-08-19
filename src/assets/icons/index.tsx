@@ -41,6 +41,7 @@ import X from '@/assets/icons/system/x.svg?react';
 import Mainpage from '@/assets/icons/menubar/mainpage.svg?react';
 import Home from '@/assets/icons/system/home.svg?react';
 
+
 export type IconName =
   | 'backward'
   | 'menubar'
@@ -82,7 +83,8 @@ export type IconName =
   | 'reply'
   | 'x'
   | 'mainpage'
-  | 'home';
+  | 'home'
+  | 'community';
 
 interface IconProps {
   name: IconName;
@@ -253,6 +255,8 @@ const Icon = ({ name, className }: IconProps) => {
   if (name === 'home') {
     return <Home className={className} />;
   }
+
+
 };
 
 export default Icon;
