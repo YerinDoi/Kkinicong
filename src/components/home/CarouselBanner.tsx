@@ -36,7 +36,7 @@ export default function CarouselBanner({ onSlideChange }: CarouselBannerProps) {
       <div className=' px-[16px] font-semibold text-title-sb-button '>
         <div className='text-[#616161] flex flex-col h-[44px] justify-between'>
           <span >
-          현재는 <span className="text-[#029F64] ">인천 지역</span>만 제공되며,        </span>
+          현재는 <span className="text-[#029F64] ">인천, 부천, 수원, 고양, 용인, 성남시</span>만 제공되며,        </span>
           <span >다른 지역은 요청이 많은 순으로 추가될 예정이에요.</span> 
 
         </div>

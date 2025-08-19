@@ -75,7 +75,7 @@ export default function AddConveniencePage() {
 
   return (
     <div className="flex flex-col h-screen">
-      <TopBar title="편의점 정보 등록" />
+      <TopBar title="정보 공유하기" />
 
       <div className="px-5 py-4 flex flex-col gap-7 flex-1">
         <div className="flex flex-col gap-3">
