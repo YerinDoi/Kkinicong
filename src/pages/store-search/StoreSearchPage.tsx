@@ -185,12 +185,30 @@ const StoreSearchPage = () => {
   );
 
   // 4) 공통 reset + fetch (강제요청)
-  const resetAndFetch = (overrides?: any) => {
-    pageRef.current = 0;
-    hasNextPageRef.current = true;
-    setStores([]);
-    fetchStores(overrides, { force: true });
-  };
+  const resetAndFetch = () => {
+  pageRef.current = 0;
+  hasNextPageRef.current = true;
+  setStores([]);
+
+  const categoryParam =
+    selectedCategory !== '전체' ? categoryMapping[selectedCategory] : undefined;
+
+  const overrides: any = { category: categoryParam };
+
+  if (isLocation && coordinates) {
+    overrides.latitude = coordinates.latitude;
+    overrides.longitude = coordinates.longitude;
+  } else if (gpsLocation) {
+    overrides.latitude = gpsLocation.latitude;
+    overrides.longitude = gpsLocation.longitude;
+  } else {
+    overrides.latitude = null;
+    overrides.longitude = null;
+  }
+
+  fetchStores(overrides, { force: true });
+};
+
 
   // 5) 단 하나의 effect에서만 fetch 실행 (초기/변경 모두 포함)
   useEffect(() => {
