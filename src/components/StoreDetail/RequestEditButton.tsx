@@ -6,6 +6,8 @@ import axiosInstance from '@/api/axiosInstance';
 import axios from 'axios';
 import { createPortal } from 'react-dom';
 import WarningToast from '@/components/common/WarningToast';
+import { useLoginStatus } from '@/hooks/useLoginStatus';
+import LoginRequiredBottomSheet from '@/components/common/LoginRequiredBottomSheet';
 
 interface Props {
   storeId: number;
@@ -25,7 +27,10 @@ const RequestEditButton: React.FC<Props> = ({
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [showWarningToast, setShowWarningToast] = useState(false);
-
+  const { isLoggedIn } = useLoginStatus();
+  const [isLoginBottomSheetOpen, setIsLoginBottomSheetOpen] = useState(false);
+  const [pendingPath, setPendingPath] = useState<string | null>(null);
+  
   const reasonMap = {
     '음식 카테고리': 'CATEGORY',
     위치: 'LOCATION',
@@ -35,6 +40,11 @@ const RequestEditButton: React.FC<Props> = ({
   } as const;
 
   const handleClick = () => {
+    if (!isLoggedIn) {
+      setPendingPath(`/store/${storeId}`);
+      setIsLoginBottomSheetOpen(true);
+      return;
+    }
     onClick?.();
     setIsEditOpen(true); // 바텀시트 열기
   };
@@ -129,6 +139,11 @@ const RequestEditButton: React.FC<Props> = ({
           </div>,
           document.body,
         )}
+      <LoginRequiredBottomSheet
+        isOpen={isLoginBottomSheetOpen}
+        onClose={() => setIsLoginBottomSheetOpen(false)}
+        pendingPath={pendingPath}
+      />
     </>
   );
 };
