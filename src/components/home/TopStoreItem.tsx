@@ -42,7 +42,7 @@ const TopStoreItem = ({ store }: TopStoreItemProps) => {
           {/* 가게 이름 */}
           <div
             ref={nameRef}
-            className="leading-[1.1875] text-black text-title-sb-button font-bold tracking-tight line-clamp-3"
+            className="leading-[1.1875] text-black text-title-sb-button font-bold tracking-tight line-clamp-2"
           >
             {store.name}
           </div>
