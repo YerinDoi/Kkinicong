@@ -7,7 +7,7 @@ import Dropdown from '@/components/common/Dropdown';
 import StoreList from '@/components/StoreSearch/StoreList';
 import NoSearchResults from '@/components/common/NoSearchResults';
 import Icons from '@/assets/icons';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { useGps } from '@/contexts/GpsContext';
@@ -27,6 +27,7 @@ import { Store } from '@/types/store';
 
 const StoreSearchPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
   const {
     address: gpsAddress,
@@ -34,9 +35,33 @@ const StoreSearchPage = () => {
     isLocationReady,
     requestGps,
   } = useGps();
-  const [selectedCategory, setSelectedCategory] = useState(
-    location.state?.selectedCategory || '전체',
-  );
+
+    // 1) 초기값: 최근값(localStorage) → 없으면 '전체'
+  const [selectedCategory, setSelectedCategory] = useState<string>(() => {
+    const saved = localStorage.getItem('selectedCategory');
+    return saved || '전체';
+  });
+
+  // 2) 홈에서 넘어온 state가 있으면 "이번 한 번만" 강제로 적용하고 state 비우기
+  useEffect(() => {
+    const fromHome = location.state?.selectedCategory as string | undefined;
+    if (fromHome) {
+      setSelectedCategory(fromHome);
+      localStorage.setItem('selectedCategory', fromHome);
+
+      // state를 비워서 새로고침/재렌더 시 더 이상 덮어쓰지 않도록 함 (일회성 처리)
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state?.selectedCategory]);
+
+  // 3) 찾기페이지 내에서 사용자가 카테고리 바꾸면 최근값으로 저장
+  useEffect(() => {
+    if (selectedCategory) {
+      localStorage.setItem('selectedCategory', selectedCategory);
+    }
+  }, [selectedCategory]);
+
   const [sort, setSort] = useState('가까운 순');
   const [stores, setStores] = useState<Store[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -55,6 +80,12 @@ const StoreSearchPage = () => {
     coordinates,
     handleSearch,
   } = useStoreSearch();
+
+  useEffect(() => {
+  if (selectedCategory) {
+    localStorage.setItem('selectedCategory', selectedCategory);
+  }
+}, [selectedCategory]);
 
   const fetchStores = useCallback(
     async (params?: any) => {
