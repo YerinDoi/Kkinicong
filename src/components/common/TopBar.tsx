@@ -10,8 +10,10 @@ interface TopBarProps {
   rightType?: 'none' | 'menu' | 'custom'; // 오른쪽에 들어갈 요소, 세 가지 타입 지정
   customRightElement?: React.ReactNode; // ← 'custom'일 때만 사용됨
   showBackButton?: boolean; // 뒤로가기 버튼 표시 여부
+  showHomeButton?: boolean;
   onBack?: () => void; // 뒤로가기 버튼 클릭 시 실행할 함수
   paddingX?: string;
+  centerTitle?: boolean;
 }
 
 export default function TopBar({
@@ -21,7 +23,9 @@ export default function TopBar({
   customRightElement,
   showBackButton = true,
   paddingX = 'px-[20px]',
+  showHomeButton = false,
   onBack,
+  centerTitle = false,
 }: TopBarProps) {
   const navigate = useNavigate();
 
@@ -44,52 +48,61 @@ export default function TopBar({
 
   return (
     <Fragment>
-      <div className={`flex items-center justify-between ${paddingX} py-[8px] mt-[11px]`}>
-        {/* 왼쪽 영역 : 뒤로가기버튼, 제목, 부제목 */}
-        <div className="flex items-center ">
-          {showBackButton ? (
-            <button onClick={handleBack} className="py-[8px] pr-[12px]">
+      <div className={`relative grid grid-cols-[auto_1fr_auto] items-center ${paddingX} py-[8px]`}>
+        {/* 좌측: 뒤로/홈 */}
+        <div className="flex items-center gap-[12px]">
+          {showBackButton && (
+            <button onClick={handleBack} className="py-[8px] pr-[12px]" aria-label="뒤로가기">
               <Icon name="backward" />
             </button>
-          ) : (
-            <div /> // 여백 맞춤
           )}
-          {/* ) : (
-          <div className="w-5 h-5" /> // 여백 맞춤
-        )} */}
-
-          {title && (
-            <div className="flex items-baseline">
-              <span className="text-[20px] font-semibold text-black">
-                {title}
-              </span>
-              {subTitle && (
-                <span className="ml-2 text-body-md-title font-medium text-[#919191]">
-                  {subTitle}
-                </span>
-              )}
-            </div>
+          {showHomeButton && (
+            <button onClick={() => navigate('/')} className="py-[8px]" aria-label="홈">
+              <Icon name="home" />
+            </button>
           )}
         </div>
 
-        {/* 오른쪽 영역 */}
-        {rightType !== 'none' && (
-          <div className="flex items-center ml-auto">
-            {rightType === 'menu' && (
-              <button
-                className="w-[24px] h-[24px] aspect-square"
-                onClick={toggleMenu}
-              >
-                <Icon name="menubar" />
-              </button>
+        {/* 가운데 타이틀 */}
+        {centerTitle ? (
+          <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 text-center">
+            {title && (
+              <span className="text-title-sb-button font-semibold text-black">
+                {title}
+              </span>
             )}
-
-            {rightType === 'custom' && customRightElement}
+            {subTitle && (
+              <div className="mt-[2px] text-[#919191] text-body-md-description leading-[18px]">
+                {subTitle}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="flex items-baseline">
+            {title && (
+              <span className="text-title-sb-button font-semibold text-black">
+                {title}
+              </span>
+            )}
+            {subTitle && (
+              <span className="ml-2 text-body-md-title font-medium text-[#919191]">
+                {subTitle}
+              </span>
+            )}
           </div>
         )}
+
+        {/* 우측: 메뉴/커스텀 */}
+        <div className="flex items-center justify-end">
+          {rightType === 'menu' && (
+            <button className="w-[24px] h-[24px]" onClick={toggleMenu} aria-label="메뉴">
+              <Icon name="menubar" />
+            </button>
+          )}
+          {rightType === 'custom' && customRightElement}
+        </div>
       </div>
 
-      {/* MenuBar 컴포넌트 렌더링, 상태 및 닫기 함수 전달 */}
       <MenuBar isOpen={isMenuOpen} onClose={closeMenu} />
     </Fragment>
   );

@@ -116,7 +116,9 @@ const CommunityPage = () => {
           paddingX="px-[15px]"
           rightType="custom"
           showBackButton={true}
+          showHomeButton = {true}
           onBack={() => navigate('/')}
+          centerTitle = {true}
           customRightElement={
             <div className="flex gap-[14px] items-center">
               <img
@@ -130,14 +132,6 @@ const CommunityPage = () => {
                 className="w-[20px] h-[20px] cursor-pointer"
               />
            
-              <button
-                className="w-[24px] h-[24px] aspect-square"
-                onClick={toggleMenu}
-              >
-                <Icon name="menubar" />
-              </button>
- 
-
             </div>
           }
         />

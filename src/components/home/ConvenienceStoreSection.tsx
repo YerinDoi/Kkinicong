@@ -55,7 +55,7 @@ function ConvenienceStoreSection() {
   }, [selectedBrand]);
 
   return (
-    <div className="px-[20px] pb-[24px] flex flex-col gap-[20px]">
+    <div className="px-[20px] pb-[24px] flex flex-col gap-[20px] border-b-8 border-[#F4F6F8]">
       <div className="flex flex-col gap-[16px]">
         <button className="flex flex-col gap-[8px] " onClick={handleClick} >
           <img src={Card} className="w-[57px] h-[40px]" />
