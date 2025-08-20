@@ -13,15 +13,36 @@ const TopStoreItem = ({ store }: TopStoreItemProps) => {
   const nameRef = useRef<HTMLDivElement | null>(null);
   const [isNameTwoLine, setIsNameTwoLine] = useState(false);
 
+  // 이름 줄 수(1 or 2) 계산: 폰트 로드/리사이즈에도 반응
   useEffect(() => {
-    if (nameRef.current) {
-      const lineHeight = parseFloat(
-        getComputedStyle(nameRef.current).lineHeight,
-      );
-      const height = nameRef.current.offsetHeight;
-      const lineCount = Math.round(height / lineHeight);
-      setIsNameTwoLine(lineCount >= 2);
+    if (!nameRef.current) return;
+
+    const el = nameRef.current;
+
+    const measure = () => {
+      const cs = getComputedStyle(el);
+      // line-height가 normal이면 fallback (프로젝트에서는 leading 지정되어 있어 OK)
+      const lh = parseFloat(cs.lineHeight || '0') || 20;
+      const lines = Math.round(el.offsetHeight / lh);
+      setIsNameTwoLine(lines >= 2);
+    };
+
+    // 최초 측정 (레이아웃 확정 후)
+    const raf = requestAnimationFrame(measure);
+
+    // 리사이즈/컨텐츠 변동 대응
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+
+    // 폰트 늦게 로딩되는 경우 대비
+    if (document.fonts?.ready) {
+      document.fonts.ready.then(measure).catch(() => {});
     }
+
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+    };
   }, [store.name]);
 
   const handleStoreClick = () => {
@@ -38,8 +59,9 @@ const TopStoreItem = ({ store }: TopStoreItemProps) => {
           name={categoryIconMap[store.category] || 'etc'}
           className="max-w-[48px] max-h-[48px] w-auto h-auto object-contain"
         />
+
         <div className="flex flex-col justify-start items-start gap-[4px] w-full">
-          {/* 가게 이름 */}
+          {/* 가게 이름 (최대 2줄) */}
           <div
             ref={nameRef}
             className="leading-[1.1875] text-black text-title-sb-button font-bold tracking-tight line-clamp-2"
@@ -47,8 +69,12 @@ const TopStoreItem = ({ store }: TopStoreItemProps) => {
             {store.name}
           </div>
 
-          {/* 주소: 항상 2줄로 제한 */}
-          <div className="text-[#919191] text-body-md-description font-regular tracking-tight line-clamp-2">
+          {/* 주소: 이름이 2줄이면 1줄, 1줄이면 2줄 */}
+          <div
+            className={`text-[#919191] text-body-md-description font-regular tracking-tight ${
+              isNameTwoLine ? 'line-clamp-1' : 'line-clamp-2'
+            }`}
+          >
             {store.address}
           </div>
 
