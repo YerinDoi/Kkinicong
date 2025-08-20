@@ -56,7 +56,7 @@ export default function NameRecommendationPage() {
           <input
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            placeholder="등록할 제품명을 입력해주세요"
+            placeholder="ex) 서울우유 500ML"
             className="flex-1 outline-none text-[#616161] text-body-md-title
                      placeholder:text-[#919191] placeholder:text-body-md-description"
           />

@@ -39,6 +39,9 @@ import EditOrDelete from '@/assets/svgs/common/more-icon.svg?react';
 import Reply from '@/assets/svgs/community/reply.svg?react';
 import X from '@/assets/icons/system/x.svg?react';
 import Mainpage from '@/assets/icons/menubar/mainpage.svg?react';
+import Home from '@/assets/icons/system/home.svg?react';
+
+
 export type IconName =
   | 'backward'
   | 'menubar'
@@ -79,7 +82,9 @@ export type IconName =
   | 'edit-or-delete'
   | 'reply'
   | 'x'
-  | 'mainpage';
+  | 'mainpage'
+  | 'home'
+  | 'community';
 
 interface IconProps {
   name: IconName;
@@ -246,6 +251,12 @@ const Icon = ({ name, className }: IconProps) => {
   if (name === 'mainpage') {
     return <Mainpage className={className} />;
   }
+
+  if (name === 'home') {
+    return <Home className={className} />;
+  }
+
+
 };
 
 export default Icon;

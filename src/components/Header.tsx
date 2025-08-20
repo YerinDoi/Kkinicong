@@ -4,15 +4,17 @@ import { useState } from 'react';
 import MenuBar from './common/MenuBar';
 
 interface HeaderProps {
-  title: string;
+  title?: string;
   location?: string;
   showMenubarButton?: boolean;
+  onBack?: () => void;
 }
 
 const Header = ({
   title,
   location,
   showMenubarButton = true,
+  onBack,
 }: HeaderProps) => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,33 +27,47 @@ const Header = ({
     setIsMenuOpen(false);
   };
 
+  const handleBack = () => {
+    if (onBack) onBack();
+    else navigate(-1);
+  };
+
   return (
     <>
-      <div className="font-pretendard flex items-center w-full pt-[8px] pb-[8px] px-[20px] mt-[11px]">
-        <button
-          className="flex items-center pt-[8px] pb-[8px] pr-[12px]"
-          onClick={() => navigate('/')}
-        >
-          <Icon name="backward" />
-        </button>
+      <div className="font-pretendard grid grid-cols-[auto_1fr_auto] items-center w-full pt-[8px] pb-[8px] px-[20px] mb-[6px]">
+        <div className='flex gap-[12px]'>
+           <button
+            className="flex items-center pt-[8px] pb-[8px] pr-[12px]"
+            onClick={handleBack}
+          >
+            <Icon name="backward" />
+          </button>
 
-        <div className="flex items-center gap-[8px] ml-[4px]">
-          <span className="text-black text-[20px] font-semibold leading-[32px]">
+          <button
+            className="flex items-center"
+            onClick={() => navigate('/')}
+          >
+            <Icon name="home" />
+          </button>
+
+        </div>
+       
+
+        <div className="relative flex items-center justify-center">
+          <span className="justify-center text-black text-title-sb-button font-semibold">
             {title}
           </span>
 
           {location && (
-            <div className="flex items-center gap-[4px]">
-              <span className="text-[#919191] text-[12px] font-normal leading-[18px]">
+              <span className="absolute top-full mt-[1.5px] text-[#919191] text-body-md-description font-regular leading-[18px]">
                 {location}
               </span>
-            </div>
-          )}
+          ) }
         </div>
 
         {showMenubarButton && (
           <button
-            className="w-[24px] h-[24px] aspect-square ml-auto"
+            className="w-[24px] h-[24px] aspect-square ml-[24px]"
             onClick={toggleMenu}
           >
             <Icon name="menubar" />
