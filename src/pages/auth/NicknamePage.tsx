@@ -59,7 +59,7 @@ export default function NicknamePage() {
     }
   };
 
-  // ✅ ❷ 닉네임 등록 : fetch → axios 사용 & 상태 저장 + 리디렉션
+  // ❷ 닉네임 등록 : fetch → axios 사용 & 상태 저장 + 리디렉션
   const handleRegister = async () => {
     if (!!error || isDuplicate !== false) return;
 
@@ -68,7 +68,7 @@ export default function NicknamePage() {
       const result = await registerNickname(nickname); // 서버에서 등록 후 유저 정보 반환
       dispatch(setUser({ id: result.email, nickname: result.nickname })); // nickname, email 받아서 Redux에 저장
 
-      // ✅ 선택: 새로고침에도 유지하고 싶다면 localStorage에도 저장
+      // 새로고침에도 유지하고 싶다면 localStorage에도 저장
       // localStorage.setItem('nickname', result.nickname);
       // localStorage.setItem('email', result.email);
 
@@ -130,7 +130,11 @@ export default function NicknamePage() {
       </div>
 
       {/* 하단 고정 버튼 */}
-      <div className="flex mt-auto justify-center">
+      <div className="flex-col mt-auto mx-7 justify-center">
+        <p className='text-[#919191] text-center text-[12px] text-body-md-description mb-5'>
+          끼니콩에 가입함으로써<br/>
+          끼니콩의 <span className='font-bold'>이용 약관</span>에 동의하게 됩니다.
+        </p>
         <GreenButton
           onClick={handleRegister}
           disabled={!!error || isDuplicate !== false || isSubmitting}

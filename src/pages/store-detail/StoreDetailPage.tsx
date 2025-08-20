@@ -3,7 +3,7 @@ import axios from '@/api/axiosInstance';
 import { useEffect, useState } from 'react';
 import StoreDetailMap from '@/components/StoreDetail/StoreDetailMap';
 import StoreDetailInfo from '@/components/StoreDetail/StoreDetailInfo';
-import TopBar from '@/components/common/TopBar';
+import Header from '@/components/Header';
 import StoreDetailReview from '@/components/StoreDetail/StoreDetailReview';
 import { StoreDetail } from '@/types/store';
 
@@ -45,7 +45,7 @@ const StoreDetailPage = () => {
 
   return (
     <div className="font-pretendard">
-      <TopBar rightType="menu" />
+      <Header />
       <StoreDetailInfo
         store={store}
         storeId={store.storeId}
