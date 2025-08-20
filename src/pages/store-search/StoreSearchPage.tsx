@@ -184,43 +184,21 @@ const StoreSearchPage = () => {
     ]
   );
 
-  // 4) 공통 reset + fetch (강제요청)
+  // 4) 공통 reset + fetch (강제요청) - 파라미터 없이 호출
   const resetAndFetch = () => {
-  pageRef.current = 0;
-  hasNextPageRef.current = true;
-  setStores([]);
+    pageRef.current = 0;
+    hasNextPageRef.current = true;
+    setStores([]);
+    fetchStores(undefined, { force: true }); // ← params 넘기지 않음
+  };
 
-  const categoryParam =
-    selectedCategory !== '전체' ? categoryMapping[selectedCategory] : undefined;
-
-  const overrides: any = { category: categoryParam };
-
-  if (isLocation && coordinates) {
-    overrides.latitude = coordinates.latitude;
-    overrides.longitude = coordinates.longitude;
-  } else if (gpsLocation) {
-    overrides.latitude = gpsLocation.latitude;
-    overrides.longitude = gpsLocation.longitude;
-  } else {
-    overrides.latitude = null;
-    overrides.longitude = null;
-  }
-
-  fetchStores(overrides, { force: true });
-};
-
-
-  // 5) 단 하나의 effect에서만 fetch 실행 (초기/변경 모두 포함)
+  // 5) effect에서도 파라미터 제거
   useEffect(() => {
-    if (!initDoneRef.current) return;  // 초기 카테고리 확정 전이면 대기
-    if (!isLocationReady) return;      // GPS 준비 전이면 대기
-
-    const categoryParam =
-      selectedCategory !== '전체' ? categoryMapping[selectedCategory] : undefined;
-
-    resetAndFetch({ category: categoryParam });
+    if (!initDoneRef.current) return;
+    if (!isLocationReady) return;
+    resetAndFetch(); // ← { category: ... } 넘기지 않음
   }, [
-    selectedCategory,  // 홈에서 넘어온 값/페이지 내 변경 둘 다 잡힘
+    selectedCategory,
     sort,
     isLocation,
     coordinates,
@@ -229,6 +207,15 @@ const StoreSearchPage = () => {
     fetchStores,
   ]);
 
+// GPS 버튼은 좌표만 진짜로 바꿔야 하니 그대로 override 허용
+const handleGpsClick = useGpsFetch((lat, lng) => {
+  pageRef.current = 0;
+  hasNextPageRef.current = true;
+  setStores([]);
+  fetchStores({ latitude: lat, longitude: lng }, { force: true });
+}, requestGps);
+
+  
   // 무한 스크롤
   const { loaderRef } = useInfiniteScroll({
     onIntersect: () => {
@@ -243,11 +230,7 @@ const StoreSearchPage = () => {
     threshold: 0.1,
   });
 
-  // GPS 버튼 강제 새로고침
-  const handleGpsClick = useGpsFetch((lat, lng) => {
-    resetAndFetch({ latitude: lat, longitude: lng });
-  }, requestGps);
-
+  
   // 검색 버튼
   const handleSearchClick = async () => {
     await handleSearch(inputValue, gpsLocation, true);
