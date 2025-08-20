@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { BrowserRouter } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 
 const queryClient = new QueryClient();
 
@@ -17,10 +18,12 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <App />
-          <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-left" />
-        </BrowserRouter>
+        <HelmetProvider>
+          <BrowserRouter>
+            <App />
+            <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-left" />
+          </BrowserRouter>
+        </HelmetProvider>
       </QueryClientProvider>
     </Provider>
   </React.StrictMode>,

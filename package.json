@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
+    "prebuild": "node scripts/generate-sitemap.mjs",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -28,6 +29,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-ga4": "^2.1.0",
+    "react-helmet-async": "^2.0.5",
     "react-kakao-maps": "^0.0.13",
     "react-kakao-maps-sdk": "^1.1.27",
     "react-redux": "^9.2.0",
@@ -65,6 +67,7 @@
     "kakao.maps.d.ts": "^0.1.40",
     "postcss": "^8.5.3",
     "prettier": "^3.5.3",
+    "sitemap": "^8.0.0",
     "storybook": "^8.6.12",
     "tailwindcss": "^3.4.1",
     "ts-jest": "^29.3.2",
