@@ -23,11 +23,25 @@ const ConvenienceStorePage = () => {
   const [keyword, setKeyword] = useState(''); // 검색 키워드 상태
 
   const brands = ['GS25', 'CU', '세븐일레븐', '이마트24', '미니스톱'];
+  const [idx, setIdx] = useState(0);
+  const [direction, setDirection] = useState<1 | -1>(1);
 
   // pagination 기본값
   const page = 0;
   const size = 10;
 
+  const goPrev = () => {
+    if (idx === 0) return;
+    setDirection(-1);
+    setIdx(i => i - 1);
+    setBrand(brands[idx - 1]);  
+  };
+  const goNext = () => {
+    if (idx === brands.length - 1) return;
+    setDirection(1);
+    setIdx(i => i + 1);
+    setBrand(brands[idx + 1]);
+  };
   const loadProducts = useCallback(async () => {
     try {
       const data = await fetchConvenienceProducts({
@@ -86,7 +100,15 @@ const ConvenienceStorePage = () => {
           label="결제 가능만 모아보기"
           className="px-[20px] pt-[8px]"
         />
-        <ProductListSection products={products} keyword={keyword} />
+        <ProductListSection
+          products={products}
+          keyword={keyword}
+          listKey={brands[idx]}      // 바뀔 때만 텍스트 교체 발생
+          direction={direction}
+          onSwipePrev={goPrev}
+          onSwipeNext={goNext}
+        />
+
       </div>
     </div>
   );

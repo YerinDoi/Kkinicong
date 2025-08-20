@@ -23,7 +23,8 @@ const calculateRadius = (level: number): number => {
   if (level >= 2) return 3000;
   return 5000;
 };
-
+//카테고리 키
+const CATEGORY_KEY = 'storeMap:selectedCategory';
 // 중복 제거 유틸리티 함수 추가
 const removeDuplicateStores = (stores: Store[]): Store[] => {
   const storeMap = new Map();
@@ -38,9 +39,9 @@ const removeDuplicateStores = (stores: Store[]): Store[] => {
 const StoreMapPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState(
-    () => location.state?.selectedCategory || '전체',
-  );
+  const [selectedCategory, setSelectedCategory] = useState<string>(() => {
+  return sessionStorage.getItem(CATEGORY_KEY) ?? '전체';
+});
   const [stores, setStores] = useState<Store[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
@@ -52,6 +53,11 @@ const StoreMapPage = () => {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const searchTriggeredRef = useRef(false);
   const isHandlingSearchRef = useRef(false);
+
+  //카테고리 클릭하면 sessionStorage에 넣기
+  useEffect(() => {
+  sessionStorage.setItem(CATEGORY_KEY, selectedCategory);
+}, [selectedCategory]);
 
   // 바텀시트 커스텀 훅 사용
   const headerHeight = 11 + 40 + 12 + 40 + 11;
