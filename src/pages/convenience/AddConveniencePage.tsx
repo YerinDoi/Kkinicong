@@ -75,7 +75,7 @@ export default function AddConveniencePage() {
 
   return (
     <div className="flex flex-col h-screen">
-      <TopBar title="편의점 정보 등록" />
+      <TopBar title="정보 공유하기" />
 
       <div className="px-5 py-4 flex flex-col gap-7 flex-1">
         <div className="flex flex-col gap-3">
@@ -84,12 +84,12 @@ export default function AddConveniencePage() {
             type="text"
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
-            placeholder="등록할 제품명을 입력해주세요"
+            placeholder="ex) 서울우유 500ML"
             className="w-full p-4 border border-[#C3C3C3] rounded-[12px] text-[#616161] text-body-md-title 
                      placeholder:text-[#919191] placeholder:text-body-md-description"
           />
           <button
-            className="flex items-center text-[#029F64] text-body-md-title font-regular"
+            className="self-start inline-flex items-center text-[#029F64] text-body-md-title font-regular bg-[#F3F5ED] px-[12px] py-[6px] rounded-[8px]"
             onClick={() => navigate('/convenience/name-recommendation')}
           >
             <img
