@@ -46,53 +46,75 @@ const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
     { icon: 'mypage' as IconName, text: '마이페이지', path: '/mypage' },
   ];
 
-  const menuBarContent = (
-    <div
-      className={`fixed top-0 left-0 pt-[5px] w-full bg-white transition-transform duration-300 ease-in-out transform z-50 ${
-        isOpen ? 'translate-y-0' : '-translate-y-full'
-      }`}
-      style={{
-        boxShadow: isOpen ? '0px 4px 24px 0px rgba(0, 0, 0, 0.30)' : 'none',
-      }}
-    >
-      <div className="flex flex-col p-[20px] pb-[28px] gap-[20px]">
-        <button className="flex justify-end" onClick={onClose}>
-          <Icon name="close-btn" />
-        </button>
+  const portalTarget = document.getElementById('app-shell') ?? document.body;
 
-        <div className="flex flex-col gap-[20px]">
-          {menuItems.map((item, index) => (
-            <div key={item.text}>
-              <button
-                className="flex items-center gap-[16px] w-full text-left"
-                onClick={() => {
-                  if (item.text === '로그아웃') {
-                    setIsLogoutModalOpen(true);
-                    onClose();
-                  } else if (item.path) {
-                    navigate(item.path);
-                    onClose();
-                  }
-                }}
-              >
-                <Icon name={item.icon} />
-                <span className="text-[#212121] text-[14px] font-normal leading-[18px]">
-                  {item.text}
-                </span>
-              </button>
-              {index === 4 && (
-                <div className="mt-[4px] pb-[20px] border-b-4 border-[#F4F6F8]" />
-              )}
+  const panel = (
+    <>
+      {/* 뒤쪽 오버레이: 화면 클릭 시 닫힘 (패널과 '형제') */}
+      <div
+        className={`fixed inset-0 z-[9998] transition-opacity duration-200
+                    ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+        onClick={onClose}
+      />
+
+      {/* 상단 패널: 컨텐츠 폭만 덮기 */}
+      <div
+        className={`fixed left-1/2 top-0 -translate-x-1/2 z-[9999]
+                    w-[375px] max-w-full
+                    transition-transform duration-300 ease-in-out
+                    ${isOpen ? 'translate-y-0' : '-translate-y-full'}`}
+        role="dialog"
+        aria-modal="true"
+        aria-hidden={!isOpen}
+      >
+        <div
+          className={`pt-[5px] bg-white ${
+            isOpen
+              ? 'shadow-[0_4px_24px_0px_rgba(0,0,0,0.30)]'
+              : 'shadow-none'
+          }`}
+          onClick={(e) => e.stopPropagation()} // 내부 클릭은 닫힘 방지
+        >
+          <div className="flex flex-col p-[20px] pb-[28px] gap-[20px]">
+            <button className="flex justify-end" onClick={onClose} aria-label="닫기">
+              <Icon name="close-btn" />
+            </button>
+
+            <div className="flex flex-col gap-[20px]">
+              {menuItems.map((item, index) => (
+                <div key={item.text}>
+                  <button
+                    className="flex items-center gap-[16px] w-full text-left"
+                    onClick={() => {
+                      if (item.text === '로그아웃') {
+                        setIsLogoutModalOpen(true);
+                        onClose();
+                      } else if (item.path) {
+                        navigate(item.path);
+                        onClose();
+                      }
+                    }}
+                  >
+                    <Icon name={item.icon} />
+                    <span className="text-[#212121] text-[14px] font-normal leading-[18px]">
+                      {item.text}
+                    </span>
+                  </button>
+                  {index === 4 && (
+                    <div className="mt-[4px] pb-[20px] border-b-4 border-[#F4F6F8]" />
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 
   return (
     <>
-      {ReactDOM.createPortal(menuBarContent, document.body)}
+      {ReactDOM.createPortal(panel, portalTarget)}
       <Modal
         open={isLogoutModalOpen}
         title="정말 로그아웃 하시겠어요?"
