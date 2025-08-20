@@ -6,6 +6,7 @@ interface Product {
   id: number;
   name: string;
   isAvailable: boolean;
+  relativeCreatedAt: string;
 }
 
 interface ProductListSectionProps {
@@ -48,12 +49,15 @@ export default function ProductListSection({
           onClick={() => navigate(`/convenience/post/${product.id}`)}
           className="flex justify-between items-center py-[8px] border-b-[3px] border-[#F4F6F8] cursor-pointer"
         >
-          <span className="text-black text-body-bd-title font-semibold">
-            {product.name}
-          </span>
+          <div className='flex gap-2 items-center'>
+            <span className="text-black text-body-bd-title font-semibold">
+              {product.name}
+            </span>
+            <span className='text-body-md-description text-[#919191] item-center'>{product.relativeCreatedAt}</span>
+          </div>
           <span
-            className={`text-body-md-title font-normal ${
-              product.isAvailable ? 'text-[#65CE58]' : 'text-[#FF6452]'
+            className={`text-[12px] leading-[18px] font-semibold tracking-[0.01em] bg-[#F4F6F8] border-[1px] rounded-[8px] px-3 py-1 ${
+              product.isAvailable ? 'text-[#029F64] border-[#029F64] ' : 'text-[#FF6452] border-[#FF6452]'
             }`}
           >
             {product.isAvailable ? '결제가능' : '결제불가'}

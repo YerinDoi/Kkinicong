@@ -33,7 +33,7 @@ export default function CarouselBanner({ onSlideChange }: CarouselBannerProps) {
   {
 
     content: (
-      <div className=' px-[16px] font-semibold text-title-sb-button '>
+      <div className=' px-[16px] font-semibold text-title-sb-button flex flex-col gap-[12px]'>
         <div className='text-[#616161] flex flex-col h-[44px] justify-between'>
           <span >
           현재는 <span className="text-[#029F64] ">인천, 부천, 수원, 고양, 용인, 성남시</span>만 제공되며,        </span>
@@ -43,7 +43,7 @@ export default function CarouselBanner({ onSlideChange }: CarouselBannerProps) {
         
           
 
-        <button className="mt-[12px] px-[16px] h-[28px] bg-[#65CE58] text-white rounded-[12px] text-body-md-title font-regular items-center flex gap-[8px]" onClick={() => navigate('/feedback')}>
+        <button className="px-[16px] w-[129px] h-[28px] bg-[#65CE58] text-white rounded-[12px] text-body-md-title font-regular items-center flex gap-[8px]" onClick={() => navigate('/feedback')}>
           <img src={AddIcon} className='w-[12px] h-[12px]'/>
           지역 요청하기
         </button>
