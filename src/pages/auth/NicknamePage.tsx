@@ -131,9 +131,22 @@ export default function NicknamePage() {
 
       {/* 하단 고정 버튼 */}
       <div className="flex-col mt-auto mx-7 justify-center">
-        <p className='text-[#919191] text-center text-[12px] text-body-md-description mb-5'>
-          끼니콩에 가입함으로써<br/>
-          끼니콩의 <span className='font-bold'>이용 약관</span>에 동의하게 됩니다.
+        <p className="text-[#919191] text-center text-[12px] text-body-md-description mb-5 leading-[150%] tracking-[0.012px]">
+          끼니콩에 가입함으로써
+          <br />
+          끼니콩의{' '}
+          <button
+            onClick={() =>
+              window.open(
+                'https://buttercup-crate-151.notion.site/20b0b19ad28b80418f3ee6db65b4c505?source=copy_link',
+                '_blank',
+              )
+            }
+            className="text-[#919191] font-pretendard text-[12px] font-bold leading-[150%] tracking-[0.012px] underline decoration-solid underline-offset-2 decoration-auto"
+          >
+            이용 약관
+          </button>
+          에 동의하게 됩니다.
         </p>
         <GreenButton
           onClick={handleRegister}
