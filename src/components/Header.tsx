@@ -34,24 +34,19 @@ const Header = ({
 
   return (
     <>
-      <div className="font-pretendard grid grid-cols-[auto_1fr_auto] items-center w-full pt-[8px] pb-[8px] px-[20px] mb-[6px]">
-        <div className='flex gap-[12px]'>
-           <button
+      <div className="sticky top-0 z-[1000] font-pretendard grid grid-cols-[auto_1fr_auto] items-center w-full pt-[8px] pb-[8px] px-[20px] mb-[6px]">
+        <div className="flex gap-[12px]">
+          <button
             className="flex items-center pt-[8px] pb-[8px] pr-[12px]"
             onClick={handleBack}
           >
             <Icon name="backward" />
           </button>
 
-          <button
-            className="flex items-center"
-            onClick={() => navigate('/')}
-          >
+          <button className="flex items-center" onClick={() => navigate('/')}>
             <Icon name="home" />
           </button>
-
         </div>
-       
 
         <div className="relative flex items-center justify-center">
           <span className="justify-center text-black text-title-sb-button font-semibold">
@@ -59,10 +54,10 @@ const Header = ({
           </span>
 
           {location && (
-              <span className="absolute top-full mt-[1.5px] text-[#919191] text-body-md-description font-regular leading-[18px]">
-                {location}
-              </span>
-          ) }
+            <span className="absolute top-full mt-[1.5px] text-[#919191] text-body-md-description font-regular leading-[18px]">
+              {location}
+            </span>
+          )}
         </div>
 
         {showMenubarButton && (

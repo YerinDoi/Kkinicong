@@ -27,7 +27,10 @@ function HomePage() {
           content="가까운 아동급식카드 가맹점 이곳에서 찾아봐요"
         />
         <meta property="og:url" content="https://kkinicong.co.kr" />
-        <meta property="og:image" content="https://kkinicong.co.kr/og-image.png" />
+        <meta
+          property="og:image"
+          content="https://kkinicong.co.kr/og-image.png"
+        />
       </Helmet>
 
       <div className="flex flex-col font-pretendard pb-[61px]">
