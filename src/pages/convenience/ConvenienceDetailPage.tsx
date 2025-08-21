@@ -114,7 +114,6 @@ export default function ConvenienceDetailPage() {
       userSelection: isSame ? null : isCorrect,
     });
 
-
     // 2. 서버에 요청
     try {
       const res = await submitPostFeedback(Number(postId), isCorrect);
@@ -146,6 +145,7 @@ export default function ConvenienceDetailPage() {
             <ShareIcon className="w-[18px] h-5" />
           </button>
         }
+        onBack={() => navigate('/convenience')}
       />
 
       <div className="min-h-screen px-4">
@@ -179,8 +179,9 @@ export default function ConvenienceDetailPage() {
           {/* <span className="text-[#65CE58] text-body-md-title font-regular ml-3">
             {post.isAvailable ? '결제가능' : '결제불가능'}
           </span> */}
-          
-          <span className={`text-body-md-title font-regular ml-3 ${
+
+          <span
+            className={`text-body-md-title font-regular ml-3 ${
               post.isAvailable ? 'text-[#65CE58]' : 'text-red-500'
             }`}
           >
