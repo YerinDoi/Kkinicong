@@ -127,7 +127,7 @@ function MyNeighborhoodPage() {
           <br /> 빠르게 확인할 수 있어요.
         </div>
         <div className="text-body-md-title text-[#616161] font-regular">
-          현재는 <span className="text-[#029F64]">인천 지역</span>만 제공되며,
+          현재는 <span className="text-[#029F64]">인천,부천,수원,고양,용인,성남시</span>만 제공되며,
           <br />
           다른 지역은 요청이 많은 순으로 추가될 예정이에요.
           <br />
