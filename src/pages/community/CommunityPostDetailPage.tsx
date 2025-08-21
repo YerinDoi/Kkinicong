@@ -248,6 +248,7 @@ const CommunityPostDetailPage = () => {
 
           <div className="mt-[20px] flex flex-col gap-[16px]">
             <MainTag rounded="rounded-[8px]" text={post.category} />
+            <p className="text-body-md-title font-regular">{post.content}</p>
             {Array.isArray(post.imageUrls) && post.imageUrls.length > 0 && (
               <div className="flex flex-col gap-[16px]">
                 {post.imageUrls.map((url, idx) => (
@@ -261,7 +262,7 @@ const CommunityPostDetailPage = () => {
               </div>
             )}
 
-            <p className="text-body-md-title font-regular">{post.content}</p>
+            
           </div>
         </div>
         <div className="flex justify-between text-[#C3C3C3]">
