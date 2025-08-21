@@ -10,6 +10,8 @@ import { fromServerBrand, fromServerCategory } from '@/utils/convenienceMapper';
 
 import TopBar from '@/components/common/TopBar';
 import DeleteConvenience from '@/components/convenience/DeleteConvenience';
+import LoginRequiredBottomSheet from '@/components/common/LoginRequiredBottomSheet';
+import { useLoginStatus } from '@/hooks/useLoginStatus';
 import FeedbackButtons from '@/components/convenience/FeedbackButtons';
 
 import ShareIcon from '@/assets/svgs/convenience/share.svg?react';
@@ -35,6 +37,8 @@ export default function ConvenienceDetailPage() {
   const { postId } = useParams();
   const [post, setPost] = useState<PostDetail | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
+  const { isLoggedIn } = useLoginStatus();
+  const [loginSheetOpen, setLoginSheetOpen] = useState(false);
 
   useEffect(() => {
     if (!postId) return;
@@ -84,6 +88,10 @@ export default function ConvenienceDetailPage() {
 
   const handleVote = async (isCorrect: boolean) => {
     if (!post || !postId) return;
+    if (isLoggedIn === false) {
+      setLoginSheetOpen(true);
+      return;
+    }
 
     const prev = { ...post };
 
@@ -228,6 +236,12 @@ export default function ConvenienceDetailPage() {
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
         onConfirm={handleDelete}
+      />
+      {/* 로그인 필요 바텀시트 */}
+      <LoginRequiredBottomSheet
+        isOpen={loginSheetOpen}
+        onClose={() => setLoginSheetOpen(false)}
+        pendingPath={window.location.pathname}
       />
     </>
   );
