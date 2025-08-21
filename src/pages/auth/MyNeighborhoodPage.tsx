@@ -127,7 +127,7 @@ function MyNeighborhoodPage() {
           <br /> 빠르게 확인할 수 있어요.
         </div>
         <div className="text-body-md-title text-[#616161] font-regular">
-          현재는 <span className="text-[#029F64]">인천 지역</span>만 제공되며,
+          현재는 <span className="text-[#029F64]">인천,부천,수원,고양,용인,성남시</span>만 제공되며,
           <br />
           다른 지역은 요청이 많은 순으로 추가될 예정이에요.
           <br />
@@ -140,7 +140,7 @@ function MyNeighborhoodPage() {
           type="text"
           value={input}
           onChange={handleChange}
-          placeholder="ex) 인천광역시 서구"
+          placeholder="ex) 백석동"
           className="border border-[#C3C3C3] text-black px-[16px] py-[12px] w-full rounded-[12px]"
         />
 

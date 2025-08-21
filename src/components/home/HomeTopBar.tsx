@@ -58,7 +58,7 @@ export default function HomeTopBar({ address = '' }: HomeTopBarProps) {
           ) : (
             <button
               onClick={login}
-              className="text-body-md-title text-[#919191]"
+              className="text-body-md-title text-[#919191] whitespace-nowrap"
             >
               로그인하기
             </button>
