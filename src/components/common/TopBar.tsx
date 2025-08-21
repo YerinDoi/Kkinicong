@@ -48,16 +48,26 @@ export default function TopBar({
 
   return (
     <Fragment>
-      <div className={`relative grid grid-cols-[auto_1fr_auto] items-center ${paddingX} py-[8px]`}>
+      <div
+        className={`sticky top-0 z-[1000] bg-white grid grid-cols-[auto_1fr_auto] items-center ${paddingX} py-[8px]`}
+      >
         {/* 좌측: 뒤로/홈 */}
         <div className="flex items-center gap-[12px]">
           {showBackButton && (
-            <button onClick={handleBack} className="py-[8px] pr-[12px]" aria-label="뒤로가기">
+            <button
+              onClick={handleBack}
+              className="py-[8px] pr-[12px]"
+              aria-label="뒤로가기"
+            >
               <Icon name="backward" />
             </button>
           )}
           {showHomeButton && (
-            <button onClick={() => navigate('/')} className="py-[8px]" aria-label="홈">
+            <button
+              onClick={() => navigate('/')}
+              className="py-[8px]"
+              aria-label="홈"
+            >
               <Icon name="home" />
             </button>
           )}
@@ -95,7 +105,11 @@ export default function TopBar({
         {/* 우측: 메뉴/커스텀 */}
         <div className="flex items-center justify-end">
           {rightType === 'menu' && (
-            <button className="w-[24px] h-[24px]" onClick={toggleMenu} aria-label="메뉴">
+            <button
+              className="w-[24px] h-[24px]"
+              onClick={toggleMenu}
+              aria-label="메뉴"
+            >
               <Icon name="menubar" />
             </button>
           )}
