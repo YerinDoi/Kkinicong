@@ -2,7 +2,7 @@ interface FeedbackButtonsProps {
   isMine: boolean;
   correctCount: number;
   incorrectCount: number;
-  userSelection: boolean | null; 
+  userSelection: boolean | null;
   // true = correct, false = incorrect, null = 아직 투표 안함
   onVote: (isCorrect: boolean) => void;
 }
@@ -23,7 +23,9 @@ export default function FeedbackButtons({
           className={`flex-1 border-[1.5px] rounded-[12px] py-3 text-title-sb-button font-semibold ${
             isMine
               ? 'border-[#E0E0E0] text-[#C0C0C0] bg-[#F8F8F8] cursor-not-allowed'
-              : 'border-[#C3C3C3] text-[#616161] hover:bg-[#F3F5ED]'
+              : userSelection === true
+                ? 'bg-[#B1D960] border-[#C3C3C3] text-[#616161]'
+                : 'bg-white hover:bg-[var(--BG,#F3F5ED)] border-[#C3C3C3] text-[#616161]'
           }`}
         >
           올바른 정보예요
@@ -35,7 +37,9 @@ export default function FeedbackButtons({
           className={`flex-1 border-[1.5px] rounded-[12px] py-3 text-title-sb-button font-semibold ${
             isMine
               ? 'border-[#E0E0E0] text-[#C0C0C0] bg-[#F8F8F8] cursor-not-allowed'
-              : 'border-[#C3C3C3] text-[#616161] hover:bg-[#F3F5ED]'
+              : userSelection === false
+                ? 'bg-[#B1D960] border-[#C3C3C3] text-[#616161]'
+                : 'bg-white hover:bg-[var(--BG,#F3F5ED)] border-[#C3C3C3] text-[#616161]'
           }`}
         >
           잘못된 정보예요
