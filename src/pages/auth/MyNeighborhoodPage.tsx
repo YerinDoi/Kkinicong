@@ -140,7 +140,7 @@ function MyNeighborhoodPage() {
           type="text"
           value={input}
           onChange={handleChange}
-          placeholder="ex) 인천광역시 서구"
+          placeholder="ex) 백석동"
           className="border border-[#C3C3C3] text-black px-[16px] py-[12px] w-full rounded-[12px]"
         />
 
