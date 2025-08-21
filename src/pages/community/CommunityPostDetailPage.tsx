@@ -17,6 +17,7 @@ import useCommentActions from '@/hooks/useCommentActions';
 import DeleteModal from '@/components/common/DeleteModal';
 import ConfirmToast from '@/components/common/ConfirmToast';
 import { createPortal } from 'react-dom';
+import { Helmet } from 'react-helmet-async';
 
 interface Comment {
   commentId: number;
@@ -204,6 +205,15 @@ const CommunityPostDetailPage = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>{post.title}</title>
+        <meta name="description" content={post.content.slice(0, 50)} />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={post.title} />
+        <meta property="og:description" content={post.content.slice(0, 50)} />
+        <meta property="og:image" content={post.imageUrls[0]} />
+        <meta property="og:url" content={`${location.origin}/post/${post.communityPostId}`} />
+      </Helmet>
       <TopBar
 
       showBackButton={true}
@@ -240,7 +250,13 @@ const CommunityPostDetailPage = () => {
               </div>
               <img
                 src={ShareIcon}
-                onClick={share}
+                onClick={() =>
+                  share({
+                    title: post.title,
+                    text: post.content.slice(0, 50),
+                    url: `${location.origin}/post/${post.communityPostId}`,
+                  })
+                }
                 className="w-[18px] h-[18px] cursor-pointer"
               />
             </div>
