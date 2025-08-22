@@ -205,15 +205,6 @@ const CommunityPostDetailPage = () => {
 
   return (
     <div>
-      <Helmet>
-        <title>{post.title}</title>
-        <meta name="description" content={post.content.slice(0, 50)} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={post.title} />
-        <meta property="og:description" content={post.content.slice(0, 50)} />
-        <meta property="og:image" content={post.imageUrls[0]} />
-        <meta property="og:url" content={`${location.origin}/post/${post.communityPostId}`} />
-      </Helmet>
       <TopBar
 
       showBackButton={true}
@@ -252,8 +243,7 @@ const CommunityPostDetailPage = () => {
                 src={ShareIcon}
                 onClick={() =>
                   share({
-                    title: post.title,
-                    text: post.content.slice(0, 50),
+                   
                     url: `${location.origin}/post/${post.communityPostId}`,
                   })
                 }
@@ -281,7 +271,7 @@ const CommunityPostDetailPage = () => {
             
           </div>
         </div>
-        <div className="flex justify-between text-[#C3C3C3]">
+        <div className="flex justify-between text-[#C3C3C3] items-center">
           <div
             className={`flex gap-[8px]  text-title-sb-button items-center font-bold ${isLiked ? 'text-main-color' : 'text-[#c3c3c3]'}`}
           >
