@@ -320,7 +320,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
               />
             ))}
         </div>
-        <div className="text-[#616161] font-regular text-body-md-title pl-[48px]">
+        <div className="text-[#616161] font-regular text-body-md-title pl-[48px] whitespace-pre-wrap break-words">
           {content}
         </div>
 
