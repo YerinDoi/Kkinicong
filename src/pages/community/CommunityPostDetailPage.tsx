@@ -281,7 +281,7 @@ const CommunityPostDetailPage = () => {
             
           </div>
         </div>
-        <div className="flex justify-between text-[#C3C3C3]">
+        <div className="flex justify-between text-[#C3C3C3] items-center">
           <div
             className={`flex gap-[8px]  text-title-sb-button items-center font-bold ${isLiked ? 'text-main-color' : 'text-[#c3c3c3]'}`}
           >
