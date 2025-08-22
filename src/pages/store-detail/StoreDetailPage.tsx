@@ -45,7 +45,7 @@ const StoreDetailPage = () => {
 
   return (
     <div className="font-pretendard">
-      <Header />
+      <Header className="bg-white" />
       <StoreDetailInfo
         store={store}
         storeId={store.storeId}
