@@ -146,7 +146,12 @@ export default function CommunityWritePage() {
             placeholder="내용을 작성해주세요"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="w-full border-[1px] border-[#C3C3C3] rounded-[12px] px-4 py-3 h-[70px] text-body-md-description fort-reular placeholder:text-[#919191]"
+            onInput={(e) => {
+              const el = e.currentTarget;
+              el.style.height = 'auto';              // 높이 초기화
+              el.style.height = `${el.scrollHeight}px`; // 내용에 맞게 확장
+            }}
+            className="w-full border-[1px] border-[#C3C3C3] rounded-[12px] px-4 py-3 h-[70px] text-body-md-description fort-reular placeholder:text-[#919191] resize-none scrollbar-hide"
           />
         </div>
 
