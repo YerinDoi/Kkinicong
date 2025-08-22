@@ -65,7 +65,7 @@ export default function CarouselBanner({ onSlideChange }: CarouselBannerProps) {
           setActiveIndex(i);
           onSlideChange(i);
         }}
-        className="w-full overflow-hidden "
+        className="w-full overflow-hidden h-[128px]"
       >
         {slides.map((slide, idx) => (
           <SwiperSlide key={idx}>
