@@ -33,13 +33,13 @@ const ConvenienceStorePage = () => {
   const goPrev = () => {
     if (idx === 0) return;
     setDirection(-1);
-    setIdx(i => i - 1);
-    setBrand(brands[idx - 1]);  
+    setIdx((i) => i - 1);
+    setBrand(brands[idx - 1]);
   };
   const goNext = () => {
     if (idx === brands.length - 1) return;
     setDirection(1);
-    setIdx(i => i + 1);
+    setIdx((i) => i + 1);
     setBrand(brands[idx + 1]);
   };
   const loadProducts = useCallback(async () => {
@@ -65,7 +65,7 @@ const ConvenienceStorePage = () => {
   return (
     <div className="flex flex-col h-full bg-[#FFF5DF]">
       {/* 상단 : 탑바, 검색바, 정보 카드*/}
-  
+
       <Header title="편의점 구매정보" />
       <div className="px-[27.5px]">
         <SearchInput
@@ -103,12 +103,11 @@ const ConvenienceStorePage = () => {
         <ProductListSection
           products={products}
           keyword={keyword}
-          listKey={brands[idx]}      // 바뀔 때만 텍스트 교체 발생
+          listKey={brands[idx]} // 바뀔 때만 텍스트 교체 발생
           direction={direction}
           onSwipePrev={goPrev}
           onSwipeNext={goNext}
         />
-
       </div>
     </div>
   );
