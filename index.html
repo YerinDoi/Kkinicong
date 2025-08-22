@@ -23,6 +23,37 @@
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
     <title>끼니콩</title>
+<!--  카톡 인앱 웹뷰 감지: 아주 이른 타이밍에 자동 글자확대 비활성화 -->
+    <script>
+      (function () {
+        if (/KAKAOTALK|KakaoTalk/i.test(navigator.userAgent)) {
+          // 인라인 스타일로 우선순위 확보(+ !important)
+          document.documentElement.style.cssText += ';-webkit-text-size-adjust:none !important;text-size-adjust:none !important;';
+          document.documentElement.classList.add('is-kakao');
+        }
+      })();
+    </script>
+
+    <!--  전역 기본 보정: 다른 브라우저에선 100% 유지 + rem 기준 고정 -->
+    <style>
+      html {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+        font-size: 16px;               /* 1rem 기준 */
+        font-synthesis: none;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-family: Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+                     Roboto, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic',
+                     Arial, 'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol', sans-serif;
+      }
+      body { font-size: 1rem; }
+      /* 카톡에서만 완전 차단 (스크립트가 .is-kakao를 추가함) */
+      html.is-kakao {
+        -webkit-text-size-adjust: none !important;
+        text-size-adjust: none !important;
+      }
+    </style>
 
     <!-- Pretendard Variable (웹폰트) 로드: 로컬 폰트 대신 이것을 사용하게 함 -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
