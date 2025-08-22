@@ -8,8 +8,12 @@ html {
   font-synthesis: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 
-  font-synthesis: none;
+  /* rem 기준(선택) — 폰트는 px로 쓰더라도 기준 고정용 */
+  font-size: 16px;
+
   font-family: 'Pretendard', sans-serif;
 }
 
