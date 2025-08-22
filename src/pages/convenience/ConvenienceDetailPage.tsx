@@ -179,36 +179,32 @@ export default function ConvenienceDetailPage() {
           )}
         </div>
 
-        {/* 상품명 및 상태 */}
-        <div className="flex items-center py-2">
-          <span className="text-headline-sb-main font-semibold">
-            {post.name}
-          </span>
-          {/* <span className="text-[#65CE58] text-body-md-title font-regular ml-3">
-            {post.isAvailable ? '결제가능' : '결제불가능'}
-          </span> */}
-
-          <span
-            className={`text-body-md-title font-regular ml-3 ${
-              post.isAvailable ? 'text-[#65CE58]' : 'text-red-500'
+        {/* 상품명 , 상태, 카테고리 */}
+        <div className="flex flex-col py-2">
+          <div
+            className={`w-fit text-[12px] leading-[18px] font-semibold tracking-[0.01em] bg-[#F4F6F8] border-[1px] rounded-[8px] px-3 py-1 ${
+              post.isAvailable
+                ? 'text-[#029F64] border-[#029F64]'
+                : 'text-[#FF6452] border-[#FF6452]'
             }`}
           >
-            {post.isAvailable ? '결제가능' : '결제불가능'}
-          </span>
-        </div>
-
-        {/* 카테고리 및 브랜드 pill */}
-        <div className="flex gap-2 mt-2">
-          <div className="border-[#919191] border-[1.5px] leading-[1] rounded-[12px] px-5 py-1 bg-[#F4F6F8]">
-            {fromServerCategory(post.category)}
+            {post.isAvailable ? '결제가능' : '결제불가'}
           </div>
-          <div className="border-[#919191] border-[1.5px] leading-[1] rounded-[12px] px-5 py-1 bg-[#F4F6F8]">
-            {fromServerBrand(post.brand)}
+          <span className="text-headline-sb-main font-semibold mt-4 mb-3">
+            {post.name}
+          </span>
+          <div className="flex gap-2">
+            <div className="border-[#919191] border-[1.5px] leading-[1] rounded-[12px] px-5 py-1 bg-[#F4F6F8]">
+              {fromServerCategory(post.category)}
+            </div>
+            <div className="border-[#919191] border-[1.5px] leading-[1] rounded-[12px] px-5 py-1 bg-[#F4F6F8]">
+              {fromServerBrand(post.brand)}
+            </div>
           </div>
         </div>
 
         {/* 상세설명 */}
-        <div className="mt-5">
+        <div className="mt-10">
           <div className="flex mb-3 justify-between items-center text-title-sb-button font-semibold">
             <label>상세설명</label>
           </div>
