@@ -76,7 +76,7 @@ const RequestEditButton: React.FC<Props> = ({
           setIsEditOpen(false);
           setShowWarningToast(true);
 
-          setTimeout(() => setShowWarningToast(false), 1500); // 3초 뒤 자동 닫힘
+          setTimeout(() => setShowWarningToast(false), 5000); // 5초 뒤 자동 닫힘
           return;
         }
 

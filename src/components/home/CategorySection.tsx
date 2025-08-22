@@ -12,7 +12,7 @@ function CategorySection() {
 
   const mainCategories = categories.slice(1, -1);
   return (
-    <div className="px-[16px] pb-[20px] border-b-8 border-[#F4F6F8]">
+    <div className="px-[16px] pt-[8px] pb-[20px] border-b-8 border-[#F4F6F8]">
       <div className="grid grid-cols-5 gap-x-[20px] gap-y-[16px]">
         {mainCategories.map((category) => (
           <CategoryItem

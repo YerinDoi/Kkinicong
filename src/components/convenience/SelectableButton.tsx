@@ -23,7 +23,7 @@ export default function SelectableButton({
         ${
           isSelected
             ? `bg-[${selectedBgColor}] border-[${selectedBorderColor}] text-black`
-            : 'bg-white border-[#C3C3C3] text-[#616161]'
+            : 'bg-white hover:bg-[var(--BG,#F3F5ED)] border-[#C3C3C3] text-[#616161]'
         }
         ${className}
       `}

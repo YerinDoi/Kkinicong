@@ -31,3 +31,6 @@ dist-ssr
 .env.test
 
 *storybook.log
+
+# TypeScript build info
+*.tsbuildinfo
