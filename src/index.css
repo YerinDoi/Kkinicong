@@ -4,6 +4,11 @@
 
 body,
 html {
+  /* 로컬 합성 굵기 방지 및 얇게 보정 */
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
   font-synthesis: none;
   font-family: 'Pretendard', sans-serif;
 }
