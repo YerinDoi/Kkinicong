@@ -8,6 +8,7 @@ interface HeaderProps {
   location?: string;
   showMenubarButton?: boolean;
   onBack?: () => void;
+  className?: string;
 }
 
 const Header = ({
@@ -15,6 +16,7 @@ const Header = ({
   location,
   showMenubarButton = true,
   onBack,
+  className,
 }: HeaderProps) => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -34,7 +36,9 @@ const Header = ({
 
   return (
     <>
-      <div className="sticky top-0 z-[1000] font-pretendard grid grid-cols-[auto_1fr_auto] items-center w-full pt-[8px] pb-[8px] px-[20px] mb-[6px]">
+      <div
+        className={`sticky top-0 z-[1000] font-pretendard grid grid-cols-[auto_1fr_auto] items-center w-full pt-[8px] pb-[8px] px-[20px] mb-[6px]${className ? ' ' + className : ''}`}
+      >
         <div className="flex gap-[12px]">
           <button
             className="flex items-center pt-[8px] pb-[8px] pr-[12px]"
