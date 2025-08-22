@@ -17,7 +17,6 @@ import useCommentActions from '@/hooks/useCommentActions';
 import DeleteModal from '@/components/common/DeleteModal';
 import ConfirmToast from '@/components/common/ConfirmToast';
 import { createPortal } from 'react-dom';
-import { Helmet } from 'react-helmet-async';
 
 interface Comment {
   commentId: number;
@@ -241,12 +240,7 @@ const CommunityPostDetailPage = () => {
               </div>
               <img
                 src={ShareIcon}
-                onClick={() =>
-                  share({
-                   
-                    url: `${location.origin}/post/${post.communityPostId}`,
-                  })
-                }
+                onClick={share}
                 className="w-[18px] h-[18px] cursor-pointer"
               />
             </div>
