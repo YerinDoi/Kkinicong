@@ -10,6 +10,8 @@ import { fromServerBrand, fromServerCategory } from '@/utils/convenienceMapper';
 
 import TopBar from '@/components/common/TopBar';
 import DeleteConvenience from '@/components/convenience/DeleteConvenience';
+import LoginRequiredBottomSheet from '@/components/common/LoginRequiredBottomSheet';
+import { useLoginStatus } from '@/hooks/useLoginStatus';
 import FeedbackButtons from '@/components/convenience/FeedbackButtons';
 
 import ShareIcon from '@/assets/svgs/convenience/share.svg?react';
@@ -35,6 +37,8 @@ export default function ConvenienceDetailPage() {
   const { postId } = useParams();
   const [post, setPost] = useState<PostDetail | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
+  const { isLoggedIn } = useLoginStatus();
+  const [loginSheetOpen, setLoginSheetOpen] = useState(false);
 
   useEffect(() => {
     if (!postId) return;
@@ -84,6 +88,10 @@ export default function ConvenienceDetailPage() {
 
   const handleVote = async (isCorrect: boolean) => {
     if (!post || !postId) return;
+    if (isLoggedIn === false) {
+      setLoginSheetOpen(true);
+      return;
+    }
 
     const prev = { ...post };
 
@@ -113,7 +121,6 @@ export default function ConvenienceDetailPage() {
       IncorrectCount: incorrect,
       userSelection: isSame ? null : isCorrect,
     });
-
 
     // 2. 서버에 요청
     try {
@@ -146,6 +153,7 @@ export default function ConvenienceDetailPage() {
             <ShareIcon className="w-[18px] h-5" />
           </button>
         }
+        onBack={() => navigate('/convenience')}
       />
 
       <div className="min-h-screen px-4">
@@ -179,8 +187,9 @@ export default function ConvenienceDetailPage() {
           {/* <span className="text-[#65CE58] text-body-md-title font-regular ml-3">
             {post.isAvailable ? '결제가능' : '결제불가능'}
           </span> */}
-          
-          <span className={`text-body-md-title font-regular ml-3 ${
+
+          <span
+            className={`text-body-md-title font-regular ml-3 ${
               post.isAvailable ? 'text-[#65CE58]' : 'text-red-500'
             }`}
           >
@@ -227,6 +236,12 @@ export default function ConvenienceDetailPage() {
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
         onConfirm={handleDelete}
+      />
+      {/* 로그인 필요 바텀시트 */}
+      <LoginRequiredBottomSheet
+        isOpen={loginSheetOpen}
+        onClose={() => setLoginSheetOpen(false)}
+        pendingPath={window.location.pathname}
       />
     </>
   );

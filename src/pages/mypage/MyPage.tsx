@@ -117,7 +117,9 @@ const MyPage = () => {
         <MenuListBtn
           label="의견 남기기"
           variant="secondary"
-          onClick={() => navigate('/feedback')}
+          onClick={() =>
+            navigate('/feedback', { state: { returnTo: '/mypage' } })
+          }
         />
 
         {isLoggedIn && (
