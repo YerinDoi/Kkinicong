@@ -88,7 +88,7 @@ KKinicong_FE/
 ----
 ## 🚀 Deployment URL
 
-- [끼니콩 바로가기](https://kkinicong.vercel.app/)
+- [끼니콩 바로가기](https://kkinicong.co.kr/)
 ----
 ## 🙋🏻‍♂️ Frontend Engineers
 
