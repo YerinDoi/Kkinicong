@@ -17,6 +17,7 @@ import useCommentActions from '@/hooks/useCommentActions';
 import DeleteModal from '@/components/common/DeleteModal';
 import ConfirmToast from '@/components/common/ConfirmToast';
 import { createPortal } from 'react-dom';
+import OptimizedImage from '@/components/common/OptimizedImage';
 
 interface Comment {
   commentId: number;
@@ -252,7 +253,7 @@ const CommunityPostDetailPage = () => {
             {Array.isArray(post.imageUrls) && post.imageUrls.length > 0 && (
               <div className="flex flex-col gap-[16px]">
                 {post.imageUrls.map((url, idx) => (
-                  <img
+                  <OptimizedImage
                     key={idx}
                     src={url}
                     alt={`게시글 이미지 ${idx + 1}`}

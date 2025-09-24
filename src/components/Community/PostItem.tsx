@@ -71,6 +71,7 @@ const PostItem = ({ post, keyword = '' }: PostItemProps) => {
               alt="thumbnail"
               className="w-full h-full object-cover"
               loading="lazy"
+              decoding="async"
             />
             {(post.imageCount ?? 0) > 1 && (
               <div className="flex justify-center absolute top-0 left-0 w-[29.3px] h-[29.3px] bg-[rgba(68,60,54,0.94)] items-center text-center  text-white text-[12px] px-[7px] py-[2px] rounded-[8px]">

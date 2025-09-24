@@ -7,6 +7,7 @@ import DeleteModal from '../common/DeleteModal';
 import MainTag from '@/components/StoreReview/MainTag';
 import axios from '@/api/axiosInstance';
 import type { StoreReview } from '@/types/store';
+import OptimizedImage from '../common/OptimizedImage';
 
 interface ReviewItemProps {
   userName: string;
@@ -103,7 +104,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
       <div className="flex flex-col gap-[12px]">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-[8px] ">
-            <img src={ProfileImg} className="w-[40px]" />
+            <OptimizedImage src={ProfileImg} alt = "프로필 사진" className="w-[40px]" />
             <div className="flex gap-[4px] ">
               <span className="font-meidum text-body-md-title ">{userName}</span>
               <span className="text-body-md-description text-[#919191] self-center">
@@ -160,7 +161,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
           {content}
         </p>
         {imageUrl && (
-          <img
+          <OptimizedImage
             src={imageUrl}
             alt="리뷰 이미지"
             className="w-[100px] h-[80px] rounded-[12px] object-cover"
