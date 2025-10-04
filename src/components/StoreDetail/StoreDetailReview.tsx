@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import axios from '@/api/axiosInstance';
 import LoginModal from '@/components/common/LoginRequiredBottomSheet';
+import OptimizedImage from '../common/OptimizedImage';
 
 interface StoreDetailReviewProps {
   store: StoreDetail;
@@ -81,7 +82,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({
             <p className="text-black">다녀오셨나요?</p>
             <p className="text-black">리뷰를 통해 경험을 공유해주세요!</p>
           </div>
-          <img src={CongG} className="w-[122px]" />
+          <OptimizedImage src={CongG} alt = "콩쥐이미지" className="w-[122px]" />
         </div>
 
         <button

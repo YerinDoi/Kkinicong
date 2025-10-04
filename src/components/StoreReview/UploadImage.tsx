@@ -53,12 +53,17 @@ const UploadImage: React.FC<UploadImageProps> = ({ onFileSelect }) => {
         maxSizeMB: 1,
         maxWidthOrHeight: 1024,
         useWebWorker: true,
+        fileType: "image/webp",
       });
 
-      const compressedFile = new File([compressedBlob], file.name, {
-        type: compressedBlob.type,
-        lastModified: Date.now(),
-      });
+      const compressedFile = new File(
+        [compressedBlob],
+        file.name.replace(/\.[^/.]+$/, ".webp"), 
+        {
+          type: "image/webp",
+          lastModified: Date.now(),
+        }
+      );
 
       // 압축된 파일 기준으로 미리보기 URL 생성
       const imageURL = URL.createObjectURL(compressedFile);
@@ -70,6 +75,12 @@ const UploadImage: React.FC<UploadImageProps> = ({ onFileSelect }) => {
     onFileSelect(null);
   }
 };
+
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview);
+    };
+  }, [preview]);
 
   const handleDeleteImage = () => {
     setPreview(null);
@@ -103,6 +114,8 @@ const UploadImage: React.FC<UploadImageProps> = ({ onFileSelect }) => {
                 src={preview}
                 alt="preview"
                 className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
               />
               <button
                 type="button"

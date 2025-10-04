@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ProfileImg from '@/assets/svgs/common/profile-img.svg';
+import OptimizedImage from './OptimizedImage';
 
 interface BottomSheetFormProps {
   title: string;
@@ -81,7 +82,7 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
       {reviewInfo && (
         <div className="px-[24px] flex flex-col gap-[12px]">
           <div className="flex gap-[4px] items-center">
-            <img src={ProfileImg} className="w-[36.3px] h-[36.3px] " />
+            <OptimizedImage src={ProfileImg} alt="사용자 프로필 이미지" className="w-[36.3px] h-[36.3px] " />
             <span className="text-body-md-title font-regular leading-[24px]">
               {reviewInfo.userName}
             </span>
@@ -97,7 +98,7 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
       {commentInfo && (
         <div className="px-[24px] flex flex-col gap-[12px]">
           <div className="flex gap-[4px] items-center">
-            <img src={ProfileImg} className="w-[36.3px] h-[36.3px] " />
+            <OptimizedImage src={ProfileImg} alt="사용자 프로필 이미지" className="w-[36.3px] h-[36.3px] " />
             <span className="text-body-md-title font-regular leading-[24px]">
               {commentInfo.nickname}
             </span>
@@ -115,7 +116,7 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
       {postInfo && (
         <div className="px-[24px] flex flex-col gap-[12px]">
           <div className="flex gap-[4px] items-center">
-            <img src={ProfileImg} className="w-[36.3px] h-[36.3px] " />
+            <OptimizedImage src={ProfileImg} alt="사용자 프로필 이미지" className="w-[36.3px] h-[36.3px] " />
             <span className="text-body-md-title font-regular leading-[24px]">
               {postInfo.nickname}
             </span>
