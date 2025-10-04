@@ -78,7 +78,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({
       <div className="bg-[#F3F5ED] p-[16px]">
         <div className="flex h-[112px]">
           <div className="h-full pb-[16px] text-[15px] font-semibold leading-[20px] flex flex-col gap-[4px] justify-center">
-            <p className="text-[#029F64]">{store.storeName}</p>
+            <p className="text-sub-color">{store.storeName}</p>
             <p className="text-black">다녀오셨나요?</p>
             <p className="text-black">리뷰를 통해 경험을 공유해주세요!</p>
           </div>
@@ -87,7 +87,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({
 
         <button
           onClick={handleReviewClick}
-          className="w-full bg-[#65CE58] text-white rounded-[12px] px-[16px] py-[10px] justify-center flex gap-[10px] text-title-sb-button font-semibold items-center"
+          className="w-full bg-main-color text-white rounded-[12px] px-[16px] py-[10px] justify-center flex gap-[10px] text-title-sb-button font-semibold items-center"
         >
           <img src={AddIcon} className="w-[14px] h-[14px] " />
           리뷰쓰기
@@ -97,7 +97,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({
       {/* 헤더 */}
       <div className="flex justify-between px-[16px] py-[8px] my-[12px] items-center text-title-sb-button font-semibold">
         <p>최근 리뷰 {reviewCount}개</p>
-        <div className="flex gap-[8px] text-[#919191] leading-[20px]">
+        <div className="flex gap-[8px] text-main-gray leading-[20px]">
           <img src={Star} className="w-[24px]" />
           <span>{ratingAvg.toFixed(1)}</span>
         </div>
@@ -112,7 +112,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({
             </p>
             <button
               onClick={handleReviewClick}
-              className="text-body-md-description font-regular text-[#919191] underline"
+              className="text-body-md-description font-regular text-main-gray underline"
             >
               첫번째 리뷰를 작성하시겠어요?
             </button>
@@ -144,7 +144,7 @@ const StoreDetailReview: React.FC<StoreDetailReviewProps> = ({
       {page + 1 < totalPage && (
         <button
           onClick={() => fetchReviews(page + 1)}
-          className="mt-[20px] mb-[33.71px] text-center text-[#65CE58] text-body-md-title font-semibold underline decoration-solid decoration-[1px] leading-[20px]"
+          className="mt-[20px] mb-[33.71px] text-center text-main-color text-body-md-title font-semibold underline decoration-solid decoration-[1px] leading-[20px]"
         >
           리뷰 더 보기
         </button>

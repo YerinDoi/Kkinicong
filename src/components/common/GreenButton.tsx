@@ -17,7 +17,7 @@ const GreenButton: React.FC<GreenButtonProps> = ({
         onClick={onClick}
         disabled={disabled}
         className={`w-[320px] h-[60px] rounded-[12px] font-bold py-4 text-title-sb-button font-semibold transition ${
-          disabled ? 'bg-[#E6E6E6] text-[#919191]' : 'bg-[#65CE58] text-white'
+          disabled ? 'bg-disabled text-main-gray' : 'bg-main-color text-white'
         }`}
       >
         {text}

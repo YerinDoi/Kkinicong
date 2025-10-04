@@ -42,7 +42,7 @@ const ProfileSection = ({
             font-bold
             leading-normal
             tracking-[0.016px]
-            text-[#616161]
+            text-text-gray
             underline
             underline-offset-2
             decoration-solid

@@ -271,8 +271,8 @@ const CommentItem: React.FC<CommentItemProps> = ({
       <div
         className={`
     ${isReply ? 'pl-0 pr-[20px] border-none pt-0' : `px-[20px] pt-[12px]`}
-    pb-[12px] border-b-[1.5px] border-[#E6E6E6]
-    ${isNew ? 'bg-[#F4F6F8]' : ''}
+    pb-[12px] border-b-[1.5px] border-disabled
+    ${isNew ? 'bg-bg-gray' : ''}
   `}
       >
         {/* 상단: 프로필 + 닉네임/작성자/시간 + more 아이콘 */}
@@ -291,12 +291,12 @@ const CommentItem: React.FC<CommentItemProps> = ({
                 </span>
 
                 {isAuthor && (
-                  <span className="px-[8px] py-[2px] text-body-md-description font-regular rounded-[8px] bg-[#E6E6E6] text-[#616161]">
+                  <span className="px-[8px] py-[2px] text-body-md-description font-regular rounded-[8px] bg-disabled text-text-gray">
                     작성자
                   </span>
                 )}
 
-                <span className="text-[#919191] text-[12px]">
+                <span className="text-main-gray text-[12px]">
                   {isModified && '수정됨 · '}
                   {createdAt}
                 </span>
@@ -320,7 +320,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
               />
             ))}
         </div>
-        <div className="text-[#616161] font-regular text-body-md-title pl-[48px] whitespace-pre-wrap break-words">
+        <div className="text-text-gray font-regular text-body-md-title pl-[48px] whitespace-pre-wrap break-words">
           {content}
         </div>
 
@@ -341,7 +341,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
             </div>
             <div
               className={`flex gap-[4px] text-title-sb-button items-center font-bold font-semibold ${
-                isLiked ? 'text-main-color' : 'text-[#C3C3C3]'
+                isLiked ? 'text-main-color' : 'text-sub-gray'
               }`}
             >
               <button onClick={handleLikeClick} className="cursor-pointer">
@@ -376,14 +376,14 @@ const CommentItem: React.FC<CommentItemProps> = ({
       {isReplyInputOpen &&
         createPortal(
           <div className="fixed bottom-0 w-full z-50 bg-white border-t shadow-lg">
-            <div className="pl-[20px] pr-[22px] py-[9px] bg-[#F4F6F8] font-regular text-body-md-description text-[#919191]">
-              <span className="text-[#616161]">
+            <div className="pl-[20px] pr-[22px] py-[9px] bg-bg-gray font-regular text-body-md-description text-main-gray">
+              <span className="text-text-gray">
                 {replyTargetNickname || '[없음]'}
               </span>
               님에게 답글 남기는 중
               <button
                 onClick={handlecloseReplyInput}
-                className="float-right text-[#616161]"
+                className="float-right text-text-gray"
               >
                 ✕
               </button>

@@ -19,7 +19,7 @@ function Top8StoreSection() {
   };
 
   return (
-    <div className="pt-[4px] px-[20px] pb-[14px] border-b-8 border-[#F4F6F8] flex flex-col gap-[16px]">
+    <div className="pt-[4px] px-[20px] pb-[14px] border-b-8 border-bg-gray flex flex-col gap-[16px]">
       <p className="text-black text-title-sb-button font-semibold leading-[20px]">
         오늘 끼니는 여기 어때요?
       </p>

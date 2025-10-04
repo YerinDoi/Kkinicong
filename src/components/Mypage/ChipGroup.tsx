@@ -18,8 +18,8 @@ interface ChipGroupProps {
             key={option}
             onClick={() => onChange(option)}
             className={`
-              px-[16px] py-[4px] h-[35px] rounded-[12px] border border-[#919191] font-pretendard text-[16px] font-medium leading-normal tracking-[0.016px]
-              ${selected === option ? 'bg-[#B1D960] border-[#B1D960] text-black ' : 'bg-[#F4F6F8]'}
+              px-[16px] py-[4px] h-[35px] rounded-[12px] border border-main-gray font-pretendard text-[16px] font-medium leading-normal tracking-[0.016px]
+              ${selected === option ? 'bg-[#B1D960] border-[#B1D960] text-black ' : 'bg-bg-gray'}
             `}
           >
             {option}

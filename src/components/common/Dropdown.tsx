@@ -44,11 +44,11 @@ const Dropdown = ({ onSelect ,options}: DropdownProps) => {
   return (
     <div
       ref={dropdownRef}
-      className="relative flex justify-center rounded-[6px] border border-[#919191] bg-[#F4F6F8] min-w-[94px] h-[28px] px-[12px] py-[4px] z-10"
+      className="relative flex justify-center rounded-[6px] border border-main-gray bg-bg-gray min-w-[94px] h-[28px] px-[12px] py-[4px] z-10"
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-[4px] font-pretendard text-[#616161] text-[14px] not-italic font-regular leading-[18px]"
+        className="flex items-center gap-[4px] font-pretendard text-text-gray text-[14px] not-italic font-regular leading-[18px]"
       >
         <span>{selected}</span>
         <Icon name={isOpen ? 'dropup' : 'dropdown'} />
@@ -56,7 +56,7 @@ const Dropdown = ({ onSelect ,options}: DropdownProps) => {
 
       {isOpen && (
         <div
-          className="absolute mt-[33px] rounded-[6px] border border-[#919191] bg-[#F4F6F8] min-w-[94px] overflow-hidden"
+          className="absolute mt-[33px] rounded-[6px] border border-main-gray bg-bg-gray min-w-[94px] overflow-hidden"
           style={{ width: `${dropdownWidth}px` }}
         >
           <ul>
@@ -64,7 +64,7 @@ const Dropdown = ({ onSelect ,options}: DropdownProps) => {
               <li
                 key={option}
                 onClick={() => handleSelect(option)}
-                className="px-[12px] py-[4px] font-pretendard text-center text-[#616161] text-[14px] font-regular leading-[20px] cursor-pointer hover:text-white hover:bg-main-color"
+                className="px-[12px] py-[4px] font-pretendard text-center text-text-gray text-[14px] font-regular leading-[20px] cursor-pointer hover:text-white hover:bg-main-color"
               >
                 {option}
               </li>

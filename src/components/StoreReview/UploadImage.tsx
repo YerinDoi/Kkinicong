@@ -96,7 +96,7 @@ const UploadImage: React.FC<UploadImageProps> = ({ onFileSelect }) => {
 
   return (
     <div className="flex flex-col gap-[12px] font-pretendard">
-      <p className="text-[#919191] text-body-md-title">
+      <p className="text-main-gray text-body-md-title">
         <span className="text-black font-semibold leading-[20px] text-title-sb-button">
           사진을 추가해주세요
         </span>{' '}

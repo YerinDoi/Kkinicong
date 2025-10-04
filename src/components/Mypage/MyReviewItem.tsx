@@ -67,7 +67,7 @@ const MyReviewItem: React.FC<MyReviewItemProps> = ({
   const openDeleteModal = () => setOpenModal(true);
 
   return (
-    <div className="flex flex-col px-[16px] pb-[12px] border-b-[1.5px] border-[#E6E6E6]">
+    <div className="flex flex-col px-[16px] pb-[12px] border-b-[1.5px] border-disabled">
       <div className="flex flex-col gap-[12px]">
         {/* 가맹점 이름 + 작성 날짜 + 삭제 버튼 */}
         <div className="flex justify-between items-center grow shrink-0 basis-0">
@@ -79,14 +79,14 @@ const MyReviewItem: React.FC<MyReviewItemProps> = ({
               {storeName}
             </span>
             <img src={chevronIcon} />
-            <span className="font-pretendard font-normal text-[12px] leading-[18px] tracking-[0.012px] text-[#919191]">
+            <span className="font-pretendard font-normal text-[12px] leading-[18px] tracking-[0.012px] text-main-gray">
               {date}
             </span>
           </div>
 
           <button
             onClick={openDeleteModal}
-            className="h-[28px] font-pretendard font-normal text-[12px] leading-[18px] tracking-[0.012px] text-[#919191]"
+            className="h-[28px] font-pretendard font-normal text-[12px] leading-[18px] tracking-[0.012px] text-main-gray"
           >
             삭제
           </button>
@@ -125,7 +125,7 @@ const MyReviewItem: React.FC<MyReviewItemProps> = ({
         {(content || imageUrl) && (
           <div className="flex gap-auto justify-between">
             <p
-              className={`font-pretendard text-body-md-title font-normal text-[#616161] ${imageUrl ? 'w-[221px]' : ''}`}
+              className={`font-pretendard text-body-md-title font-normal text-text-gray ${imageUrl ? 'w-[221px]' : ''}`}
             >
               {content || ''}
             </p>

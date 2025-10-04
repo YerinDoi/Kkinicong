@@ -100,14 +100,14 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
   const closeDeleteModal = () => setShowDeleteModal(false);
 
   return (
-    <div className="flex flex-col gap-[12px] px-[16px] pb-[12px] border-b-[1.5px] border-[#E6E6E6]">
+    <div className="flex flex-col gap-[12px] px-[16px] pb-[12px] border-b-[1.5px] border-disabled">
       <div className="flex flex-col gap-[12px]">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-[8px] ">
             <OptimizedImage src={ProfileImg} alt = "프로필 사진" className="w-[40px]" />
             <div className="flex gap-[4px] ">
               <span className="font-meidum text-body-md-title ">{userName}</span>
-              <span className="text-body-md-description text-[#919191] self-center">
+              <span className="text-body-md-description text-main-gray self-center">
                 {date}
               </span>
             </div>
@@ -115,7 +115,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
           {isOwner ? (
             <button
               onClick={openDeleteModal}
-              className="text-body-md-description font-regular text-[#919191]"
+              className="text-body-md-description font-regular text-main-gray"
             >
               삭제
             </button>
@@ -157,7 +157,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
         </div>
       </div>
       <div className="flex gap-[20px] justify-between">
-        <p className="text-body-md-title font-regular leading-[24px] text-[#616161] flex-1">
+        <p className="text-body-md-title font-regular leading-[24px] text-text-gray flex-1">
           {content}
         </p>
         {imageUrl && (

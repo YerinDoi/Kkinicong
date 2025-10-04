@@ -210,7 +210,7 @@ const CommunityPostDetailPage = () => {
       showBackButton={true}
       onBack={() => navigate('/community')}
     />
-      <div className="pb-[16px] px-[20px] flex flex-col gap-[40px] border-b border-[#E6E6E6]">
+      <div className="pb-[16px] px-[20px] flex flex-col gap-[40px] border-b border-disabled">
         <div>
           <div className="flex flex-col gap-[16px]">
             <div className="flex items-center text-headline-sb-sub font-semibold justify-between">
@@ -234,7 +234,7 @@ const CommunityPostDetailPage = () => {
                   <span className="text-body-md-title font-regular">
                     {post.nickname ?? '익명'}
                   </span>
-                  <span className="flex gap-[2px] text-body-md-description text-[#C3C3C3]">
+                  <span className="flex gap-[2px] text-body-md-description text-sub-gray">
                     {post.isModified && '수정됨 ·'}{post.createdAt} · 조회 {post.viewCount}
                   </span>
                 </div>
@@ -266,9 +266,9 @@ const CommunityPostDetailPage = () => {
             
           </div>
         </div>
-        <div className="flex justify-between text-[#C3C3C3] items-center">
+        <div className="flex justify-between text-sub-gray items-center">
           <div
-            className={`flex gap-[8px]  text-title-sb-button items-center font-bold ${isLiked ? 'text-main-color' : 'text-[#c3c3c3]'}`}
+            className={`flex gap-[8px]  text-title-sb-button items-center font-bold ${isLiked ? 'text-main-color' : 'text-sub-gray'}`}
           >
             <button onClick={handleLikeClick} className="cursor-pointer">
               <Icon name={isLiked ? 'like-filled' : 'like'} />
@@ -295,7 +295,7 @@ const CommunityPostDetailPage = () => {
       />
 
       {/*댓글*/}
-      <div className="flex justify-end text-[#C3C3C3] items-center pr-[11px] h-[54px] font-semibold text-title-sb-button">
+      <div className="flex justify-end text-sub-gray items-center pr-[11px] h-[54px] font-semibold text-title-sb-button">
         <Icon name="comment" className="w-[15px] h-[14px] mr-[4px]" />
         {post.commentCount}
       </div>

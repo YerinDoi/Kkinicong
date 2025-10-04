@@ -31,7 +31,7 @@ const SearchInput = ({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="flex-1 min-w-0 text-[#919191] text-[12px] tracking-[0.012px] focus:outline-none"
+          className="flex-1 min-w-0 text-main-gray text-[12px] tracking-[0.012px] focus:outline-none"
         />
         <button className="ml-2" onClick={onSearch}>
           <Icon name="search" />

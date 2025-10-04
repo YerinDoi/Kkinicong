@@ -24,8 +24,8 @@ export default function FeedbackButtons({
             isMine
               ? 'border-[#E0E0E0] text-[#C0C0C0] bg-[#F8F8F8] cursor-not-allowed'
               : userSelection === true
-                ? 'bg-[#B1D960] border-[#C3C3C3] text-[#616161]'
-                : 'bg-white hover:bg-[var(--BG,#F3F5ED)] border-[#C3C3C3] text-[#616161]'
+                ? 'bg-[#B1D960] border-sub-gray text-text-gray'
+                : 'bg-white hover:bg-[var(--BG,#F3F5ED)] border-sub-gray text-text-gray'
           }`}
         >
           올바른 정보예요
@@ -38,8 +38,8 @@ export default function FeedbackButtons({
             isMine
               ? 'border-[#E0E0E0] text-[#C0C0C0] bg-[#F8F8F8] cursor-not-allowed'
               : userSelection === false
-                ? 'bg-[#B1D960] border-[#C3C3C3] text-[#616161]'
-                : 'bg-white hover:bg-[var(--BG,#F3F5ED)] border-[#C3C3C3] text-[#616161]'
+                ? 'bg-[#B1D960] border-sub-gray text-text-gray'
+                : 'bg-white hover:bg-[var(--BG,#F3F5ED)] border-sub-gray text-text-gray'
           }`}
         >
           잘못된 정보예요

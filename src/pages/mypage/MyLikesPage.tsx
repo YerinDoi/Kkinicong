@@ -73,12 +73,12 @@ const MyLikesPage = () => {
       />
 
       {loading && totalCount === 0 ? null : totalCount === 0 ? (
-        <div className="flex flex-1 w-full h-full items-center justify-center bg-[#F4F6F8]">
+        <div className="flex flex-1 w-full h-full items-center justify-center bg-bg-gray">
           <EmptyView title={'아직 좋아요 한 글이 없어요'} />
         </div>
       ) : (
         <div className="flex flex-col gap-[12px]">
-          <div className="bg-[#F3F5ED] font-pretendard text-title-sb-button text-[#616161] px-[34px] py-[8px] font-semibold mt-[8px]">
+          <div className="bg-[#F3F5ED] font-pretendard text-title-sb-button text-text-gray px-[34px] py-[8px] font-semibold mt-[8px]">
             좋아요 한 글 {totalCount}개
           </div>
 
