@@ -21,7 +21,7 @@ export default function OptimizedImage({
 
   return (
     <div
-      className={`relative overflow-hidden bg-gray-200 ${
+      className={`relative overflow-hidden  ${
         className ?? ""
       }`}
       style={{ width, height }}
@@ -36,7 +36,7 @@ export default function OptimizedImage({
         }`}
         onLoad={() => setLoaded(true)}
       />
-      {!loaded && <div className="absolute inset-0 bg-gray-300 animate-pulse" />}
+      {!loaded && <div className="absolute inset-0 animate-pulse" />}
     </div>
   );
 }
