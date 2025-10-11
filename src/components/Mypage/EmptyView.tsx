@@ -18,7 +18,7 @@ const EmptyView = ({
   actionType = 'link',
 
 }: EmptyViewProps) => (
-  <div className="flex flex-col items-center justify-center gap-[12px] text-center bg-[#F4F6F8]">
+  <div className="flex flex-col items-center justify-center gap-[12px] text-center bg-bg-gray">
     <img
       src={CuriousCongG}
       className="w-[165px] h-[144px] pb-[8px]"
@@ -49,7 +49,7 @@ const EmptyView = ({
     )}
     {actionText && actionType === 'button' && (
       <button
-        className="flex items-center justify-center mt-[12px] px-[20px] py-[12px] gap-[8px] bg-[#65CE58] font-pretendard text-white rounded-[24px] text-[16px] font-semibold leading-normal tracking-[0.016px]"
+        className="flex items-center justify-center mt-[12px] px-[20px] py-[12px] gap-[8px] bg-main-color font-pretendard text-white rounded-[24px] text-[16px] font-semibold leading-normal tracking-[0.016px]"
         onClick={onActionClick}
       >
         <img src={plusIcon} />

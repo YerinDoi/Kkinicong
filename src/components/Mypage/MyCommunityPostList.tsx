@@ -31,7 +31,7 @@ const MyCommunityPostList = ({
       className={`flex flex-col flex-1 ${posts.length === 0 && !loading ? '' : 'mt-[16px]'}`}
     >
       {posts.length === 0 && !loading ? (
-        <div className="flex flex-1 w-full items-center justify-center bg-[#F4F6F8] relative">
+        <div className="flex flex-1 w-full items-center justify-center bg-bg-gray relative">
           <div style={{ position: 'relative', top: '-36px' }}>
             <EmptyView
               title={'아직 작성한 글이 없어요\n당신의 첫 이야기를 들려주세요'}

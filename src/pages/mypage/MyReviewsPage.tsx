@@ -89,12 +89,12 @@ const MyReviewsPage = () => {
         onBack={() => navigate('/mypage')}
       />
       {totalCount === 0 ? (
-        <div className="flex flex-1 w-full h-full items-center justify-center bg-[#F4F6F8]">
+        <div className="flex flex-1 w-full h-full items-center justify-center bg-bg-gray">
           <EmptyView title={'아직 작성한 리뷰가 없어요'} />
         </div>
       ) : (
         <div className="flex flex-col gap-[12px]">
-          <div className="bg-[#F3F5ED] font-pretendard text-title-sb-button text-[#616161] px-[34px] py-[8px] font-semibold mt-[8px]">
+          <div className="bg-[#F3F5ED] font-pretendard text-title-sb-button text-text-gray px-[34px] py-[8px] font-semibold mt-[8px]">
             내가 쓴 리뷰 수 {totalCount}개
           </div>
           <div className="flex flex-col gap-[12px]">

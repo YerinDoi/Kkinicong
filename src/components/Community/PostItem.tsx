@@ -31,7 +31,7 @@ const PostItem = ({ post, keyword = '' }: PostItemProps) => {
 
   return (
     <div
-      className="flex flex-col px-[20px] gap-[12px] py-[12px] border-b border-[#C3C3C3] cursor-pointer"
+      className="flex flex-col px-[20px] gap-[12px] py-[12px] border-b border-sub-gray cursor-pointer"
       onClick={handleClick}
     >
       <div className={`flex ${hasThumbnail ? 'flex-row justify-between gap-[19px]' : 'flex-col gap-[12px]'}`}>
@@ -50,7 +50,7 @@ const PostItem = ({ post, keyword = '' }: PostItemProps) => {
             )}
             
             {post.contentPreview && (
-              <p className="text-body-md-title text-[#C3C3C3]">
+              <p className="text-body-md-title text-sub-gray">
                 {highlightKeyword(
                   post.contentPreview.length > 50
                     ? post.contentPreview.slice(0, 50) + '…'
@@ -82,7 +82,7 @@ const PostItem = ({ post, keyword = '' }: PostItemProps) => {
         )}
       </div>
 
-      <div className="flex justify-between text-body-md-title text-[#C3C3C3]">
+      <div className="flex justify-between text-body-md-title text-sub-gray">
         <div className="flex gap-[2px]">
           <span> 좋아요 {post.likeCount}</span> ·<span>{post.createdAt}</span> ·
           <span> 조회 {post.viewCount}</span>
@@ -116,7 +116,7 @@ export const highlightKeyword = (
     regex.test(part) ? (
       <span
         key={i}
-        className={isTitle ? 'font-bold underline underline-offset-2' : 'font-regular text-[#616161]'}
+        className={isTitle ? 'font-bold underline underline-offset-2' : 'font-regular text-text-gray'}
       >
         {part}
       </span>

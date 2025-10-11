@@ -53,10 +53,10 @@ const PopularPosts = () => {
                     onClick={() => handleClick(post.communityPostId)}
                     className="text-caption-m text-left truncate w-full flex items-center gap-[8px]"
                   >
-                    <span className="text-[#029F64] font-semibold">
+                    <span className="text-sub-color font-semibold">
                       {idx + 1}.
                     </span>
-                    <span className="text-[#919191] font-regular text-body-md-description ">
+                    <span className="text-main-gray font-regular text-body-md-description ">
                       {post.title}
                     </span>
                   </button>

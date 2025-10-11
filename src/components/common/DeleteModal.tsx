@@ -24,7 +24,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
           <OptimizedImage src={TrashIcon} alt="휴지통 아이콘" className="w-[40px] h-[40px]" />
           <div className="text-center flex flex-col gap-[8px]">
             <p className="text-black text-title-sb-button font-bold">{title}</p>
-            <p className="text-body-md-title font-regular text-[#919191]">
+            <p className="text-body-md-title font-regular text-main-gray">
               {description}
             </p>
           </div>
@@ -41,7 +41,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
             onClick={onDelete}
             heightClass="h-[44px]"
             widthClass="w-1/2"
-            bgColorClass="bg-[#919191]"
+            bgColorClass="bg-main-gray"
             textColorClass="text-white"
           />
         </div>

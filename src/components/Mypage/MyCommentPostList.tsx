@@ -44,10 +44,10 @@ const MyCommentPostList: React.FC<MyCommentPostListProps> = ({
             {post.myCommentList.map((comment: any, cidx: number) => (
               <div
                 key={`${comment.commentId}-${cidx}`}
-                className="items-center inline-flex gap-[8px] px-[20px] py-[9px] bg-[#F4F6F8]"
+                className="items-center inline-flex gap-[8px] px-[20px] py-[9px] bg-bg-gray"
               >
                 <img src={ReplyCommentIcon} alt="reply-comment" />
-                <span className="flex items-center font-pretendard text-[12px] text-[#616161] font-normal leading-[18px] tracking-[0.012px]">
+                <span className="flex items-center font-pretendard text-[12px] text-text-gray font-normal leading-[18px] tracking-[0.012px]">
                   {comment.content}
                 </span>
               </div>
@@ -57,7 +57,7 @@ const MyCommentPostList: React.FC<MyCommentPostListProps> = ({
       </div>
     ))}
     {commentPosts.length === 0 && !loading && (
-      <div className="flex flex-1 w-full h-full items-center justify-center bg-[#F4F6F8]">
+      <div className="flex flex-1 w-full h-full items-center justify-center bg-bg-gray">
         <EmptyView
           title={'아직 작성한 댓글이 없어요'}
           actionText="커뮤니티로 이동해볼까요?"

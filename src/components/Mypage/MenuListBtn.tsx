@@ -14,7 +14,7 @@ const MenuListBtn = ({
   const style =
     variant === 'default' 
       ? 'w-full flex items-center px-[20px] py-[16px] self-stretch rounded-[20px] bg-[#F3F5ED]'
-      : 'w-full flex items-center px-[20px] py-[8px] self-stretch rounded-[16px] bg-[#F4F6F8]';
+      : 'w-full flex items-center px-[20px] py-[8px] self-stretch rounded-[16px] bg-bg-gray';
 
   const textStyle = variant === 'default' ? 'text-[16px] font-semibold leading-[20px]' : 'text-[14px] font-normal leading-[24px]';
 
@@ -24,7 +24,7 @@ const MenuListBtn = ({
         onClick={onClick}
         className={`justify-between ${style}`}
     >
-        <span className={`font-pretendard text-[#616161] ${textStyle}`}>{label}</span>
+        <span className={`font-pretendard text-text-gray ${textStyle}`}>{label}</span>
         <img src={ChevronRightIcon} className="flex-shrink-0" />
     </button>
   );

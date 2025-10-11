@@ -33,7 +33,7 @@ const LoginRequiredBottomSheet: React.FC<LoginRequiredBottomSheetProps> = ({
               로그인이 필요한 기능이에요
             </span>
             {/* 서브텍스트 */}
-            <span className="text-[14px] font-regular text-[#919191] leading-[18px]">
+            <span className="text-[14px] font-regular text-main-gray leading-[18px]">
               로그인 후 더 많은 기능을 이용해볼까요?
             </span>
           </div>
@@ -42,7 +42,7 @@ const LoginRequiredBottomSheet: React.FC<LoginRequiredBottomSheetProps> = ({
         {/* 버튼 영역 */}
         <div className="flex gap-[8px] w-full px-[18px]">
           <button
-            className="flex flex-col justify-center items-center w-[117px] h-[44px] px-[20px] py-[12px] rounded-[12px] border-[1.5px] border-[#C3C3C3] text-[#616161] font-medium bg-white font-pretendard"
+            className="flex flex-col justify-center items-center w-[117px] h-[44px] px-[20px] py-[12px] rounded-[12px] border-[1.5px] border-sub-gray text-text-gray font-medium bg-white font-pretendard"
             onClick={onClose}
           >
             취소하기

@@ -41,7 +41,7 @@ const EditOrDeleteBottomSheet: React.FC<Props> = ({
           </div>
         </div>
         <div
-          className="flex justify-center border-t-[2px] border-[#F4F6F8] py-[12px] cursor-pointer"
+          className="flex justify-center border-t-[2px] border-bg-gray py-[12px] cursor-pointer"
           onClick={onClose}
         >
           취소

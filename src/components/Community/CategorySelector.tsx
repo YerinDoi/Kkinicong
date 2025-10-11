@@ -36,7 +36,7 @@
 //     <div>
 //       <button
 //         onClick={() => setIsOpen(true)}
-//         className="w-full border-[1px] border-[#C3C3C3] rounded-[12px] px-4 py-3 text-left text-body-md-description fort-reular text-[#919191]"
+//         className="w-full border-[1px] border-sub-gray rounded-[12px] px-4 py-3 text-left text-body-md-description fort-reular text-main-gray"
 //       >
 //         {selectedLabel || '카테고리를 선택하세요'}
 //       </button>
@@ -112,7 +112,7 @@ export default function CategorySelector({
           setIsOpen(true);
           setTempValue(value);
         }}
-        className="w-full border-[1px] border-[#C3C3C3] rounded-[12px] px-4 py-3 text-left text-body-md-description font-regular text-[#919191]"
+        className="w-full border-[1px] border-sub-gray rounded-[12px] px-4 py-3 text-left text-body-md-description font-regular text-main-gray"
       >
         {selectedLabel || '게시글의 카테고리를 선택해주세요'}
       </button>
@@ -138,10 +138,10 @@ export default function CategorySelector({
                     className="w-full flex items-center gap-5 px-2 py-2 text-left"
                   >
                     <div
-                      className={`w-[24px] h-[24px] rounded-full flex items-center justify-center bg-[#E6E6E6]`}
+                      className={`w-[24px] h-[24px] rounded-full flex items-center justify-center bg-disabled`}
                     >
                       {tempValue === categoryValue && (
-                        <div className="w-[18px] h-[18px] bg-[#65CE58] rounded-full" />
+                        <div className="w-[18px] h-[18px] bg-main-color rounded-full" />
                       )}
                     </div>
                     <span className="text-title-sb-button font-semibold">

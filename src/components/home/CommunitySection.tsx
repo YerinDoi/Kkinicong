@@ -54,7 +54,7 @@ function CommunitySection() {
           </span>
 
           <button
-            className="text-[#919191] text-body-md-description font-regular flex gap-[8px] items-center"
+            className="text-main-gray text-body-md-description font-regular flex gap-[8px] items-center"
             onClick={handleClick}
           >
             <span>확인하러 가기 </span>

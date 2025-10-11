@@ -55,7 +55,7 @@ function ConvenienceStoreSection() {
   }, [selectedBrand]);
 
   return (
-    <div className="px-[20px] pb-[24px] flex flex-col gap-[20px] border-b-8 border-[#F4F6F8]">
+    <div className="px-[20px] pb-[24px] flex flex-col gap-[20px] border-b-8 border-bg-gray">
       <div className="flex flex-col gap-[16px]">
         <button className="flex flex-col gap-[8px] " onClick={handleClick}>
           <img src={Card} className="w-[57px] h-[40px]" />
@@ -80,7 +80,7 @@ function ConvenienceStoreSection() {
           </span>
 
           <button
-            className="text-[#919191] text-body-md-description font-regular flex gap-[8px] items-center"
+            className="text-main-gray text-body-md-description font-regular flex gap-[8px] items-center"
             onClick={handleClick}
           >
             {noResult ? '정보 공유하기' : '전체보기'}
@@ -89,10 +89,10 @@ function ConvenienceStoreSection() {
         </div>
         {noResult ? (
           <div className="mt-[16px] justify-center items-center font-regular flex flex-col gap-[8px]">
-            <p className="text-[#919191] text-body-md-title leading-[18px]">
+            <p className="text-main-gray text-body-md-title leading-[18px]">
               아직은 공유된 제품 정보가 없어요
             </p>
-            <p className="text-[#C3C3C3] text-body-md-description">
+            <p className="text-sub-gray text-body-md-description">
               여러분의 결제 경험을 공유해주세요
             </p>
           </div>
@@ -106,10 +106,10 @@ function ConvenienceStoreSection() {
               >
                 <span>{item.name}</span>
                 <div
-                  className={`w-fit text-[12px] leading-[18px] font-semibold tracking-[0.01em] bg-[#F4F6F8] border-[1px] rounded-[8px] px-3 py-1 ${
+                  className={`w-fit text-[12px] leading-[18px] font-semibold tracking-[0.01em] bg-bg-gray border-[1px] rounded-[8px] px-3 py-1 ${
                     item.isAvailable
-                      ? 'text-[#029F64] border-[#029F64]'
-                      : 'text-[#FF6452] border-[#FF6452]'
+                      ? 'text-sub-color border-sub-color'
+                      : 'text-warning border-warning'
                   }`}
                 >
                   {item.isAvailable ? '결제가능' : '결제불가'}
@@ -117,7 +117,7 @@ function ConvenienceStoreSection() {
                 {/* <span
                   className={
                     item.isAvailable ? 'text-[#029F64] border-[#029F64]'
-                    : 'text-[#FF6452] border-[#FF6452]'
+                    : 'text-warning border-warning'
                   }
                 >
                   {item.isAvailable ? '결제가능' : '결제불가'}

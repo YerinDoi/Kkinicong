@@ -83,11 +83,11 @@ const MyPostsPage = () => {
           onChange={handleChipChange}
           className={
             tab === '게시글' && chip === '커뮤니티' && isCommunityEmpty
-              ? 'bg-[#F4F6F8]'
+              ? 'bg-bg-gray'
               : tab === '게시글' &&
                   chip === '편의점 게시판' &&
                   isConvenienceEmpty
-                ? 'bg-[#F4F6F8]'
+                ? 'bg-bg-gray'
                 : ''
           }
         />

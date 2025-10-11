@@ -15,7 +15,17 @@ const config: Config = {
         pretendard: ['Pretendard', 'sans-serif'],
       },
       colors: {
+        
+        black: '#212121',
         'main-color': '#65CE58',
+        'sub-color': '#029F64',
+        'disabled': '#E6E6E6',
+        'warning': '#FF6452',
+        'main-gray': '#919191',  
+        'sub-gray': '#C3C3C3',
+        'bg-gray': '#F4F6F8',
+        'text-gray': '#616161',
+        'bg': 'rgba(243, 245, 237, 1)',
       },
       boxShadow: {
         custom: '2px 4px 10px 0px rgba(0, 0, 0, 0.20)',

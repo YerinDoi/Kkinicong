@@ -90,7 +90,7 @@ export default function NicknamePage() {
       <div className="mb-[48px] mt-[24px] px-6">
         <div className="flex flex-col justify-between h-[60px]">
           <h1 className="text-xl font-bold text-black">반가워요!</h1>
-          <p className="text-xl font-semibold text-[#65CE58]">
+          <p className="text-xl font-semibold text-main-color">
             사용할 닉네임을 정해주세요
           </p>
         </div>
@@ -131,7 +131,7 @@ export default function NicknamePage() {
 
       {/* 하단 고정 버튼 */}
       <div className="flex-col mt-auto mx-7 justify-center">
-        <p className="text-[#919191] text-center text-[12px] text-body-md-description mb-5 leading-[150%] tracking-[0.012px]">
+        <p className="text-main-gray text-center text-[12px] text-body-md-description mb-5 leading-[150%] tracking-[0.012px]">
           끼니콩에 가입함으로써
           <br />
           끼니콩의{' '}
@@ -142,7 +142,7 @@ export default function NicknamePage() {
                 '_blank',
               )
             }
-            className="text-[#919191] font-pretendard text-[12px] font-bold leading-[150%] tracking-[0.012px] underline decoration-solid underline-offset-2 decoration-auto"
+            className="text-main-gray font-pretendard text-[12px] font-bold leading-[150%] tracking-[0.012px] underline decoration-solid underline-offset-2 decoration-auto"
           >
             이용 약관
           </button>

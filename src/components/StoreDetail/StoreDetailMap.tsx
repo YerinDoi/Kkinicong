@@ -288,13 +288,13 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
           {/* 메뉴 보러가기 */}
           <button
             onClick={handleViewMenu}
-            className="flex-1 flex items-center justify-center gap-[12px] h-[44px] bg-white hover:bg-[var(--BG,#F3F5ED)] border-[1.5px] border-[#C3C3C3] rounded-[12px] font-medium px-[20px] py-[12px]"
+            className="flex-1 flex items-center justify-center gap-[12px] h-[44px] bg-white hover:bg-[var(--BG,#F3F5ED)] border-[1.5px] border-sub-gray rounded-[12px] font-medium px-[20px] py-[12px]"
             disabled={
               loadingLinks || errorLoadingLinks || !externalLinks?.menuUrl
             }
           >
             <MenuBtn />
-            <span className="text-[16px] text-[#616161] leading-[20px] text-center">
+            <span className="text-[16px] text-text-gray leading-[20px] text-center">
               메뉴 보러가기
             </span>
           </button>
@@ -304,7 +304,7 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
           {!IS_MOBILE && (
             <button
               onClick={handleFindWayDesktop}
-              className="flex-1 flex items-center justify-center gap-[12px] h-[44px] bg-white hover:bg-[var(--BG,#F3F5ED)] border-[1.5px] border-[#C3C3C3] rounded-[12px] font-medium px-[20px] py-[12px]"
+              className="flex-1 flex items-center justify-center gap-[12px] h-[44px] bg-white hover:bg-[var(--BG,#F3F5ED)] border-[1.5px] border-sub-gray rounded-[12px] font-medium px-[20px] py-[12px]"
               disabled={
                 loadingLinks ||
                 errorLoadingLinks ||
@@ -312,7 +312,7 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
               }
             >
               <NavigationBtn />
-              <span className="text-[16px] text-[#616161] leading-[20px] text-center">
+              <span className="text-[16px] text-text-gray leading-[20px] text-center">
                 길 찾기
               </span>
             </button>
@@ -321,7 +321,7 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
           {IS_ANDROID && (
             <button
               onClick={handleFindWayAndroid}
-              className="flex-1 flex items-center justify-center gap-[12px] h-[44px] bg-white hover:bg-[var(--BG,#F3F5ED)] border-[1.5px] border-[#C3C3C3] rounded-[12px] font-medium px-[20px] py-[12px]"
+              className="flex-1 flex items-center justify-center gap-[12px] h-[44px] bg-white hover:bg-[var(--BG,#F3F5ED)] border-[1.5px] border-sub-gray rounded-[12px] font-medium px-[20px] py-[12px]"
               disabled={
                 loadingLinks ||
                 errorLoadingLinks ||
@@ -329,7 +329,7 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
               }
             >
               <NavigationBtn />
-              <span className="text-[16px] text-[#616161] leading-[20px] text-center">
+              <span className="text-[16px] text-text-gray leading-[20px] text-center">
                 길 찾기
               </span>
             </button>
@@ -339,11 +339,11 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
             <a
               href={iosDeepLinks.appUrl} // 진짜 링크로 열기(사용자 제스처)
               onClick={onClickIOSAnchor} // 폴백 타이머/전환 감지
-              className="flex-1 flex items-center justify-center gap-[12px] h-[44px] bg-white hover:bg-[var(--BG,#F3F5ED)] border-[1.5px] border-[#C3C3C3] rounded-[12px] font-medium px-[20px] py-[12px]"
+              className="flex-1 flex items-center justify-center gap-[12px] h-[44px] bg-white hover:bg-[var(--BG,#F3F5ED)] border-[1.5px] border-sub-gray rounded-[12px] font-medium px-[20px] py-[12px]"
               style={{ textDecoration: 'none' }}
             >
               <NavigationBtn />
-              <span className="text-[16px] text-[#616161] leading-[20px] text-center">
+              <span className="text-[16px] text-text-gray leading-[20px] text-center">
                 길 찾기
               </span>
             </a>
@@ -352,7 +352,7 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
           {IS_IOS && !iosDeepLinks && (
             <button
               onClick={handleFindWayDesktop}
-              className="flex-1 flex items-center justify-center gap-[12px] h-[44px] bg-white hover:bg-[var(--BG,#F3F5ED)] border-[1.5px] border-[#C3C3C3] rounded-[12px] font-medium px-[20px] py-[12px]"
+              className="flex-1 flex items-center justify-center gap-[12px] h-[44px] bg-white hover:bg-[var(--BG,#F3F5ED)] border-[1.5px] border-sub-gray rounded-[12px] font-medium px-[20px] py-[12px]"
               disabled={
                 loadingLinks ||
                 errorLoadingLinks ||
@@ -360,7 +360,7 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
               }
             >
               <NavigationBtn />
-              <span className="text-[16px] text-[#616161] leading-[20px] text-center">
+              <span className="text-[16px] text-text-gray leading-[20px] text-center">
                 길 찾기
               </span>
             </button>

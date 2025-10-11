@@ -71,7 +71,7 @@ const TopStoreItem = ({ store }: TopStoreItemProps) => {
 
           {/* 주소: 이름이 2줄이면 1줄, 1줄이면 2줄 */}
           <div
-            className={`text-[#919191] text-body-md-description font-regular tracking-tight ${
+            className={`text-main-gray text-body-md-description font-regular tracking-tight ${
               isNameTwoLine ? 'line-clamp-1' : 'line-clamp-2'
             }`}
           >
@@ -79,7 +79,7 @@ const TopStoreItem = ({ store }: TopStoreItemProps) => {
           </div>
 
           {/* 조회수 */}
-          <div className="mt-[4px] text-[#919191] text-body-md-description font-regular tracking-tight">
+          <div className="mt-[4px] text-main-gray text-body-md-description font-regular tracking-tight">
             조회 {store.viewCount}
           </div>
         </div>

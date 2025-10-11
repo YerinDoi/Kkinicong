@@ -7,7 +7,7 @@ interface RecentKeywordProps {
 
 const RecentKeyword = ({ label, onDelete, onClick }: RecentKeywordProps) => {
   return (
-    <div className="flex w-fit items-center px-[12px] py-[4px] bg-[#F4F6F8] border border-[#919191] text-body-md-title rounded-[6px] font-regular gap-[10px]" onClick={onClick}>
+    <div className="flex w-fit items-center px-[12px] py-[4px] bg-bg-gray border border-main-gray text-body-md-title rounded-[6px] font-regular gap-[10px]" onClick={onClick}>
       <span>{label}</span>
       <button
         onClick={(e) => {

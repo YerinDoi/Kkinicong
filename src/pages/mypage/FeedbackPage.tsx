@@ -45,7 +45,7 @@ const FeedbackPage = () => {
       />
 
       <div className="flex flex-col gap-[44px] px-[20px] font-pretendard text-[16px] font-semibold leading-[20px]">
-        <div className="border-b border-[#C3C3C3]">
+        <div className="border-b border-sub-gray">
           <div className="flex flex-col h-[44px] justify-between mt-[24px]">
             <p>
               <span className="text-main-color">끼니콩</span>을 이용하면서
