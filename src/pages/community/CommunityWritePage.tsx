@@ -136,7 +136,7 @@ export default function CommunityWritePage() {
             placeholder="글 제목"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full border-[1px] border-[#C3C3C3] rounded-[12px] px-4 py-3 text-body-md-description fort-reular placeholder:text-[#919191]"
+            className="w-full border-[1px] border-sub-gray rounded-[12px] px-4 py-3 text-body-md-description fort-reular placeholder:text-main-gray"
           />
         </div>
 
@@ -151,7 +151,7 @@ export default function CommunityWritePage() {
               el.style.height = 'auto';              // 높이 초기화
               el.style.height = `${el.scrollHeight}px`; // 내용에 맞게 확장
             }}
-            className="w-full border-[1px] border-[#C3C3C3] rounded-[12px] px-4 py-3 h-[70px] text-body-md-description fort-reular placeholder:text-[#919191] resize-none scrollbar-hide"
+            className="w-full border-[1px] border-sub-gray rounded-[12px] px-4 py-3 h-[70px] text-body-md-description fort-reular placeholder:text-main-gray resize-none scrollbar-hide"
           />
         </div>
 
@@ -159,7 +159,7 @@ export default function CommunityWritePage() {
           <span className="text-title-sb-button font-semibold">
             사진을 추가해주세요
           </span>
-          <span className="text-[#919191]">(선택/최대 3장)</span>
+          <span className="text-main-gray">(선택/최대 3장)</span>
           <ImageUploader images={images} setImages={setImages} />
         </div>
       </div>
@@ -168,8 +168,8 @@ export default function CommunityWritePage() {
         <button
           disabled={!isValid || isSubmitting}
           onClick={handleSubmit}
-          className={`py-4 w-full mb-8 rounded-[12px] text-[#919191] text-[16px] font-semibold ${
-            isValid && !isSubmitting ? 'bg-[#65CE58] text-[#FFFFFF]' : 'bg-[#E6E6E6]'
+          className={`py-4 w-full mb-8 rounded-[12px] text-main-gray text-[16px] font-semibold ${
+            isValid && !isSubmitting ? 'bg-main-color text-[#FFFFFF]' : 'bg-disabled'
           }`}
         >
           등록하기

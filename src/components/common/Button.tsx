@@ -16,13 +16,13 @@ const Button: React.FC<ButtonProps> = ({
   heightClass = 'auto',
   widthClass = 'w-full',
   bgColorClass = 'bg-[#FFF]',
-  textColorClass = 'text-[#616161]',
+  textColorClass = 'text-text-gray',
   className = '',
 }) => {
   return (
     <button
       onClick={onClick}
-      className={`${widthClass} ${heightClass} leading-[20px] font-pretendard justify-center items-center border-[#C3C3C3] border-[1.5px] py-[12px] px-[20px] text-title-sb-button font-semibold text-center rounded-[12px] ${bgColorClass} ${textColorClass} ${className}`}
+      className={`${widthClass} ${heightClass} leading-[20px] font-pretendard justify-center items-center border-sub-gray border-[1.5px] py-[12px] px-[20px] text-title-sb-button font-semibold text-center rounded-[12px] ${bgColorClass} ${textColorClass} ${className}`}
     >
       {text}
     </button>

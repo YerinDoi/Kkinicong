@@ -3,6 +3,7 @@ import AddIcon from '@/assets/svgs/common/add-icon.svg';
 import { useLoginStatus } from '@/hooks/useLoginStatus';
 import LoginRequiredBottomSheet from './LoginRequiredBottomSheet';
 import { useState } from 'react';
+import OptimizedImage from './OptimizedImage';
 
 const FloatingButton = () => {
   const navigate = useNavigate();
@@ -29,8 +30,9 @@ const FloatingButton = () => {
         onClick={handleClick}
         className="bg-main-color shadow-floating flex gap-[8px] items-center px-[20px] py-[12px] rounded-[24px] w-[104px] h-[43px] text-[15px] text-white text-cursor-pointer z-50"
       >
-        <img
+        <OptimizedImage
           src={AddIcon}
+          alt = "추가 아이콘"
           className="w-[14px] h-[14px] inline-block align-middle"
         />
         <p className="leading-none align-middle">글쓰기</p>

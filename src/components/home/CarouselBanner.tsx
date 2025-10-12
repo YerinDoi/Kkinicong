@@ -20,7 +20,7 @@ export default function CarouselBanner({ onSlideChange }: CarouselBannerProps) {
       content: (
         <div className="flex justify-between px-[20px] ">
           <div className="h-full text-title-sb-button py-[14px] font-semibold leading-[20px] flex flex-col gap-[4px] justify-center">
-            <p className="text-[#029F64]">아동급식카드</p>
+            <p className="text-sub-color">아동급식카드</p>
             <p className="text-black">사용 가맹점을 검색하고,</p>
             <p className="text-black">리뷰를 남겨보세요!</p>
           </div>
@@ -31,10 +31,10 @@ export default function CarouselBanner({ onSlideChange }: CarouselBannerProps) {
     {
       content: (
         <div className=" px-[16px] font-semibold text-title-sb-button flex flex-col gap-[12px]">
-          <div className="text-[#616161] flex flex-col leading-[22px]">
+          <div className="text-text-gray flex flex-col leading-[22px]">
             <span>
               현재는{' '}
-              <span className="text-[#029F64] ">
+              <span className="text-sub-color ">
                 인천, 부천, 수원, 고양, 용인, 성남
               </span>
               만 제공되며,{' '}
@@ -43,7 +43,7 @@ export default function CarouselBanner({ onSlideChange }: CarouselBannerProps) {
           </div>
 
           <button
-            className="px-[16px] w-[129px] h-[28px] bg-[#65CE58] text-white rounded-[12px] text-body-md-title font-regular items-center flex gap-[8px]"
+            className="px-[16px] w-[129px] h-[28px] bg-main-color text-white rounded-[12px] text-body-md-title font-regular items-center flex gap-[8px]"
             onClick={() => navigate('/feedback', { state: { returnTo: '/' } })}
           >
             <img src={AddIcon} className="w-[12px] h-[12px]" />
@@ -80,7 +80,7 @@ export default function CarouselBanner({ onSlideChange }: CarouselBannerProps) {
           <div
             key={i}
             className={`w-[8px] h-[8px] rounded-full ${
-              i === activeIndex ? 'bg-[#919191]' : 'bg-[#C3C3C3]'
+              i === activeIndex ? 'bg-main-gray' : 'bg-sub-gray'
             }`}
           />
         ))}

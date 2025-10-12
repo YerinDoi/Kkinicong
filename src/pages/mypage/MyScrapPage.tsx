@@ -61,7 +61,7 @@ const MyScrapPage = () => {
       />
 
       {loading ? null : scrapStores.length === 0 ? (
-        <div className="flex flex-1 w-full h-full items-center justify-center bg-[#F4F6F8]">
+        <div className="flex flex-1 w-full h-full items-center justify-center bg-bg-gray">
           <EmptyView
             title={'아직 찜한 가게가 없어요'}
             actionText="가게 둘러보기"
@@ -71,7 +71,7 @@ const MyScrapPage = () => {
         </div>
       ) : (
         <div className="flex flex-col">
-          <div className="bg-[#F3F5ED] font-pretendard text-title-sb-button text-[#616161] px-[34px] py-[8px] font-semibold mt-[8px]">
+          <div className="bg-[#F3F5ED] font-pretendard text-title-sb-button text-text-gray px-[34px] py-[8px] font-semibold mt-[8px]">
             내가 찜한 가게 수 {scrapStores.length}개
           </div>
           <div

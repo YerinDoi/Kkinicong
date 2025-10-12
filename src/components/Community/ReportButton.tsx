@@ -112,7 +112,7 @@ const ReportButton: React.FC<ReportButtonProps> = ({
     <>
       <button
         onClick={handleClick}
-        className="text-body-md-description font-regular text-[#919191] flex gap-[4px]"
+        className="text-body-md-description font-regular text-main-gray flex gap-[4px]"
       >
         <img src={AlarmIcon} className="h-[14px]" />
         <p>신고하기</p>

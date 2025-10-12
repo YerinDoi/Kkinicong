@@ -28,14 +28,14 @@ const NoSearchResults: React.FC<NoSearchResultsProps> = ({
         {type === 'search' ? (
           <>
             <span className="text-[#212121]">'{query}'</span>
-            <span className="text-[#919191]">
+            <span className="text-main-gray">
               <span>와 관련한</span> <p>검색 결과가 없어요</p>
             </span>
           </>
         ) : (
           <>
-            <span className="text-[#919191]">내 주위에 가까운</span>
-            <span className="text-[#919191]">
+            <span className="text-main-gray">내 주위에 가까운</span>
+            <span className="text-main-gray">
               <p>가맹점이 없어요</p>
             </span>
           </>
@@ -45,7 +45,7 @@ const NoSearchResults: React.FC<NoSearchResultsProps> = ({
       {/* 추천 검색어 영역 (추천 검색어가 있을 경우만 표시) */}
       {suggestedSearchTerm && (
         <button
-          className="text-[#919191] text-center font-pretendard text-[14px] font-regular leading-[18px] underline mt-2"
+          className="text-main-gray text-center font-pretendard text-[14px] font-regular leading-[18px] underline mt-2"
           onClick={() => onSuggestClick && onSuggestClick(suggestedSearchTerm)}
         >
           '{suggestedSearchTerm}'를 찾으셨나요?

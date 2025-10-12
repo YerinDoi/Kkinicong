@@ -13,7 +13,7 @@ const SearchOnMapBtn: React.FC<SearchOnMapBtnProps> = ({ lat, lng, onClick }) =>
     onClick={() => onClick(lat, lng)}
   >
     <img src={ReloadIcon} alt="재검색 아이콘"/>
-    <span className="font-pretendard text-[14px] text-[#029F64] font-normal leading-[24px] ">현 지도에서 검색</span>
+    <span className="font-pretendard text-[14px] text-sub-color font-normal leading-[24px] ">현 지도에서 검색</span>
   </button>
 );
 

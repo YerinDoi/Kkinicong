@@ -86,7 +86,7 @@ const NicknameEditPage = () => {
           <p className="text-[20px] font-semibold leading-[28px]">
             수정할 닉네임을 적어주세요
           </p>
-          <p className="text-[14px] font-normal leading-[24px] text-[#919191]">
+          <p className="text-[14px] font-normal leading-[24px] text-main-gray">
             닉네임 수정은 1회 가능해요
           </p>
         </div>

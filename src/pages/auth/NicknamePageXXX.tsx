@@ -9,11 +9,11 @@ function NicknamePageXXX() {
       <div className="mb-6">
         <div className="mb-4">
           <h1 className="text-xl font-bold text-black">반가워요!</h1>
-          <p className="text-xl font-bold text-[#65CE58]">
+          <p className="text-xl font-bold text-main-color">
             사용할 닉네임을 정해주세요
           </p>
         </div>
-        <p className="text-body-md-title text-[#919191]">
+        <p className="text-body-md-title text-main-gray">
           설정한 닉네임은 마이페이지에서 수정할 수 있어요
         </p>
       </div>

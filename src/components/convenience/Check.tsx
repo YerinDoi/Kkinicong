@@ -37,7 +37,7 @@ const Check: React.FC<CheckProps> = ({
       </div>
 
       {!hideLabelText && (
-        <span className={checked ? 'text-black ' : 'text-[#919191]'}>
+        <span className={checked ? 'text-black ' : 'text-main-gray'}>
           {label}
         </span>
       )}

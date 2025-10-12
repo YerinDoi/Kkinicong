@@ -45,7 +45,7 @@ export default function HomeTopBar({ address = '' }: HomeTopBarProps) {
             <LogoTextIcon className="w-16" />
             <LogoIcon className="w-6 h-6" />
           </div>
-          <span className="text-body-md-description text-[#919191] font-regular">
+          <span className="text-body-md-description text-main-gray font-regular">
             {address}
           </span>
         </div>
@@ -58,7 +58,7 @@ export default function HomeTopBar({ address = '' }: HomeTopBarProps) {
           ) : (
             <button
               onClick={login}
-              className="text-body-md-title text-[#919191] whitespace-nowrap"
+              className="text-body-md-title text-main-gray whitespace-nowrap"
             >
               로그인하기
             </button>

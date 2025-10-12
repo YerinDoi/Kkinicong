@@ -101,7 +101,7 @@ const MenuBar = ({ isOpen, onClose }: MenuBarProps) => {
                     </span>
                   </button>
                   {index === 4 && (
-                    <div className="mt-[4px] pb-[20px] border-b-4 border-[#F4F6F8]" />
+                    <div className="mt-[4px] pb-[20px] border-b-4 border-bg-gray" />
                   )}
                 </div>
               ))}

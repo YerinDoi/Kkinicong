@@ -168,7 +168,7 @@ export default function ConvenienceDetailPage() {
             <span className="text-body-md-title font-regular">
               {post.userNickname}
             </span>
-            <span className="text-body-md-description font-regular text-[#919191]">
+            <span className="text-body-md-description font-regular text-main-gray">
               {post.createTime}
             </span>
           </div>
@@ -182,10 +182,10 @@ export default function ConvenienceDetailPage() {
         {/* 상품명 , 상태, 카테고리 */}
         <div className="flex flex-col py-2">
           <div
-            className={`w-fit text-[12px] leading-[18px] font-semibold tracking-[0.01em] bg-[#F4F6F8] border-[1px] rounded-[8px] px-3 py-1 ${
+            className={`w-fit text-[12px] leading-[18px] font-semibold tracking-[0.01em] bg-bg-gray border-[1px] rounded-[8px] px-3 py-1 ${
               post.isAvailable
-                ? 'text-[#029F64] border-[#029F64]'
-                : 'text-[#FF6452] border-[#FF6452]'
+                ? 'text-sub-color border-sub-color'
+                : 'text-warning border-warning'
             }`}
           >
             {post.isAvailable ? '결제가능' : '결제불가'}
@@ -194,10 +194,10 @@ export default function ConvenienceDetailPage() {
             {post.name}
           </span>
           <div className="flex gap-2">
-            <div className="border-[#919191] border-[1.5px] leading-[1] rounded-[12px] px-5 py-1 bg-[#F4F6F8]">
+            <div className="border-main-gray border-[1.5px] leading-[1] rounded-[12px] px-5 py-1 bg-bg-gray">
               {fromServerCategory(post.category)}
             </div>
-            <div className="border-[#919191] border-[1.5px] leading-[1] rounded-[12px] px-5 py-1 bg-[#F4F6F8]">
+            <div className="border-main-gray border-[1.5px] leading-[1] rounded-[12px] px-5 py-1 bg-bg-gray">
               {fromServerBrand(post.brand)}
             </div>
           </div>
@@ -209,13 +209,13 @@ export default function ConvenienceDetailPage() {
             <label>상세설명</label>
           </div>
 
-          <p className="min-h-20 px-4 py-3 border border-[#C3C3C3] rounded-[12px] text-[#616161] text-body-md-title">
+          <p className="min-h-20 px-4 py-3 border border-sub-gray rounded-[12px] text-text-gray text-body-md-title">
             {post.description}
           </p>
         </div>
 
         {/* 구분선 */}
-        <div className="my-7 h-[1.5px] bg-[#E6E6E6]" />
+        <div className="my-7 h-[1.5px] bg-disabled" />
 
         {/* 피드백 버튼 */}
         <FeedbackButtons
