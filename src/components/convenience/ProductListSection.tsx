@@ -108,7 +108,7 @@ export default function ProductListSection({
         <p className="text-body-md-title text-black text-center mt-4">
           아직은 공유된 제품 정보가 없어요
         </p>
-        <p className="text-body-md-description text-[#919191] text-center mt-2">
+        <p className="text-body-md-description text-main-gray text-center mt-2">
           여러분의 결제 경험을 공유해주세요
         </p>
       </div>
@@ -133,7 +133,7 @@ export default function ProductListSection({
             if (suppressed) return;
             navigate(`/convenience/post/${p.id}`);
           }}
-          className="flex justify-between items-center py-[14px] border-b-[3px] border-[#F4F6F8] cursor-pointer"
+          className="flex justify-between items-center py-[14px] border-b-[3px] border-bg-gray cursor-pointer"
         >
           {/* 왼쪽: 이름(애니메이션) + 시간(고정) */}
           <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -153,7 +153,7 @@ export default function ProductListSection({
               </AnimatePresence>
             </div>
 
-            <span className="leading-[20px] text-body-md-description text-[#919191]">
+            <span className="leading-[20px] text-body-md-description text-main-gray">
               {p.relativeCreatedAt}
             </span>
           </div>
@@ -168,10 +168,10 @@ export default function ProductListSection({
                 animate="center"
                 exit="exit"
                 custom={dir}
-                className={`inline-block text-[12px] leading-[18px] font-semibold tracking-[0.01em] bg-[#F4F6F8] border-[1px] rounded-[8px] px-3 py-1 will-change-transform ${
+                className={`inline-block text-[12px] leading-[18px] font-semibold tracking-[0.01em] bg-bg-gray border-[1px] rounded-[8px] px-3 py-1 will-change-transform ${
                   p.isAvailable
-                    ? 'text-[#029F64] border-[#029F64]'
-                    : 'text-[#FF6452] border-[#FF6452]'
+                    ? 'text-sub-color border-main-color'
+                    : 'text-warning border-warning'
                 }`}
               >
                 {p.isAvailable ? '결제가능' : '결제불가'}

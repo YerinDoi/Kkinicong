@@ -52,13 +52,13 @@ export default function NameRecommendationPage() {
         <label className="text-title-sb-button font-semibold mb-3">
           제품명
         </label>
-        <div className="flex px-4 py-4 mb-10 border border-[#C3C3C3] rounded-[12px]">
+        <div className="flex px-4 py-4 mb-10 border border-sub-gray rounded-[12px]">
           <input
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             placeholder="ex) 서울우유 500ML"
-            className="flex-1 outline-none text-[#616161] text-body-md-title
-                     placeholder:text-[#919191] placeholder:text-body-md-description"
+            className="flex-1 outline-none text-text-gray text-body-md-title
+                     placeholder:text-main-gray placeholder:text-body-md-description"
           />
           <button onClick={handleSearch}>
             <img src={SearchIcon} alt="검색" className="w-5 h-5" />
@@ -101,7 +101,7 @@ export default function NameRecommendationPage() {
           }
         }}
         className={`mt-auto mb-6 mx-4 py-3 rounded-[12px] font-semibold text-white ${
-          selected ? 'bg-[#65CE58]' : 'bg-[#E6E6E6]'
+          selected ? 'bg-main-color' : 'bg-disabled'
         }`}
         disabled={!selected}
       >

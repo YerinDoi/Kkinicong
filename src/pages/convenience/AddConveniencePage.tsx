@@ -85,11 +85,11 @@ export default function AddConveniencePage() {
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
             placeholder="ex) 서울우유 500ML"
-            className="w-full p-4 border border-[#C3C3C3] rounded-[12px] text-[#616161] text-body-md-title 
-                     placeholder:text-[#919191] placeholder:text-body-md-description"
+            className="w-full p-4 border border-sub-gray rounded-[12px] text-text-gray text-body-md-title 
+                     placeholder:text-main-gray placeholder:text-body-md-description"
           />
           <button
-            className="self-start inline-flex items-center text-[#029F64] text-body-md-title font-regular bg-[#F3F5ED] px-[12px] py-[6px] rounded-[8px]"
+            className="self-start inline-flex items-center text-sub-color text-body-md-title font-regular bg-[#F3F5ED] px-[12px] py-[6px] rounded-[8px]"
             onClick={() => navigate('/convenience/name-recommendation')}
           >
             <img
@@ -124,7 +124,7 @@ export default function AddConveniencePage() {
         <div>
           <div className="flex mb-3 justify-between items-center text-title-sb-button font-semibold">
             <label>상세설명 (선택)</label>
-            <span className="text-right text-[#919191]">
+            <span className="text-right text-main-gray">
               {description.length}/300
             </span>
           </div>
@@ -134,8 +134,8 @@ export default function AddConveniencePage() {
             onChange={(e) => setDescription(e.target.value)}
             maxLength={300}
             placeholder="ex) 직원이 알려줬어요"
-            className="w-full p-4 border border-[#C3C3C3] rounded-[12px] text-[#616161] text-body-md-title 
-                     placeholder:text-[#919191] placeholder:text-body-md-description"
+            className="w-full p-4 border border-sub-gray rounded-[12px] text-text-gray text-body-md-title 
+                     placeholder:text-main-gray placeholder:text-body-md-description"
           />
         </div>
 
@@ -156,10 +156,10 @@ export default function AddConveniencePage() {
       </div>
 
       <button
-        className={`mx-4 my-7 py-3 rounded-lg font-semibold text-[#919191] ${
+        className={`mx-4 my-7 py-3 rounded-lg font-semibold text-main-gray ${
           isFormValid
-            ? 'bg-[#65CE58] text-[#FFFFFF]'
-            : 'bg-[#E6E6E6] text-[#919191]'
+            ? 'bg-main-color text-[#FFFFFF]'
+            : 'bg-disabled text-main-gray'
         }`}
         disabled={!isFormValid}
         onClick={handleSubmit}

@@ -108,8 +108,8 @@ const StoreReviewPage = () => {
             disabled={!isSubmitEnabled}
             className={`text-white font-semibold text-title-sb-button px-[16px] py-[12px] rounded-[8px] mt-[24px] ${
               isSubmitEnabled
-                ? 'bg-[#65CE58]'
-                : 'bg-[#E6E6E6] cursor-not-allowed'
+                ? 'bg-main-color'
+                : 'bg-disabled cursor-not-allowed'
             }`}
           >
             공유하기

@@ -14,7 +14,7 @@ const TabBar: React.FC<TabBarProps> = ({ value, onChange, tabs }) => {
           key={tab}
           className={`
             flex-1 pb-[8px] text-center font-pretendard font-semibold text-[16px] tracking-[0.016px] transition-colors
-            ${value === tab ? 'text-black' : 'text-[#919191]'}
+            ${value === tab ? 'text-black' : 'text-main-gray'}
           `}
           onClick={() => onChange(tab)}
         >
@@ -23,7 +23,7 @@ const TabBar: React.FC<TabBarProps> = ({ value, onChange, tabs }) => {
       ))}
 
       {/* 바닥줄 (회색) */}
-      <div className="absolute left-0 bottom-0 w-full h-[2px] rounded-[10px] bg-[#C3C3C3] z-0" />
+      <div className="absolute left-0 bottom-0 w-full h-[2px] rounded-[10px] bg-sub-gray z-0" />
 
       {/* 하이라이트 바 */}
       <div

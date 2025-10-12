@@ -58,7 +58,7 @@ const Header = ({
           </span>
 
           {location && (
-            <span className="absolute top-full mt-[1.5px] text-[#919191] text-body-md-description font-regular leading-[18px]">
+            <span className="absolute top-full mt-[1.5px] text-main-gray text-body-md-description font-regular leading-[18px]">
               {location}
             </span>
           )}

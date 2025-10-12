@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ProfileImg from '@/assets/svgs/common/profile-img.svg';
+import OptimizedImage from './OptimizedImage';
 
 interface BottomSheetFormProps {
   title: string;
@@ -61,7 +62,7 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
         <div className="px-[24px] flex flex-col gap-[12px] h-[184px]">
           <div className="flex flex-col gap-[2.635px]">
             {storeInfo.category && (
-              <div className="text-body-md-description text-[#919191] font-regular">
+              <div className="text-body-md-description text-main-gray font-regular">
                 {storeInfo.category}
               </div>
             )}
@@ -81,13 +82,13 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
       {reviewInfo && (
         <div className="px-[24px] flex flex-col gap-[12px]">
           <div className="flex gap-[4px] items-center">
-            <img src={ProfileImg} className="w-[36.3px] h-[36.3px] " />
+            <OptimizedImage src={ProfileImg} alt="사용자 프로필 이미지" className="w-[36.3px] h-[36.3px] " />
             <span className="text-body-md-title font-regular leading-[24px]">
               {reviewInfo.userName}
             </span>
           </div>
 
-          <span className="text-body-md-title mb-[13.7px] font-regular leading-[24px] text-[#616161]">
+          <span className="text-body-md-title mb-[13.7px] font-regular leading-[24px] text-text-gray">
             {reviewInfo.content}
           </span>
         </div>
@@ -97,13 +98,13 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
       {commentInfo && (
         <div className="px-[24px] flex flex-col gap-[12px]">
           <div className="flex gap-[4px] items-center">
-            <img src={ProfileImg} className="w-[36.3px] h-[36.3px] " />
+            <OptimizedImage src={ProfileImg} alt="사용자 프로필 이미지" className="w-[36.3px] h-[36.3px] " />
             <span className="text-body-md-title font-regular leading-[24px]">
               {commentInfo.nickname}
             </span>
           </div>
 
-          <span className="text-body-md-title mb-[13.7px] font-regular leading-[24px] text-[#616161]">
+          <span className="text-body-md-title mb-[13.7px] font-regular leading-[24px] text-text-gray">
             {commentInfo.content.length > 30
               ? commentInfo.content.slice(0, 30) + '...'
               : commentInfo.content}
@@ -115,13 +116,13 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
       {postInfo && (
         <div className="px-[24px] flex flex-col gap-[12px]">
           <div className="flex gap-[4px] items-center">
-            <img src={ProfileImg} className="w-[36.3px] h-[36.3px] " />
+            <OptimizedImage src={ProfileImg} alt="사용자 프로필 이미지" className="w-[36.3px] h-[36.3px] " />
             <span className="text-body-md-title font-regular leading-[24px]">
               {postInfo.nickname}
             </span>
           </div>
 
-          <span className="text-body-md-title mb-[13.7px] font-regular leading-[24px] text-[#616161]">
+          <span className="text-body-md-title mb-[13.7px] font-regular leading-[24px] text-text-gray">
             {postInfo.content.length > 30
               ? postInfo.content.slice(0, 30) + '...'
               : postInfo.content}
@@ -130,7 +131,7 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
       )}
 
       {/*공통*/}
-      <div className="flex flex-col pt-[12px] gap-[8px] px-[39px] border-t-[2px] border-[#F4F6F8]">
+      <div className="flex flex-col pt-[12px] gap-[8px] px-[39px] border-t-[2px] border-bg-gray">
         <p className="text-title-sb-button font-semibold leading-[20px]">
           {question}
         </p>
@@ -151,9 +152,9 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
               />
 
               {/* 커스텀 원 */}
-              <div className="w-[24px] h-[24px] rounded-full flex items-center justify-center bg-[#C3C3C3]">
+              <div className="w-[24px] h-[24px] rounded-full flex items-center justify-center bg-sub-gray">
                 {selected === option && (
-                  <div className="w-[18px] h-[18px] bg-[#65CE58] rounded-full" />
+                  <div className="w-[18px] h-[18px] bg-main-color rounded-full" />
                 )}
               </div>
               <span className="font-semibold leading-[20px]">{option}</span>
@@ -173,7 +174,7 @@ const BottomSheetForm: React.FC<BottomSheetFormProps> = ({
       <p className="text-center text-body-md-title font-regular">
         보내주신 의견은 운영팀이 검토 후 반영됩니다
       </p>
-      <div className="flex justify-between mt-[8px] border-t-[2px] border-[#F4F6F8]">
+      <div className="flex justify-between mt-[8px] border-t-[2px] border-bg-gray">
         <button
           onClick={onCancel}
           className="w-1/2 text-center text-title-sb-button font-bold py-[12px]"

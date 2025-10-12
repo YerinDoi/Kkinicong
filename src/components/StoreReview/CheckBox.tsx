@@ -30,7 +30,7 @@ const CheckBox: React.FC<CheckBoxProps> = ({onCheckChange }) => {
         </div>
 
 
-        <span className={checked ? "text-title-sb-button text-black font-semibold " : "text-[#919191]"}> 
+        <span className={checked ? "text-title-sb-button text-black font-semibold " : "text-main-gray"}> 
           네, 실제로 방문해 급식카드로 이용했어요.
         </span>
       </label>

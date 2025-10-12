@@ -32,7 +32,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
               onClick={onDelete}
               heightClass="h-[44px]"
               widthClass="w-1/2"
-              bgColorClass="bg-[#919191]"
+              bgColorClass="bg-main-gray"
               textColorClass="text-white"
             />
         </div>

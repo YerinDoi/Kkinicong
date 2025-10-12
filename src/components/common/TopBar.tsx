@@ -82,7 +82,7 @@ export default function TopBar({
               </span>
             )}
             {subTitle && (
-              <div className="mt-[2px] text-[#919191] text-body-md-description leading-[18px]">
+              <div className="mt-[2px] text-main-gray text-body-md-description leading-[18px]">
                 {subTitle}
               </div>
             )}
@@ -95,7 +95,7 @@ export default function TopBar({
               </span>
             )}
             {subTitle && (
-              <span className="ml-2 text-body-md-title font-medium text-[#919191]">
+              <span className="ml-2 text-body-md-title font-medium text-main-gray">
                 {subTitle}
               </span>
             )}

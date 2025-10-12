@@ -2,7 +2,7 @@ import EmptyIcon from '@/assets/svgs/logo/curious-congG.svg';
 
 export default function EmptyNotification() {
   return (
-    <div className="flex flex-col flex-grow justify-center items-center bg-[#F4F6F8]">
+    <div className="flex flex-col flex-grow justify-center items-center bg-bg-gray">
       <img
         src={EmptyIcon}
         alt="알림 없음"

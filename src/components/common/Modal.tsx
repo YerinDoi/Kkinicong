@@ -26,21 +26,21 @@ const Modal: React.FC<ModalProps> = ({
       <div className="bg-white rounded-[12px] w-[300px] px-[20px] py-[36px] flex flex-col items-center gap-[24px]">
         <div className="px-[16px] py-[8px] font-pretendard text-[16px] font-bold leading-normal tracking-[0.016px] text-center">{title}</div>
         {description && (
-          <div className="text-[15px] text-[#616161] text-center mb-6">
+          <div className="text-[15px] text-text-gray text-center mb-6">
             {description}
           </div>
         )}
         <div className="flex w-full gap-[12px]">
           <button
-            className="flex-1 h-[44px] rounded-[12px] px-[20px] py-[12px] border-[1.5px] border-[#C3C3C3] 
-                font-pretendard text-[#616161] font-semibold text-[16px] leading-[20px] bg-white"
+            className="flex-1 h-[44px] rounded-[12px] px-[20px] py-[12px] border-[1.5px] border-sub-gray
+                font-pretendard text-text-gray font-semibold text-[16px] leading-[20px] bg-white"
             onClick={onCancel}
           >
             {cancelText}
           </button>
           <button
             className={`flex-1 h-[44px] rounded-[12px] px-[16px] py-[10px] 
-                font-pretendard font-semibold text-[16px] leading-normal tracking-[0.016px] text-white bg-[#919191]`}
+                font-pretendard font-semibold text-[16px] leading-normal tracking-[0.016px] text-white bg-main-gray`}
             onClick={onConfirm}
           >
             {confirmText}

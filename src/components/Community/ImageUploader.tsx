@@ -25,11 +25,14 @@ export default function ImageUploader({
         maxSizeMB: 1,
         maxWidthOrHeight: 1024,
         useWebWorker: true,
+        fileType: "image/webp", //webp파일로 저장되게 하여 공간 절약
       });
 
+      const newFileName = file.name.replace(/\.[^/.]+$/, ".webp");
+
       //  압축된 Blob을 다시 File로 변환하면서 name 보존
-      const compressedFile = new File([compressedBlob], file.name, {
-        type: compressedBlob.type,
+      const compressedFile = new File([compressedBlob], newFileName, {
+        type: "image/webp",
         lastModified: Date.now(),
       });
 

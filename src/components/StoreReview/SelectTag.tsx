@@ -23,13 +23,13 @@ const SelectTag: React.FC<SelectTagProps> = ({ selected, onChange }) => {
 
   return (
     <div className="flex flex-col gap-[16px]">
-      <p className="h-[20px] text-[#919191]">
+      <p className="h-[20px] text-main-gray">
         <span className="text-black font-semibold leading-[20px] text-title-sb-button">
           태그를 선택해주세요
         </span>{' '}
         (최대 5개)
       </p>
-      <div className="flex flex-col gap-[12px] text-body-md-description font-regular text-[#919191]">
+      <div className="flex flex-col gap-[12px] text-body-md-description font-regular text-main-gray">
         <p>메뉴가 어땠나요?</p>
 
         <TagSelector
