@@ -7,6 +7,7 @@ interface OptimizedImageProps {
   width?: number;
   height?: number;
   priority?: boolean; // 첫 화면 LCP 이미지인 경우 true
+  onLoad?: () => void; // 이미지 로드 완료 콜백
 }
 
 export default function OptimizedImage({
@@ -16,6 +17,7 @@ export default function OptimizedImage({
   width,
   height,
   priority = false,
+  onLoad,
 }: OptimizedImageProps) {
   const [loaded, setLoaded] = useState(false);
 
@@ -34,7 +36,10 @@ export default function OptimizedImage({
         className={`object-cover transition-opacity duration-300 ${
           loaded ? "opacity-100" : "opacity-0"
         }`}
-        onLoad={() => setLoaded(true)}
+        onLoad={() => {
+          setLoaded(true);
+          onLoad?.();
+        }}
       />
       {!loaded && <div className="absolute inset-0 animate-pulse" />}
     </div>
