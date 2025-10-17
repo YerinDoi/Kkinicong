@@ -9,7 +9,7 @@ const FeedbackBox: React.FC<FeedbackBoxProps> = ({ value, onChange }) => {
   const maxLength = 6000;
 
   return (
-    <div className="flex flex-col gap-[12px] font-pretendard px-[8px]">
+    <div className="flex flex-col gap-[12px] font-pretendard">
       <div className="flex text-main-gray justify-between font-semibold">
         <div className="h-[18px] font-semibold">
           <span className="text-black font-semibold text-title-sb-button">
