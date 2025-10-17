@@ -6,6 +6,7 @@ import Star from '@/components/StoreReview/Star';
 import FeedbackBox from '@/components/Mypage/FeedbackBox';
 import ConfirmToast from '@/components/common/ConfirmToast';
 import axiosInstance from '@/api/axiosInstance';
+import FeedbackCheckList from '@/components/Mypage/FeedbackCheckList';
 
 const FeedbackPage = () => {
   const navigate = useNavigate();
@@ -18,6 +19,14 @@ const FeedbackPage = () => {
   const [feedback, setFeedback] = useState('');
   const [showToast, setShowToast] = useState(false);
   const userId = localStorage.getItem('nickname');
+
+  // 선택형 체크박스: 불편 사항 옵션 및 선택 상태
+  const ISSUE_OPTIONS = [
+    '메인페이지에서 가게 이름을 검색해도 결과가 안 나와요',
+    '메인페이지에서 음식 이름을 검색해도 결과가 안 나와요',
+    '커뮤니티에서 검색 결과가 안 보여요',
+  ];
+  const [selectedIssues, setSelectedIssues] = useState<string[]>([]);
 
   const handleSubmit = async () => {
     try {
@@ -44,7 +53,7 @@ const FeedbackPage = () => {
         onBack={() => (returnTo ? navigate(returnTo) : navigate(-1))}
       />
 
-      <div className="flex flex-col gap-[44px] px-[20px] font-pretendard text-[16px] font-semibold leading-[20px]">
+      <div className="flex flex-col gap-[36px] px-[20px] font-pretendard text-[16px] font-semibold leading-[20px]">
         <div className="border-b border-sub-gray">
           <div className="flex flex-col h-[44px] justify-between mt-[24px]">
             <p>
@@ -58,9 +67,21 @@ const FeedbackPage = () => {
           </p>
         </div>
 
-        <div className="flex flex-col px-[8px] gap-[16px] font-semibold">
+        <div className="flex flex-col gap-[16px] font-semibold">
           <p>얼마나 만족스럽게 사용하고 계신가요?</p>
           <Star value={value} onChange={onChange} />
+        </div>
+
+        <div className="flex flex-col gap-[12px] font-semibold">
+          <p>
+            다음 사항 중 불편함이 있었나요?{' '}
+            <span className="text-main-gray">(선택)</span>
+          </p>
+          <FeedbackCheckList
+            options={ISSUE_OPTIONS}
+            value={selectedIssues}
+            onChange={setSelectedIssues}
+          />
         </div>
 
         <FeedbackBox value={feedback} onChange={setFeedback} />
