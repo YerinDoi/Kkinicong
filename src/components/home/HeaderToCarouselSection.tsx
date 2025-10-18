@@ -1,19 +1,20 @@
 import HomeTopBar from '@/components/home/HomeTopBar';
 import Icons from '@/assets/icons';
 import SearchInput from '@/components/common/SearchInput';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CarouselBanner from '@/components/home/CarouselBanner';
 import { useGps } from '@/contexts/GpsContext';
 import axiosInstance from '@/api/axiosInstance';
 import { Store } from '@/types/store';
 
-const bgColors = ['#F3F5ED', '#F4F6F8'];
+const bgColors = ['#F3F5ED', '#F4F6F8','#F3F5ED'];
 
 function HeaderToCarouselSection() {
   const [inputValue, setInputValue] = useState('');
   const [activeSlide, setActiveSlide] = useState(0);
   const navigate = useNavigate();
+  const swiperRef = useRef<any>(null); // Swiper에 대한 ref
 
   const { address, requestGps, location: gpsLocation } = useGps();
 
@@ -22,7 +23,6 @@ function HeaderToCarouselSection() {
     if (!searchTerm) return;
 
     try {
-      // 검색 시 위치 정보를 포함하도록 파라미터 구성
       const params: any = { keyword: searchTerm, size: 2 };
       if (gpsLocation && gpsLocation.latitude && gpsLocation.longitude) {
         params.latitude = gpsLocation.latitude;
@@ -35,14 +35,11 @@ function HeaderToCarouselSection() {
       });
 
       const stores: Store[] = response.data.results?.content || [];
-
-      // 중복 제거
       const uniqueStores = stores.filter(
         (store, index, self) =>
           index === self.findIndex((s) => s.id === store.id),
       );
 
-      // 결과가 정확히 1개이고, 이름이 검색어와 정확히 일치하면 상세 페이지로 이동
       if (
         uniqueStores.length === 1 &&
         uniqueStores[0].name.toLowerCase().replace(/\s/g, '') ===
@@ -51,12 +48,10 @@ function HeaderToCarouselSection() {
         console.log('상세페이지로 이동:', uniqueStores[0].id);
         navigate(`/store/${uniqueStores[0].id}`);
       } else {
-        // 지역명(동/구/역)으로 끝나면 center 없이 검색어만 넘김
         const isAddress = /동$|구$|역$/.test(searchTerm);
         if (isAddress) {
           navigate('/store-map', { state: { searchTerm } });
         } else {
-          // 일반 키워드는 center도 같이 넘김
           navigate('/store-map', {
             state: {
               searchTerm,
@@ -69,14 +64,13 @@ function HeaderToCarouselSection() {
       }
     } catch (error) {
       console.error('Search failed, navigating to map page as fallback', error);
-      // 에러 발생 시에도 안전하게 지도 페이지로 이동
-      const isAddress = /동$|구$|역$/.test(searchTerm);
+      const isAddress = /동$|구$|역$/.test(inputValue);
       if (isAddress) {
-        navigate('/store-map', { state: { searchTerm } });
+        navigate('/store-map', { state: { searchTerm: inputValue } });
       } else {
         navigate('/store-map', {
           state: {
-            searchTerm,
+            searchTerm: inputValue,
             center: gpsLocation
               ? { lat: gpsLocation.latitude, lng: gpsLocation.longitude }
               : null,
@@ -86,15 +80,25 @@ function HeaderToCarouselSection() {
     }
   };
 
+  // Swiper 초기화 지연 처리
+  useEffect(() => {
+    if (swiperRef.current) {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => swiperRef.current?.autoplay?.start());
+      } else {
+        setTimeout(() => swiperRef.current?.autoplay?.start(), 800);
+      }
+    }
+  }, []);
+
   return (
     <div
-      className="transition-colors duration-500 py-[8px] flex flex-col "
+      className="transition-colors duration-500 py-[8px] flex flex-col"
       style={{ backgroundColor: bgColors[activeSlide] }}
     >
       <div className="px-[15px]">
         <HomeTopBar address={address} />
       </div>
-      {/*GPS 구현 (자주 가는 지역 제외), 검색 부분은 수정 예정. 지금은 ui만 구현*/}
       <div className="flex gap-[8px] px-[20px] w-full">
         <button onClick={() => requestGps()}>
           <Icons name="gps" />
@@ -108,7 +112,7 @@ function HeaderToCarouselSection() {
         />
       </div>
 
-      <CarouselBanner onSlideChange={setActiveSlide} />
+      <CarouselBanner onSlideChange={setActiveSlide} swiperRef={swiperRef} />
     </div>
   );
 }
