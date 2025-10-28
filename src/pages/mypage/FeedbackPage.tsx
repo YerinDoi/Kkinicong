@@ -103,7 +103,7 @@ const FeedbackPage = () => {
       </div>
 
       {/* 하단 고정 버튼 */}
-      <div className="flex mt-auto justify-center">
+      <div className="flex mt-[32px] pb-[68px] justify-center">
         <GreenButton
           text={'제출하기'}
           onClick={handleSubmit}
