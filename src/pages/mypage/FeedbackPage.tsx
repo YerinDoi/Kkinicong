@@ -28,12 +28,27 @@ const FeedbackPage = () => {
   ];
   const [selectedIssues, setSelectedIssues] = useState<string[]>([]);
 
+  const getIssueType = (issue: string): string | null => {
+    const typeMap: Record<string, string> = {
+      '메인페이지에서 가게 이름을 검색해도 결과가 안 나와요':
+        'SEARCH_RESTAURANT',
+      '메인페이지에서 음식 이름을 검색해도 결과가 안 나와요': 'SEARCH_FOOD',
+      '커뮤니티에서 검색 결과가 안 보여요': 'SEARCH_COMMUNITY',
+    };
+    return typeMap[issue] || null;
+  };
+
   const handleSubmit = async () => {
     try {
+      const typeArray = selectedIssues
+        .map((issue) => getIssueType(issue))
+        .filter((v): v is string => Boolean(v));
+
       await axiosInstance.post('/api/v1/feedback', {
         userId,
         rating: value, // 별점
         content: feedback, // 의견 텍스트
+        type: typeArray, // 체크리스트 타입 배열
       });
       setShowToast(true);
       setTimeout(() => {
@@ -88,7 +103,7 @@ const FeedbackPage = () => {
       </div>
 
       {/* 하단 고정 버튼 */}
-      <div className="flex mt-auto justify-center">
+      <div className="flex mt-[32px] pb-[68px] justify-center">
         <GreenButton
           text={'제출하기'}
           onClick={handleSubmit}
