@@ -1,9 +1,14 @@
 import TopBar from '@/components/common/TopBar';
 import { useState } from 'react';
-import regionData from '@/constants/regionData';
+import regionDataRaw from '@/data/regionData.json';
 import axiosInstance from '@/api/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import GreenButton from '@/components/common/GreenButton';
+
+const regionData = regionDataRaw as Record<
+  string,
+  Record<string, { name: string; lat: number; lng: number }[]>
+>;
 
 function MyNeighborhoodPage() {
   const [input, setInput] = useState('');
@@ -127,7 +132,7 @@ function MyNeighborhoodPage() {
           <br /> 빠르게 확인할 수 있어요.
         </div>
         <div className="text-body-md-title text-text-gray font-regular">
-          현재는 <span className="text-sub-color">인천,부천,수원,고양,용인,성남시</span>만 제공되며,
+          현재는 <span className="text-sub-color">서울,인천,부천,수원,고양,용인,성남시</span>만 제공되며,
           <br />
           다른 지역은 요청이 많은 순으로 추가될 예정이에요.
           <br />

@@ -45,11 +45,11 @@ export default function CarouselBanner({
     {
       content: (
         <div className="px-[16px] font-semibold text-title-sb-button flex flex-col gap-[12px] justify-center">
-          <div className="text-text-gray flex flex-col leading-[22px]">
+          <div className="text-text-gray flex flex-col leading-[22px] tracking-[-0.96px]">
             <span>
               현재는{' '}
               <span className="text-sub-color">
-                인천, 부천, 수원, 고양, 용인, 성남
+                서울, 인천, 부천, 수원, 고양, 용인, 성남
               </span>
               만 제공되며,{' '}
             </span>
