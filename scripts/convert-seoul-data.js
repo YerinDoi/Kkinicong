@@ -25,17 +25,23 @@ try {
   const seoulData = {};
 
   rows.forEach((row) => {
-    const city = row["sd_nm"] || "서울특별시";
-    const district = row["sgg_nm"];
-    const dong = row["emd_nm"];
-    const lat = parseFloat(row["center_lati"]);
-    const lng = parseFloat(row["center_long"]);
+  const city = row["sd_nm"];
+  const district = row["sgg_nm"];
+  const dong = row["emd_nm"];
+  const lat = parseFloat(row["center_lati"]);
+  const lng = parseFloat(row["center_long"]);
 
-    if (!district || !dong || isNaN(lat) || isNaN(lng)) return;
+  // ✅ 1. '서울특별시'만 처리
+  if (city !== "서울특별시") return;
 
-    if (!seoulData[district]) seoulData[district] = [];
-    seoulData[district].push({ name: dong, lat, lng });
-  });
+  // ✅ 2. 값 유효성 검사
+  if (!district || !dong || isNaN(lat) || isNaN(lng)) return;
+
+  // ✅ 3. seoulData에 누적
+  if (!seoulData[district]) seoulData[district] = [];
+  seoulData[district].push({ name: dong, lat, lng });
+});
+
 
   // 4️⃣ 기존 regionData.json에 병합
   regionData["서울특별시"] = seoulData;
