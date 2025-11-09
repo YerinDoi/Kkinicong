@@ -1,9 +1,13 @@
 import TopBar from '@/components/common/TopBar';
 import { useState } from 'react';
-import regionData from '@/constants/regionData';
+import regionDataRaw from '@/data/regionData.json';
 import axiosInstance from '@/api/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import GreenButton from '@/components/common/GreenButton';
+
+const regionData = (
+  (regionDataRaw as any).default ?? regionDataRaw
+) as Record<string, Record<string, { name: string; lat: number; lng: number }[]>>;
 
 function MyNeighborhoodPage() {
   const [input, setInput] = useState('');
@@ -18,6 +22,8 @@ function MyNeighborhoodPage() {
   const [city, district, selectedDong] = words;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('regionDataRaw', regionDataRaw);
+
     const value = e.target.value;
     setInput(value);
 
@@ -27,7 +33,16 @@ function MyNeighborhoodPage() {
     if (newCity && newDistrict && !newDong) {
       // 기존 방식: 시 + 군/구 입력 시 동 리스트 추출
       const list = regionData[newCity]?.[newDistrict] ?? null;
-      setDongList(list);
+      if (list) {
+        const enrichedList = list.map((dong) => ({
+          ...dong,
+          city: newCity,
+          district: newDistrict,
+        }));
+        setDongList(enrichedList);
+      } else {
+        setDongList(null);
+      }
     } else if (words.length === 1 && words[0] !== '') {
       // 동 이름만 입력된 경우: 전체 탐색
       const searchWord = words[0];
@@ -66,6 +81,7 @@ function MyNeighborhoodPage() {
     city: string;
     district: string;
   }) => {
+    console.log('handleDongSelect 받은 dong:', dong);
     const fullInput = `${dong.city} ${dong.district} ${dong.name}`;
     setInput(fullInput);
     setDongList(null);
@@ -98,11 +114,12 @@ function MyNeighborhoodPage() {
     } catch (err) {
       console.error('API 오류:', err);
       alert('서버 요청 중 오류가 발생했어요.');
-      setIsLocationRegistered(true);
+      setIsLocationRegistered(false);
     }
   };
 
   return (
+    
     <div className="flex flex-col h-full gap-[32px] font-pretendard pb-[68px]">
       <div className="flex flex-col gap-[24px] px-[15px]">
         <TopBar
@@ -127,7 +144,7 @@ function MyNeighborhoodPage() {
           <br /> 빠르게 확인할 수 있어요.
         </div>
         <div className="text-body-md-title text-text-gray font-regular">
-          현재는 <span className="text-sub-color">인천,부천,수원,고양,용인,성남시</span>만 제공되며,
+          현재는 <span className="text-sub-color">서울,인천,부천,수원,고양,용인,성남시</span>만 제공되며,
           <br />
           다른 지역은 요청이 많은 순으로 추가될 예정이에요.
           <br />
@@ -147,24 +164,23 @@ function MyNeighborhoodPage() {
         {dongList && dongList.length > 0 ? (
           <ul className="border border-text-gray mt-[20px] bg-bg-gray max-h-[170px] overflow-y-auto rounded-[12px] text-text-gray text-body-md-description font-regular">
  
-            {dongList.map((dong:any) => (
+            {dongList.map((dong: any) => (
               <li
-                key={`${dong.name}-${dong.lat}-${dong.lng}`}
+                key={`${dong.city}-${dong.district}-${dong.name}-${dong.lat}`}
                 className="px-[12px] py-[8px] h-[34px] cursor-pointer hover:bg-[#E0E0E0]"
-                onClick={() =>
+                onClick={() => {
+                  console.log('클릭한 dong:', dong);
+                  console.log('dong 전체 정보:', JSON.stringify(dong));
                   handleDongSelect({
                     name: dong.name,
                     lat: dong.lat,
                     lng: dong.lng,
-                    // dong.city, dong.district가 있으면 사용, 아니면 상위 스코프의 city/district 사용
-                    city: 'city' in dong ? dong.city : city,
-                    district: 'district' in dong ? dong.district : district,
-                  })
-                }
+                    city: dong.city,
+                    district: dong.district,
+                  });
+                }}
               >
-                {`${'city' in dong ? dong.city : city} ${
-                  'district' in dong ? dong.district : district
-                } ${dong.name}`}
+                {`${dong.city} ${dong.district} ${dong.name}`}
               </li>
             ))}
 

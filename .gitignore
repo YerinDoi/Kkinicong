@@ -23,6 +23,10 @@ dist-ssr
 *.sln
 *.sw?
 
+# Local region data converter
+convert-region-data.js
+
+
 # Environment Variables
 .env
 .env.local
