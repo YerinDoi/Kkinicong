@@ -12,6 +12,7 @@ import { useLocation } from 'react-router-dom';
 import { tagMap } from '@/constants/tagMap';
 import ConfirmToast from '@/components/common/ConfirmToast';
 import { createPortal } from 'react-dom';
+import { trackSubmitReview } from '@/analytics/ga';
 
 // 리뷰PR 커밋용 주석 열기
 const StoreReviewPage = () => {
@@ -37,7 +38,6 @@ const StoreReviewPage = () => {
   }
 
   const handleSubmitReview = async () => {
-
     if (isSubmitting) return; // 중복 제출 방지
     setIsSubmitting(true);
 
@@ -67,6 +67,9 @@ const StoreReviewPage = () => {
         console.log('이미지 업로드 완료');
       }
 
+      // 리뷰 등록 이벤트 태깅
+      trackSubmitReview(storeId, rating, comment.length);
+
       setShowToast(true);
       setTimeout(() => {
         setShowToast(false);
@@ -75,8 +78,7 @@ const StoreReviewPage = () => {
     } catch (error) {
       console.error('리뷰 작성 실패:', error);
       alert('리뷰 작성에 실패했습니다.');
-    }
-    finally {
+    } finally {
       setIsSubmitting(false);
     }
   };
