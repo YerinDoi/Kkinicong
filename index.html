@@ -1,13 +1,24 @@
 <!doctype html>
 <html lang="ko">
   <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-141DQ7VQ83"></script>
+    <!-- Google Tag Manager -->
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', 'GTM-NTRF52GQ');
+    </script>
+    <!-- End Google Tag Manager -->
+
+    <!-- dataLayer 초기화 (GTM이 사용) -->
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-141DQ7VQ83');
     </script>
 
     <meta charset="UTF-8" />
@@ -22,28 +33,38 @@
     <link rel="canonical" href="https://kkinicong.co.kr/" />
 
     <!-- Search -->
-    <meta name="description" content="가까운 아동급식카드 가맹점 이곳에서 찾아봐요" />
+    <meta
+      name="description"
+      content="가까운 아동급식카드 가맹점 이곳에서 찾아봐요"
+    />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content="끼니콩" />
-    <meta property="og:description" content="가까운 아동급식카드 가맹점 이곳에서 찾아봐요" />
+    <meta
+      property="og:description"
+      content="가까운 아동급식카드 가맹점 이곳에서 찾아봐요"
+    />
     <meta property="og:url" content="https://kkinicong.co.kr/" />
     <meta property="og:image" content="https://kkinicong.co.kr/og-image.png" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="끼니콩" />
-    <meta name="twitter:description" content="가까운 아동급식카드 가맹점 이곳에서 찾아봐요" />
+    <meta
+      name="twitter:description"
+      content="가까운 아동급식카드 가맹점 이곳에서 찾아봐요"
+    />
     <meta name="twitter:image" content="https://kkinicong.co.kr/og-image.png" />
     <!-- ================================================ -->
-    
+
     <!--  카톡 인앱 웹뷰 감지: 아주 이른 타이밍에 자동 글자확대 비활성화 -->
     <script>
       (function () {
         if (/KAKAOTALK|KakaoTalk/i.test(navigator.userAgent)) {
           // 인라인 스타일로 우선순위 확보(+ !important)
-          document.documentElement.style.cssText += ';-webkit-text-size-adjust:none !important;text-size-adjust:none !important;';
+          document.documentElement.style.cssText +=
+            ';-webkit-text-size-adjust:none !important;text-size-adjust:none !important;';
           document.documentElement.classList.add('is-kakao');
         }
       })();
@@ -54,15 +75,28 @@
       html {
         -webkit-text-size-adjust: 100%;
         text-size-adjust: 100%;
-        font-size: 16px;               /* 1rem 기준 */
+        font-size: 16px; /* 1rem 기준 */
         font-synthesis: none;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        font-family: Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-                     Roboto, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic',
-                     Arial, 'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol', sans-serif;
+        font-family:
+          Pretendard,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          'Noto Sans KR',
+          'Apple SD Gothic Neo',
+          'Malgun Gothic',
+          Arial,
+          'Apple Color Emoji',
+          'Segoe UI Emoji',
+          'Segoe UI Symbol',
+          sans-serif;
       }
-      body { font-size: 1rem; }
+      body {
+        font-size: 1rem;
+      }
       /* 카톡에서만 완전 차단 (스크립트가 .is-kakao를 추가함) */
       html.is-kakao {
         -webkit-text-size-adjust: none !important;
@@ -71,16 +105,38 @@
     </style>
 
     <!-- Google Search Console ownership -->
-    <meta name="google-site-verification" content="MgWIj6pzr0s3wno-nIkU2nVbY5bWWXviIcULcJ5FcRg" />
+    <meta
+      name="google-site-verification"
+      content="MgWIj6pzr0s3wno-nIkU2nVbY5bWWXviIcULcJ5FcRg"
+    />
 
     <!-- Pretendard (비차단 로딩) -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" media="print" onload="this.media='all'" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css"
+      media="print"
+      onload="this.media='all'"
+    />
     <noscript>
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css"
+      />
     </noscript>
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+      <iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-NTRF52GQ"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

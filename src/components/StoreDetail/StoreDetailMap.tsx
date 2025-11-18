@@ -8,6 +8,7 @@ import { useMemo, useState, useEffect } from 'react';
 import MenuBtn from '@/assets/svgs/detail/menu-btn.svg?react';
 import NavigationBtn from '@/assets/svgs/detail/navigation-btn.svg?react';
 import axiosInstance from '@/api/axiosInstance';
+import { trackClickPhoneOrMap } from '@/analytics/ga';
 import { MapMarker } from 'react-kakao-maps-sdk';
 
 interface StoreDetailMapProps {
@@ -167,7 +168,10 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
     const desktop = externalLinks?.directionUrlDesktop;
     if (!desktop) return;
     const webUrl = normalizeWebUrl(desktop);
-    if (webUrl) window.open(webUrl, '_blank', 'noopener');
+    if (webUrl) {
+      trackClickPhoneOrMap(store.storeId, 'map');
+      window.open(webUrl, '_blank', 'noopener');
+    }
   };
 
   /** Android: 앱 우선(앱→인텐트→웹) */
@@ -191,10 +195,14 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
       !isSafeScheme(appUrl)
     ) {
       // 좌표/URL 이상하면 그냥 웹
-      if (webUrl) window.open(webUrl, '_blank', 'noopener');
+      if (webUrl) {
+        trackClickPhoneOrMap(store.storeId, 'map');
+        window.open(webUrl, '_blank', 'noopener');
+      }
       return;
     }
 
+    trackClickPhoneOrMap(store.storeId, 'map');
     openAppAndroid(appUrl, intentUrl, webUrl);
   };
 
@@ -225,6 +233,7 @@ const StoreDetailMap: React.FC<StoreDetailMapProps> = ({
   const onClickIOSAnchor = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (!iosDeepLinks) return;
     const { webUrl } = iosDeepLinks;
+    trackClickPhoneOrMap(store.storeId, 'map');
 
     // 전환 감지되면 타이머 취소 → 돌아와도 웹 안 뜸
     let finished = false;
