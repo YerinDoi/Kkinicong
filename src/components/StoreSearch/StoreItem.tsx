@@ -3,6 +3,7 @@ import Icon, { IconName } from '@/assets/icons';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '@/api/axiosInstance';
+import { trackSaveStore } from '@/analytics/ga';
 import LoginRequiredBottomSheet from '@/components/common/LoginRequiredBottomSheet';
 
 interface StoreItemProps {
@@ -36,8 +37,13 @@ const StoreItem = ({ store }: StoreItemProps) => {
       });
 
       if (response.data.isSuccess) {
-        setIsLiked(response.data.results.isScrapped);
+        const newIsLiked = response.data.results.isScrapped;
+        setIsLiked(newIsLiked);
         setLikeCount(response.data.results.scrapCount);
+        // 즐겨찾기 이벤트 태깅 (저장할 때만)
+        if (newIsLiked) {
+          trackSaveStore(store.id);
+        }
       }
     } catch (error) {
       console.error('스크랩 처리 중 오류가 발생했습니다:', error);

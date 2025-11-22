@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
+import {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useLayoutEffect,
+} from 'react';
 import axiosInstance from '@/api/axiosInstance';
 import Header from '@/components/Header';
 import SearchInput from '@/components/common/SearchInput';
@@ -16,6 +22,11 @@ import useStoreSearch from '@/hooks/useStoreSearch';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import { categoryMapping, sortMapping } from '@/constants/storeMapping';
 import { Store } from '@/types/store';
+import {
+  trackSearchStore,
+  trackOpenCategory,
+  trackFilterSearch,
+} from '@/analytics/ga';
 
 const StoreSearchPage = () => {
   const location = useLocation();
@@ -30,9 +41,9 @@ const StoreSearchPage = () => {
   } = useGps();
 
   // 초기화 가드들
-  const initDoneRef = useRef(false);           // 초기 카테고리 확정 전엔 fetch 막기
-  const didInitCategoryRef = useRef(false);    // StrictMode 2회 호출 차단
-  const requestSeqRef = useRef(0);             // 구요청 응답 무시용 시퀀스
+  const initDoneRef = useRef(false); // 초기 카테고리 확정 전엔 fetch 막기
+  const didInitCategoryRef = useRef(false); // StrictMode 2회 호출 차단
+  const requestSeqRef = useRef(0); // 구요청 응답 무시용 시퀀스
 
   // UI 표시용 상태
   const [selectedCategory, setSelectedCategory] = useState<string>('전체');
@@ -51,7 +62,6 @@ const StoreSearchPage = () => {
     inputValue,
     setInputValue,
     searchTerm,
-    setSearchTerm,
     isLocation,
     coordinates,
     handleSearch,
@@ -80,11 +90,21 @@ const StoreSearchPage = () => {
   useEffect(() => {
     if (!initDoneRef.current) return;
     localStorage.setItem('selectedCategory', selectedCategory);
+    // 카테고리 선택 이벤트 태깅 (초기화 이후에만)
+    if (selectedCategory !== '전체') {
+      trackOpenCategory(selectedCategory);
+    }
   }, [selectedCategory]);
+
+  // 정렬 변경 이벤트 태깅
+  useEffect(() => {
+    if (!initDoneRef.current) return;
+    trackFilterSearch('sort', sort);
+  }, [sort]);
 
   // 3) 데이터 페치 함수 (force 옵션 + 구요청 응답 무시)
   const fetchStores = useCallback(
-    async (params?: any, options?: { force?: boolean } = {}) => {
+    async (params?: any, options: { force?: boolean } = {}) => {
       const { force = false } = options;
 
       // 로딩 중인데 강제요청이 아니라면 스킵
@@ -154,8 +174,14 @@ const StoreSearchPage = () => {
         const isLastPage =
           res.data.results?.totalPage <= res.data.results?.currentPage + 1;
 
+        // 검색 이벤트 태깅 (첫 페이지일 때만)
+        if (page === 0 && searchTerm) {
+          trackSearchStore(searchTerm, newStores.length);
+        }
+
         setStores((prev: Store[]) => {
-          const merged: Store[] = page === 0 ? newStores : [...prev, ...newStores];
+          const merged: Store[] =
+            page === 0 ? newStores : [...prev, ...newStores];
           return Array.from(new Map(merged.map((s) => [s.id, s])).values());
         });
 
@@ -174,14 +200,7 @@ const StoreSearchPage = () => {
         }
       }
     },
-    [
-      selectedCategory,
-      sort,
-      isLocation,
-      coordinates,
-      searchTerm,
-      gpsLocation,
-    ]
+    [selectedCategory, sort, isLocation, coordinates, searchTerm, gpsLocation],
   );
 
   // 4) 공통 reset + fetch (강제요청) - 파라미터 없이 호출
@@ -207,15 +226,14 @@ const StoreSearchPage = () => {
     fetchStores,
   ]);
 
-// GPS 버튼은 좌표만 진짜로 바꿔야 하니 그대로 override 허용
-const handleGpsClick = useGpsFetch((lat, lng) => {
-  pageRef.current = 0;
-  hasNextPageRef.current = true;
-  setStores([]);
-  fetchStores({ latitude: lat, longitude: lng }, { force: true });
-}, requestGps);
+  // GPS 버튼은 좌표만 진짜로 바꿔야 하니 그대로 override 허용
+  const handleGpsClick = useGpsFetch((lat, lng) => {
+    pageRef.current = 0;
+    hasNextPageRef.current = true;
+    setStores([]);
+    fetchStores({ latitude: lat, longitude: lng }, { force: true });
+  }, requestGps);
 
-  
   // 무한 스크롤
   const { loaderRef } = useInfiniteScroll({
     onIntersect: () => {
@@ -230,7 +248,6 @@ const handleGpsClick = useGpsFetch((lat, lng) => {
     threshold: 0.1,
   });
 
-  
   // 검색 버튼
   const handleSearchClick = async () => {
     await handleSearch(inputValue, gpsLocation, true);
@@ -253,7 +270,12 @@ const handleGpsClick = useGpsFetch((lat, lng) => {
         </div>
         <MenuCategoryCarousel
           selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
+          onSelectCategory={(category) => {
+            setSelectedCategory(category);
+            if (category !== '전체') {
+              trackOpenCategory(category);
+            }
+          }}
         />
       </div>
 
@@ -275,7 +297,10 @@ const handleGpsClick = useGpsFetch((lat, lng) => {
                 '별점 높은 순',
                 '조회수 순',
               ]}
-              onSelect={setSort}
+              onSelect={(value) => {
+                setSort(value);
+                trackFilterSearch('sort', value);
+              }}
             />
           </div>
           <div

@@ -7,8 +7,9 @@ import CarouselBanner from '@/components/home/CarouselBanner';
 import { useGps } from '@/contexts/GpsContext';
 import axiosInstance from '@/api/axiosInstance';
 import { Store } from '@/types/store';
+import { trackSearchStore } from '@/analytics/ga';
 
-const bgColors = ['#F3F5ED', '#F4F6F8','#F3F5ED'];
+const bgColors = ['#F3F5ED', '#F4F6F8', '#F3F5ED'];
 
 function HeaderToCarouselSection() {
   const [inputValue, setInputValue] = useState('');
@@ -39,6 +40,9 @@ function HeaderToCarouselSection() {
         (store, index, self) =>
           index === self.findIndex((s) => s.id === store.id),
       );
+
+      // 검색 이벤트 태깅
+      trackSearchStore(searchTerm, uniqueStores.length);
 
       if (
         uniqueStores.length === 1 &&
