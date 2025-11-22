@@ -1,4 +1,9 @@
-import ReactGA from 'react-ga4';
+// GTM dataLayer를 직접 사용하는 방식으로 변경
+declare global {
+  interface Window {
+    dataLayer: any[];
+  }
+}
 
 let isInitialized = false;
 
@@ -8,7 +13,10 @@ export const initGA = () => {
     return;
   }
 
-  ReactGA.initialize('G-MFJ749RKHH'); // 측정 ID
+  // dataLayer 초기화 확인
+  if (typeof window !== 'undefined') {
+    window.dataLayer = window.dataLayer || [];
+  }
   isInitialized = true;
 };
 
@@ -17,10 +25,16 @@ export const trackPageView = (path: string) => {
     console.warn('GA4가 초기화되지 않았습니다. initGA()를 먼저 호출하세요.');
     return;
   }
-  ReactGA.send({ hitType: 'pageview', page: path });
+
+  if (typeof window !== 'undefined' && window.dataLayer) {
+    window.dataLayer.push({
+      event: 'page_view',
+      page_path: path,
+    });
+  }
 };
 
-// GA4 이벤트 추적 함수
+// GA4 이벤트 추적 함수 (GTM dataLayer 사용)
 export const trackEvent = (
   eventName: string,
   parameters?: Record<string, any>,
@@ -29,7 +43,13 @@ export const trackEvent = (
     console.warn('GA4가 초기화되지 않았습니다. initGA()를 먼저 호출하세요.');
     return;
   }
-  ReactGA.event(eventName, parameters);
+
+  if (typeof window !== 'undefined' && window.dataLayer) {
+    window.dataLayer.push({
+      event: eventName,
+      ...parameters,
+    });
+  }
 };
 
 // 검색 이벤트
