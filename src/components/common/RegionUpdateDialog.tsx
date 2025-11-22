@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import CongG from '@/assets/svgs/logo/card-congG.svg';
 import GradientBg from '@/assets/svgs/common/region-update-gradient-bg.svg';
 
@@ -14,9 +15,20 @@ const RegionUpdateDialog: React.FC<Props> = ({
   onGoHome,
   onDontShowAgain,
 }) => {
+  // body 스크롤 잠금 처리
+  useEffect(() => {
+    if (open) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [open]);
+
   if (!open) return null;
 
-  return (
+  const dialog = (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/30">
       <div
         className="relative bg-white rounded-[12px] overflow-hidden w-[287px] h-[415px]"
@@ -25,9 +37,7 @@ const RegionUpdateDialog: React.FC<Props> = ({
         aria-label="서울 지역 가맹점 업데이트 안내"
       >
         {/* 상단 배경 */}
-        <div
-          className="relative overflow-hidden w-[287px] h-[368px] bg-[#F3F5ED]"
-        >
+        <div className="relative overflow-hidden w-[287px] h-[368px] bg-[#F3F5ED]">
           {/* 그라데이션 원 배경 (SVG) */}
           <img
             src={GradientBg}
@@ -51,9 +61,7 @@ const RegionUpdateDialog: React.FC<Props> = ({
               많은 분들이 요청해주신
             </div>
 
-            <div
-              className="flex justify-center w-[182px] h-[64px] items-center flex-shrink-0"
-            >
+            <div className="flex justify-center w-[182px] h-[64px] items-center flex-shrink-0">
               <div
                 className="font-bold text-center flex flex-col gap-[6px]"
                 style={{
@@ -68,12 +76,10 @@ const RegionUpdateDialog: React.FC<Props> = ({
                   WebkitTextFillColor: 'transparent',
                 }}
               >
-                <span>서울 지역 가맹점이</span>
+                <span>부산 지역 가맹점이</span>
                 <span>업데이트 되었어요!</span>
               </div>
             </div>
-
-            
           </div>
 
           {/* 콩쥐 이미지 */}
@@ -104,6 +110,8 @@ const RegionUpdateDialog: React.FC<Props> = ({
       </div>
     </div>
   );
+
+  return createPortal(dialog, document.body);
 };
 
 export default RegionUpdateDialog;

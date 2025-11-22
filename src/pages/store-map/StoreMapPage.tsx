@@ -16,6 +16,7 @@ import useBottomSheet from '@/hooks/useBottomSheet';
 import { categoryMapping } from '@/constants/storeMapping';
 import { useGpsFetch } from '@/hooks/useGpsFetch';
 import SearchOnMapBtn from '@/components/StoreMap/SearchOnMapBtn';
+import { trackSearchStore, trackOpenCategory } from '@/analytics/ga';
 
 // 줌 레벨에 따른 반경 계산 함수 (컴포넌트 외부로 이동)
 const calculateRadius = (level: number): number => {
@@ -40,8 +41,8 @@ const StoreMapPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string>(() => {
-  return sessionStorage.getItem(CATEGORY_KEY) ?? '전체';
-});
+    return sessionStorage.getItem(CATEGORY_KEY) ?? '전체';
+  });
   const [stores, setStores] = useState<Store[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
@@ -56,8 +57,8 @@ const StoreMapPage = () => {
 
   //카테고리 클릭하면 sessionStorage에 넣기
   useEffect(() => {
-  sessionStorage.setItem(CATEGORY_KEY, selectedCategory);
-}, [selectedCategory]);
+    sessionStorage.setItem(CATEGORY_KEY, selectedCategory);
+  }, [selectedCategory]);
 
   // 바텀시트 커스텀 훅 사용
   const headerHeight = 11 + 40 + 12 + 40 + 11;
@@ -268,6 +269,11 @@ const StoreMapPage = () => {
   // 1. 카테고리 변경 시 데이터 로드
   useEffect(() => {
     if (mapInstance) {
+      // 카테고리 선택 이벤트 태깅
+      if (selectedCategory !== '전체') {
+        trackOpenCategory(selectedCategory);
+      }
+
       setFirstLoading(true);
       pageRef.current = 0;
       hasNextPageRef.current = true;
@@ -566,6 +572,12 @@ const StoreMapPage = () => {
         ? newStores
         : removeDuplicateStores(newStores);
       setStores(processedStores); // 검색 완료 후에만 데이터 설정
+
+      // 검색 이벤트 태깅
+      if (termToSearch.trim()) {
+        trackSearchStore(termToSearch.trim(), newStores.length);
+      }
+
       // 검색 결과가 없으면 searchTerm을 유지하여 엠티뷰 표시
       if (newStores.length === 0) {
         console.log('[검색 결과 없음] 엠티뷰 표시');

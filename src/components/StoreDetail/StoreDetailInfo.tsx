@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import LoginRequiredBottomSheet from '../common/LoginRequiredBottomSheet';
 import axios from '@/api/axiosInstance';
 import type { StoreDetail } from '@/types/store';
+import { trackSaveStore } from '@/analytics/ga';
 
 interface StoreDetailInfoProps {
   store: StoreDetail;
@@ -66,8 +67,13 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
       });
 
       if (response.data.isSuccess) {
-        setIsLiked(response.data.results.isScrapped);
+        const newIsLiked = response.data.results.isScrapped;
+        setIsLiked(newIsLiked);
         setLikeCount(response.data.results.scrapCount);
+        // 즐겨찾기 이벤트 태깅 (저장할 때만)
+        if (newIsLiked) {
+          trackSaveStore(storeId);
+        }
       } else {
         console.error('서버 응답 실패:', response.data.message);
       }
@@ -81,7 +87,9 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
       <div className="flex flex-col gap-[12px] w-full">
         {/* 카테고리, 이름, 태그 */}
         <div className="flex flex-col gap-[4px]">
-          <p className="text-body-md-description font-regular text-main-gray">{category}</p>
+          <p className="text-body-md-description font-regular text-main-gray">
+            {category}
+          </p>
           <div className="relative flex items-center gap-[8px]">
             <h1 className="text-[20px] font-semibold text-black leading-[32px]">
               {name}
@@ -91,7 +99,9 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
         </div>
 
         {/* 주소 */}
-        <p className="text-body-md-description font-regular text-main-gray">{address}</p>
+        <p className="text-body-md-description font-regular text-main-gray">
+          {address}
+        </p>
 
         {/* 영업시간 + 찜 아이콘 */}
         <div className="flex justify-between items-start w-full">
@@ -136,7 +146,7 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
       <LoginRequiredBottomSheet
         isOpen={isBottomSheetOpen}
         onClose={() => setIsBottomSheetOpen(false)}
-        pendingPath = {pendingPath}
+        pendingPath={pendingPath}
       />
     </div>
   );
