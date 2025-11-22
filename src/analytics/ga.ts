@@ -6,6 +6,7 @@ declare global {
 }
 
 let isInitialized = false;
+let currentUserId: string | null = null;
 
 export const initGA = () => {
   // 중복 초기화 방지
@@ -18,6 +19,19 @@ export const initGA = () => {
     window.dataLayer = window.dataLayer || [];
   }
   isInitialized = true;
+};
+
+// User-ID 설정 함수
+export const setUserId = (userId: string | null) => {
+  currentUserId = userId;
+
+  if (typeof window !== 'undefined' && window.dataLayer) {
+    if (userId) {
+      window.dataLayer.push({
+        user_id: userId,
+      });
+    }
+  }
 };
 
 export const trackPageView = (path: string) => {
@@ -45,8 +59,13 @@ export const trackEvent = (
   }
 
   if (typeof window !== 'undefined' && window.dataLayer) {
+    // 개발 환경에서만 debug_mode 활성화
+    const isDevelopment = import.meta.env.DEV;
+
     window.dataLayer.push({
       event: eventName,
+      ...(isDevelopment && { debug_mode: true }),
+      ...(currentUserId && { user_id: currentUserId }),
       ...parameters,
     });
   }

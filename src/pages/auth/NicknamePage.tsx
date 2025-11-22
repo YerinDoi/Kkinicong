@@ -6,6 +6,7 @@ import TopBar from '@/components/common/TopBar';
 import { checkNicknameDuplicate, registerNickname } from '@/api/user';
 import { useDispatch } from 'react-redux';
 import { setUser } from '@/store/userSlice'; // ✅ ❷ 닉네임 저장용 액션
+import { setUserId } from '@/analytics/ga';
 
 export default function NicknamePage() {
   const navigate = useNavigate();
@@ -67,6 +68,7 @@ export default function NicknamePage() {
     try {
       const result = await registerNickname(nickname); // 서버에서 등록 후 유저 정보 반환
       dispatch(setUser({ id: result.email, nickname: result.nickname })); // nickname, email 받아서 Redux에 저장
+      setUserId(result.email); // GA4 User-ID 설정
 
       // 새로고침에도 유지하고 싶다면 localStorage에도 저장
       // localStorage.setItem('nickname', result.nickname);
