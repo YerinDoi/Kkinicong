@@ -1,6 +1,7 @@
 import { useDispatch } from 'react-redux';
 import axiosInstance from '@/api/axiosInstance';
 import { clearUser } from '@/store/userSlice';
+import { setUserId } from '@/analytics/ga';
 
 export default function useWithdraw() {
   const dispatch = useDispatch();
@@ -9,6 +10,7 @@ export default function useWithdraw() {
     try {
       await axiosInstance.delete('/api/v1/user/me');
       dispatch(clearUser());
+      setUserId(null); // GA4 User-ID 제거
       localStorage.removeItem('accessToken');
     } catch (error) {
       console.error('회원 탈퇴 실패:', error);
