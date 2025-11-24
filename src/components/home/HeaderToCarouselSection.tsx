@@ -44,28 +44,31 @@ function HeaderToCarouselSection() {
       // 검색 이벤트 태깅
       trackSearchStore(searchTerm, uniqueStores.length);
 
-      if (
-        uniqueStores.length === 1 &&
-        uniqueStores[0].name.toLowerCase().replace(/\s/g, '') ===
-          searchTerm.toLowerCase().replace(/\s/g, '')
-      ) {
-        console.log('상세페이지로 이동:', uniqueStores[0].id);
-        navigate(`/store/${uniqueStores[0].id}`);
-      } else {
-        const isAddress = /동$|구$|역$/.test(searchTerm);
-        if (isAddress) {
-          navigate('/store-map', { state: { searchTerm } });
+      // GTM이 이벤트를 처리할 시간을 주기 위해 약간의 지연
+      setTimeout(() => {
+        if (
+          uniqueStores.length === 1 &&
+          uniqueStores[0].name.toLowerCase().replace(/\s/g, '') ===
+            searchTerm.toLowerCase().replace(/\s/g, '')
+        ) {
+          console.log('상세페이지로 이동:', uniqueStores[0].id);
+          navigate(`/store/${uniqueStores[0].id}`);
         } else {
-          navigate('/store-map', {
-            state: {
-              searchTerm,
-              center: gpsLocation
-                ? { lat: gpsLocation.latitude, lng: gpsLocation.longitude }
-                : null,
-            },
-          });
+          const isAddress = /동$|구$|역$/.test(searchTerm);
+          if (isAddress) {
+            navigate('/store-map', { state: { searchTerm } });
+          } else {
+            navigate('/store-map', {
+              state: {
+                searchTerm,
+                center: gpsLocation
+                  ? { lat: gpsLocation.latitude, lng: gpsLocation.longitude }
+                  : null,
+              },
+            });
+          }
         }
-      }
+      }, 100);
     } catch (error) {
       console.error('Search failed, navigating to map page as fallback', error);
       const isAddress = /동$|구$|역$/.test(inputValue);
