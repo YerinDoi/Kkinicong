@@ -47,29 +47,14 @@ const RegionUpdateDialog: React.FC<Props> = ({
 
           {/* 텍스트 영역 */}
           <div className="relative pt-[36px] text-center flex flex-col items-center z-10">
-            <div
-              className="mx-auto truncate mb-[6px]"
-              style={{
-                fontFamily: 'Pretendard',
-                fontSize: 16,
-                fontStyle: 'normal',
-                fontWeight: 600,
-                lineHeight: '130%',
-                color: '#FFF',
-              }}
-            >
+            <div className="mx-auto truncate mb-[6px] font-pretendard text-[16px] font-semibold leading-[130%] text-white">
               많은 분들이 요청해주신
             </div>
 
             <div className="flex justify-center w-[182px] h-[64px] items-center flex-shrink-0">
               <div
-                className="font-bold text-center flex flex-col gap-[6px]"
+                className="font-pretendard font-bold text-center flex flex-col gap-[6px] text-[24px] leading-[116%]"
                 style={{
-                  fontFamily: 'Pretendard',
-                  fontSize: 24,
-                  fontStyle: 'normal',
-                  fontWeight: 700,
-                  lineHeight: '116%',
                   background: 'linear-gradient(0deg, #F3F5ED 0%, #FFF 100%)',
                   WebkitBackgroundClip: 'text',
                   backgroundClip: 'text',
