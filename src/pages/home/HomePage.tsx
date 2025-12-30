@@ -3,6 +3,7 @@ import CategorySection from '@/components/home/CategorySection';
 import Top8StoreSection from '@/components/home/Top8StoreSection';
 import ConvenienceStoreSection from '@/components/home/ConvenienceStoreSection';
 import CommunitySection from '@/components/home/CommunitySection';
+import QuickActionButtons from '@/components/home/QuickActionButtons';
 import { useEffect, useState } from 'react';
 import RegionUpdateDialog from '@/components/common/RegionUpdateDialog';
 
@@ -18,6 +19,7 @@ function HomePage() {
     <>
       <div className="flex flex-col font-pretendard pb-[61px]">
         <HeaderToCarouselSection />
+        <QuickActionButtons />
 
         <div className="flex flex-col gap-[16px]">
           <CategorySection />

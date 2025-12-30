@@ -34,7 +34,7 @@ const RegionUpdateDialog: React.FC<Props> = ({
         className="relative bg-white rounded-[12px] overflow-hidden w-[287px] h-[415px]"
         role="dialog"
         aria-modal="true"
-        aria-label="서울 지역 가맹점 업데이트 안내"
+        aria-label="지역 업데이트 안내"
       >
         {/* 상단 배경 */}
         <div className="relative overflow-hidden w-[287px] h-[368px] bg-[#F3F5ED]">
@@ -46,12 +46,12 @@ const RegionUpdateDialog: React.FC<Props> = ({
           />
 
           {/* 텍스트 영역 */}
-          <div className="relative pt-[36px] text-center flex flex-col items-center z-10">
+          <div className="relative pt-[33px] text-center flex flex-col items-center z-[100]">
             <div className="mx-auto truncate mb-[6px] font-pretendard text-[16px] font-semibold leading-[130%] text-white">
-              많은 분들이 요청해주신
+              현재 서비스 지역은
             </div>
 
-            <div className="flex justify-center w-[182px] h-[64px] items-center flex-shrink-0">
+            <div className="flex justify-center w-[270px] h-[64px] items-center flex-shrink-0">
               <div
                 className="font-pretendard font-bold text-center flex flex-col gap-[6px] text-[24px] leading-[116%]"
                 style={{
@@ -61,23 +61,31 @@ const RegionUpdateDialog: React.FC<Props> = ({
                   WebkitTextFillColor: 'transparent',
                 }}
               >
-                <span>부산 지역 가맹점이</span>
-                <span>업데이트 되었어요!</span>
+                <span>서울 인천 부천 수원</span>
+                <span>고양 용인 부산 성남</span>
               </div>
+            </div>
+
+            <div className="font-pretendard text-center mt-[6px] w-[270px] h-[18px] text-[12px] font-regular leading-[150%] tracking-[0.012px] text-white">
+              다른 지역은 추후에 추가될 예정이에요
             </div>
           </div>
 
           {/* 콩쥐 이미지 */}
-          <div className="absolute bottom-0 justify-center left-1/2 -translate-x-1/2 w-[237px] aspect-[237/263] z-100">
-            <img src={CongG} alt="카드를 든 콩쥐" />
+          <div className="absolute mt-[2px]bottom-0 left-1/2 -translate-x-1/2 w-[226px] z-[50]">
+            <img
+              src={CongG}
+              alt="카드를 든 콩쥐"
+              className="w-full h-auto object-bottom"
+            />
           </div>
 
           {/* 블러 영역 */}
-          <div className="absolute bottom-0 w-full h-[41px] flex-shrink-0 bg-gradient-to-b from-[rgba(243,245,237,0)] to-[#F3F5ED] z-[999]"></div>
+          <div className="absolute bottom-0 w-full h-[41px] flex-shrink-0 bg-gradient-to-b from-[rgba(243,245,237,0)] to-[#F3F5ED] z-[200]"></div>
         </div>
 
         {/* 버튼 영역 */}
-        <div className="left-0 right-0 bottom-0 flex">
+        <div className="absolute left-0 right-0 bottom-0 flex h-[47px]">
           <button
             className="flex-1 h-[47px] border-sub-gray text-[#616161] font-pretendard text-[16px] font-semibold leading-[20px]"
             onClick={onGoHome}
