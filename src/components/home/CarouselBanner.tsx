@@ -44,12 +44,12 @@ export default function CarouselBanner({
     // 두 번째 슬라이드
     {
       content: (
-        <div className="pl-[16px] font-semibold text-title-sb-button flex flex-col gap-[12px] justify-center">
-          <div className="text-text-gray flex flex-col leading-[22px] tracking-[-1.28px]">
+        <div className="pl-[16px] font-semibold text-title-sb-button flex flex-col gap-[12px] justify-center align-self-stretch">
+          <div className="text-text-gray flex flex-col leading-[20px]">
             <span>
               현재는{' '}
               <span className="text-sub-color">
-                서울, 인천, 부천, 수원, 고양, 용인, 부산, 성남
+                서울, 인천 외 일부 지역
               </span>
               만 제공되며,{' '}
             </span>
