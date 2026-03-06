@@ -4,26 +4,42 @@ import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import { useEffect, useState } from 'react';
 import CongG from '@/assets/svgs/logo/congG.svg';
-import AddIcon from '@/assets/svgs/common/add-icon.svg';
 import CongG3D from '@/assets/svgs/common/3DCongG.svg';
 import { useNavigate } from 'react-router-dom';
+import { getRegionCount } from '@/api/store';
 
 interface CarouselBannerProps {
   onSlideChange: (index: number) => void;
   swiperRef: React.MutableRefObject<any>;
+  onOpenRegionBottomSheet: () => void;
 }
 
 export default function CarouselBanner({
   onSlideChange,
   swiperRef,
+  onOpenRegionBottomSheet,
 }: CarouselBannerProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [regionCount, setRegionCount] = useState<number>(0);
   const navigate = useNavigate();
 
   // ✅ CongG3D 미리 로드 (Safari object 로딩 지연 방지)
   useEffect(() => {
     const preload = new Image();
     preload.src = CongG3D;
+  }, []);
+
+  // region-count 조회
+  useEffect(() => {
+    const fetchRegionCount = async () => {
+      try {
+        const count = await getRegionCount();
+        setRegionCount(count);
+      } catch (e) {
+        console.error('region count 조회 실패:', e);
+      }
+    };
+    fetchRegionCount();
   }, []);
 
   const slides = [
@@ -49,7 +65,7 @@ export default function CarouselBanner({
             <span>
               현재는{' '}
               <span className="text-sub-color">
-                서울, 인천 외 일부 지역
+                서울, 인천 외 {regionCount}개 지역
               </span>
               만 제공되며,{' '}
             </span>
@@ -57,11 +73,10 @@ export default function CarouselBanner({
           </div>
 
           <button
-            className="px-[16px] w-[129px] h-[28px] bg-main-color text-white rounded-[12px] text-body-md-title font-regular items-center flex gap-[8px]"
-            onClick={() => navigate('/feedback', { state: { returnTo: '/' } })}
+            className="px-[16px] w-[112px] h-[28px] bg-main-color text-white rounded-[12px] text-body-md-title font-regular items-center flex gap-[8px]"
+            onClick={onOpenRegionBottomSheet}
           >
-            <img src={AddIcon} className="w-[12px] h-[12px]" />
-            지역 요청하기
+            전체 지역 보기
           </button>
         </div>
       ),
