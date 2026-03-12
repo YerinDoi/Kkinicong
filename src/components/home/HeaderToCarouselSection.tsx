@@ -8,12 +8,15 @@ import { useGps } from '@/contexts/GpsContext';
 import axiosInstance from '@/api/axiosInstance';
 import { Store } from '@/types/store';
 import { trackSearchStore } from '@/analytics/ga';
+import BottomSheet from '@/components/common/BottomSheet';
+import AllRegionBottomSheet from '@/components/home/AllRegionBottomSheet';
 
 const bgColors = ['#F3F5ED', '#F4F6F8', '#F3F5ED'];
 
 function HeaderToCarouselSection() {
   const [inputValue, setInputValue] = useState('');
   const [activeSlide, setActiveSlide] = useState(0);
+  const [isRegionBottomSheetOpen, setIsRegionBottomSheetOpen] = useState(false);
   const navigate = useNavigate();
   const swiperRef = useRef<any>(null); // Swiper에 대한 ref
 
@@ -119,7 +122,15 @@ function HeaderToCarouselSection() {
         />
       </div>
 
-      <CarouselBanner onSlideChange={setActiveSlide} swiperRef={swiperRef} />
+      <CarouselBanner 
+        onSlideChange={setActiveSlide} 
+        swiperRef={swiperRef} 
+        onOpenRegionBottomSheet={() => setIsRegionBottomSheetOpen(true)} 
+      />
+      
+      <BottomSheet isOpen={isRegionBottomSheetOpen} onClose={() => setIsRegionBottomSheetOpen(false)}>
+        <AllRegionBottomSheet onClose={() => setIsRegionBottomSheetOpen(false)} />
+      </BottomSheet>
     </div>
   );
 }
