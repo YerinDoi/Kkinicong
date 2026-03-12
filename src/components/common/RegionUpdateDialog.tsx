@@ -47,8 +47,8 @@ const RegionUpdateDialog: React.FC<Props> = ({
 
           {/* 텍스트 영역 */}
           <div className="relative pt-[33px] text-center flex flex-col items-center z-[100]">
-            <div className="mx-auto truncate mb-[6px] font-pretendard text-[16px] font-semibold leading-[130%] text-white">
-              현재 서비스 지역은
+            <div className="mx-auto truncate mb-[6px] font-pretendard text-[16px] font-semibold leading-[116%] text-white">
+              많은 분들이 요청해주신
             </div>
 
             <div className="flex justify-center w-[270px] h-[64px] items-center flex-shrink-0">
@@ -61,8 +61,8 @@ const RegionUpdateDialog: React.FC<Props> = ({
                   WebkitTextFillColor: 'transparent',
                 }}
               >
-                <span>서울 인천 부천 수원</span>
-                <span>고양 용인 부산 성남</span>
+                <span>경산 지역 가맹점이</span>
+                <span>업데이트 되었어요!</span>
               </div>
             </div>
 
