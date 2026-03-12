@@ -73,7 +73,7 @@ export default function CarouselBanner({
           </div>
 
           <button
-            className="px-[16px] w-[112px] h-[28px] bg-main-color text-white rounded-[12px] text-body-md-title font-regular items-center flex gap-[8px]"
+            className="px-[16px] w-[113px] h-[28px] bg-main-color text-white rounded-[12px] text-body-md-title font-regular items-center flex gap-[8px]"
             onClick={onOpenRegionBottomSheet}
           >
             전체 지역 보기
