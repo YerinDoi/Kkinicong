@@ -1,38 +1,40 @@
 import { Routes, Route } from 'react-router-dom';
-import Home from '../pages/home/HomePage';
+import { lazy, Suspense } from 'react';
 import { GpsProvider } from '@/contexts/GpsContext';
 
-import LoginPage from '@/pages/auth/LoginPage';
-import CallbackPage from '@/pages/auth/CallbackPage';
-import NicknamePage from '@/pages/auth/NicknamePage';
-import NicknamePageXXX from '@/pages/auth/NicknamePageXXX';
-import MyNeighborhoodPage from '@/pages/auth/MyNeighborhoodPage';
+const Home = lazy(() => import('../pages/home/HomePage'));
+const LoginPage = lazy(() => import('@/pages/auth/LoginPage'));
+const CallbackPage = lazy(() => import('@/pages/auth/CallbackPage'));
+const NicknamePage = lazy(() => import('@/pages/auth/NicknamePage'));
+const NicknamePageXXX = lazy(() => import('@/pages/auth/NicknamePageXXX'));
+const MyNeighborhoodPage = lazy(() => import('@/pages/auth/MyNeighborhoodPage'));
 
-import StoreMapPage from '@/pages/store-map/StoreMapPage';
-import StoreSearchPage from '@/pages/store-search/StoreSearchPage';
-import StoreReviewPage from '@/pages/store-review/StoreReviewPage';
-import StoreDetailPage from '@/pages/store-detail/StoreDetailPage';
-import MyPage from '@/pages/mypage/MyPage';
-import ConvenienceStorePage from '@/pages/convenience/ConveniencePage';
-import AddConveniencePage from '@/pages/convenience/AddConveniencePage';
-import ConvenienceDetailPage from '@/pages/convenience/ConvenienceDetailPage';
-import NameRecommendationPage from '@/pages/convenience/NameRecommendationPage';
-import AccountDeletePage from '@/pages/mypage/AccountDeletePage';
-import NicknameEditPage from '@/pages/mypage/NicknameEditPage';
-import CommunityPage from '@/pages/community/CommunityPage';
-import CommunityWritePage from '@/pages/community/CommunityWritePage';
-import CommunitySearchPage from '@/pages/community/CommunitySearchPage';
+const StoreMapPage = lazy(() => import('@/pages/store-map/StoreMapPage'));
+const StoreSearchPage = lazy(() => import('@/pages/store-search/StoreSearchPage'));
+const StoreReviewPage = lazy(() => import('@/pages/store-review/StoreReviewPage'));
+const StoreDetailPage = lazy(() => import('@/pages/store-detail/StoreDetailPage'));
+const MyPage = lazy(() => import('@/pages/mypage/MyPage'));
+const ConvenienceStorePage = lazy(() => import('@/pages/convenience/ConveniencePage'));
+const AddConveniencePage = lazy(() => import('@/pages/convenience/AddConveniencePage'));
+const ConvenienceDetailPage = lazy(() => import('@/pages/convenience/ConvenienceDetailPage'));
+const NameRecommendationPage = lazy(() => import('@/pages/convenience/NameRecommendationPage'));
+const AccountDeletePage = lazy(() => import('@/pages/mypage/AccountDeletePage'));
+const NicknameEditPage = lazy(() => import('@/pages/mypage/NicknameEditPage'));
+const CommunityPage = lazy(() => import('@/pages/community/CommunityPage'));
+const CommunityWritePage = lazy(() => import('@/pages/community/CommunityWritePage'));
+const CommunitySearchPage = lazy(() => import('@/pages/community/CommunitySearchPage'));
 
-import FeedbackPage from '@/pages/mypage/FeedbackPage';
-import MyPostsPage from '@/pages/mypage/MyPostsPage';
-import MyReviewsPage from '@/pages/mypage/MyReviewsPage';
-import MyLikesPage from '@/pages/mypage/MyLikesPage';
-import MyScrapPage from '@/pages/mypage/MyScrapPage';
-import PostDetailPage from '@/pages/community/CommunityPostDetailPage';
-import NotificationPage from '@/pages/notification/NotificationPage';
+const FeedbackPage = lazy(() => import('@/pages/mypage/FeedbackPage'));
+const MyPostsPage = lazy(() => import('@/pages/mypage/MyPostsPage'));
+const MyReviewsPage = lazy(() => import('@/pages/mypage/MyReviewsPage'));
+const MyLikesPage = lazy(() => import('@/pages/mypage/MyLikesPage'));
+const MyScrapPage = lazy(() => import('@/pages/mypage/MyScrapPage'));
+const PostDetailPage = lazy(() => import('@/pages/community/CommunityPostDetailPage'));
+const NotificationPage = lazy(() => import('@/pages/notification/NotificationPage'));
 
 const Router = () => {
   return (
+    <Suspense fallback={null}>
     <Routes>
       <Route
         path="/"
@@ -99,6 +101,7 @@ const Router = () => {
       {/*알림*/}
       <Route path="/notification" element={<NotificationPage />} />
     </Routes>
+    </Suspense>
   );
 };
 
