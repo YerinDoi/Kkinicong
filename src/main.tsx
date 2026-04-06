@@ -21,7 +21,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <HelmetProvider>
           <BrowserRouter>
             <App />
-            <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-left" />
+            {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-left" />}
           </BrowserRouter>
         </HelmetProvider>
       </QueryClientProvider>
